@@ -1,27 +1,38 @@
 import Field from "./Field";
-import { IMG_BIG_SIZE, IMG_SMALL_SIZE } from '../utils/constants';
-
-const getImageSize = (mapSize) => {
-  return mapSize > 10 ?  IMG_SMALL_SIZE : IMG_BIG_SIZE;
-}
+import { FIELD_TYPE } from '../utils/constants';
 
 const Canvas = ( props ) => {
-  const { level, fields, width, height } = {...props};
-
-  let size = getImageSize(width);
+  const { fields, width, height, currentLevel, fieldSize, heroes, enemies, bullets, treasures, obstacles } = {...props};
 
   let canvas = [];
   
   if(fields) {
+
     for (let i = width-1; i >= 0; i--) {
       for (let j = 0; j < height; j++) {
         const id = `id-${j}-${i}`;
-        const field = fields[id];
-        field.level = level;
-        field.size = size;
+
+        let field = {
+          position: {
+            x: j,
+            y: i,
+          },
+          size: fieldSize,
+          level: currentLevel,
+          type: FIELD_TYPE.FLOOR
+        };
+
+        if(heroes[id]) {
+          field = heroes[id];
+        } else if(treasures[id]) {
+          field = treasures[id];
+        } else if(obstacles[id]) {
+          field = obstacles[id];
+        }
 
         canvas.push(<Field key={id} {...field} />);
-    }}
+
+    } }
   }
 
   const canvasStyle = {

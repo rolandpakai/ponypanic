@@ -1,6 +1,5 @@
 //POST /playGameApi/v1/story/begin
 // param: "player-token":
-
 export const mockStoryBegin = {
   "storyPlaythroughId": 686,
   "storyPlaythroughToken": "686_I2J8eykySCo0QW8mNEVWVGkqWDxKZ2xEZSleZypCJGtzPilKIiRwKkM=",
@@ -59,6 +58,54 @@ export const mockMapState = {
       "position": {
         "x": 1,
         "y": 2
+      },
+      "health": 1,
+      "score": 0
+    }
+  ]
+}
+
+//POST /playGameApi/v1/play/approveHeroTurn
+//BODY {
+//  "action": "MOVE_UP",
+//  "heroId": 51931
+//}
+export const mockApproveHeroTurn = {
+  "didTickHappen": true,
+  "tickLogs": [],
+  "message": "Wow, what a move! Call the play/mapState endpoint to check out what happened on the map!"
+}
+
+export const mockMapStateAfterTurn = {
+  "message": "Here is the current state of the map. Use the play/approveHeroTurn endpoint to make your Hero do something!",
+  "map": {
+    "id": 102939,
+    "width": 5,
+    "height": 5,
+    "elapsedTickCount": 1,
+    "status": "PLAYING",
+    "treasures": [
+      {
+        "id": 1,
+        "position": {
+          "x": 3,
+          "y": 2
+        },
+        "name": "Strange object",
+        "collectedByHeroId": null
+      }
+    ],
+    "enemies": [],
+    "bullets": [],
+    "isGameOver": false
+  },
+  "heroes": [
+    {
+      "id": 51931,
+      "playerId": 751,
+      "position": {
+        "x": 1,
+        "y": 3
       },
       "health": 1,
       "score": 0

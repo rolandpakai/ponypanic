@@ -1,10 +1,11 @@
+import { useMemo } from "react";
 import { FIELD_TYPE, TREASURE_COUNT } from '../utils/constants';
 import { randomInteger } from '../utils/util';
 
 const Field = ( props ) => {
-  const { id, health, playerId, position, size, score, type, level } = {...props};
+  const { id, collectedByHeroId, health, name, playerId, position, size, score, type, level } = {...props};
 
-  let randomTreasure = randomInteger(1, TREASURE_COUNT);
+  let randomTreasure = useMemo(() => randomInteger(1, TREASURE_COUNT), [position]);;
 
   const divStyle = {
     width: size,
