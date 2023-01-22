@@ -6,7 +6,7 @@ const Footer = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   return (
     <footer className="footer">
-      <div className="">
+      <div className="footer-content">
         FOOTER {theme}
         <button onClick={toggleTheme}>TOGGLE</button>
       </div>

@@ -1,72 +1,69 @@
 import { useEffect, useState } from 'react';
-import { mockMapState } from './Map.test';
+import { mockStoryBegin, mockMapState, mockMapResource } from './Map.test';
+import { FIELD_TYPE } from '../utils/constants';
+import Canvas from './Canvas';
 
-const HERO_STATE = {
-  STAND: 'stand', 
-  SHILD: 'shild',
-  ATTACK: 'attack',
-}
-
-const HERO_MOVE = {
-  LEFT: 'left', 
-  SHILD: 'right',
-  UP: 'up',
-  DOWN: 'down',
-}
 
 const Main = () => {
-  const [canvas, setCanvas] = useState([]);
+  const [canvas, setCanvas] = useState({});
+  const [storyPlaythroughToken, setStoryPlaythroughToken] = useState('');
+  const [currentLevel, setCurrentLevel] = useState(0);
+  const [elapsedTickCount, setElapsedTickCount] = useState(0);
+  const [mapStatus, setMapStatus] = useState('');
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isCurrentLevelFinished , setIsCurrentLevelFinished] = useState(false);
 
-  const xyTOij = (x, y, height) => {
-      return { i: height - y - 1, j: x }
+  const addEntityToMap = (map, array, type) => {
+    array.forEach((el) => {
+      const id = `id-${el.position.x}-${el.position.y}`;
+      el.type = type;
+      map[id] = el;
+    })
   }
-
-  const setHeroPosition = (position) => {
-
-    const id = `id-${position.i}-${position.j}`;
-    const element = document.getElementById(id);
-    
-    if(element)
-      document.getElementById(id).classList.add('hero');
-  }
-
-  const getCanvasPositions = (array, mapHeight) => {
-      return array.map((el) => {
-        const ij = xyTOij(el.position.x, el.position.y, mapHeight);
-        
-        return `id-${ij.i}-${ij.j}`
-      })
-  }
-
 
   useEffect(() => {
 
+    const {storyPlaythroughToken, playthroughState: {currentLevel, isCurrentLevelFinished} } = mockStoryBegin;
     const { map, heroes } = mockMapState;
-  
-    const herosCanvasPosition = getCanvasPositions(heroes, map.height);
-    const treasuresCanvasPosition = getCanvasPositions(map.treasures, map.height);
+    const { compressedObstacles: {coordinateMap} } = mockMapResource;
 
-    const canvas = [];
+    setStoryPlaythroughToken(storyPlaythroughToken);
+    setCurrentLevel(currentLevel);
+    setIsCurrentLevelFinished(isCurrentLevelFinished);
+    setElapsedTickCount(map.elapsedTickCount);
+    setMapStatus(map.status);
+    setIsGameOver(map.isGameOver);
 
-    for (let i = 0; i < map.width; i++) {
+    const obstacles = [];
+    for (const x in coordinateMap) {
+      if (coordinateMap.hasOwnProperty(x)) {
+        coordinateMap[x].map((y) => obstacles.push({position: {x, y}}))
+      }
+    }
+
+    const canvas = {
+      width: map.width,
+      height: map.height,
+      level: currentLevel,
+      fields: {},
+    };
+
+    for (let i = map.width-1; i >= 0; i--) {
       for (let j = 0; j < map.height; j++) {
-        
-        const key = `key-${i}-${j}`;
-        const id = `id-${i}-${j}`;
+        const id = `id-${j}-${i}`;
 
-        let addClass = '';
-
-        if (herosCanvasPosition.includes(id)) {
-          addClass = 'hero';
-        } else if (treasuresCanvasPosition.includes(id)) {
-          addClass = 'treasure';
-        }
-  
-        canvas.push(<div key={key} id={id} className={`floor ${addClass}`}>
-          {i}{j}
-        </div>);
+        canvas.fields[id] = {
+          position: {
+            x: j,
+            y: i,
+          },
+          type: FIELD_TYPE.FLOOR
+        };
     } }
 
+    addEntityToMap(canvas.fields, heroes, FIELD_TYPE.HERO);
+    addEntityToMap(canvas.fields, map.treasures, FIELD_TYPE.TREASURE);
+    addEntityToMap(canvas.fields, obstacles, FIELD_TYPE.OBSTACLE);
 
     setCanvas(canvas);
 
@@ -77,9 +74,9 @@ const Main = () => {
       <div className="main-container">
         <div className="sub-container">
           <div className="panel-left">
-            <div className="canvas">
-              { canvas }
-            </div>
+              <Canvas 
+                {...canvas}
+              />
           </div>
         </div>
       </div>

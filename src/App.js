@@ -3,8 +3,8 @@ import Main from './components/Main';
 import Footer from './components/Footer';
 import { Fragment } from 'react';
 
-import './App.scss';
-import './Styles.scss';
+import './styles/App.scss';
+import './styles/Styles.scss';
 
 const App = () => {
   return (
