@@ -30,7 +30,7 @@ const Main = () => {
       document.getElementById(id).classList.add('hero');
   }
 
-  const getCanvaPositions = (array, mapHeight) => {
+  const getCanvasPositions = (array, mapHeight) => {
       return array.map((el) => {
         const ij = xyTOij(el.position.x, el.position.y, mapHeight);
         
@@ -43,8 +43,8 @@ const Main = () => {
 
     const { map, heroes } = mockMapState;
   
-    const herosCanvaPosition = getCanvaPositions(heroes, map.height);
-    const treasuresCanvaPosition = getCanvaPositions(map.treasures, map.height);
+    const herosCanvasPosition = getCanvasPositions(heroes, map.height);
+    const treasuresCanvasPosition = getCanvasPositions(map.treasures, map.height);
 
     const canvas = [];
 
@@ -56,9 +56,9 @@ const Main = () => {
 
         let addClass = '';
 
-        if (herosCanvaPosition.includes(id)) {
+        if (herosCanvasPosition.includes(id)) {
           addClass = 'hero';
-        } else if (treasuresCanvaPosition.includes(id)) {
+        } else if (treasuresCanvasPosition.includes(id)) {
           addClass = 'treasure';
         }
   
