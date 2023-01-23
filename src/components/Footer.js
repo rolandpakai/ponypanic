@@ -17,7 +17,8 @@ const Footer = () => {
         <div className="footer-right">
           <Select
             name="theme-select"
-            className="basic-single"
+            className="react-select-container"
+            classNamePrefix="react-select"
             onChange={selectTheme}
             defaultValue={DEFAULT_THEME_OPTION}
             options={THEMES_SELECT_OPTIONS}
