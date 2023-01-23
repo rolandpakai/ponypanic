@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { mockStoryBegin, mockMapState, mockMapResource, mockApproveHeroTurn, mockMapStateAfterTurn } from './Map.test';
+import { mockStoryBegin, mockMapState, mockMapResource, mockApproveHeroTurn, mockMapStateAfterTurn } from '../api/api.mock';
 import { FIELD_TYPE } from '../utils/constants';
 import { arrayToMap, obstacleMapToArray } from '../utils/util';
 import { IMG_BIG_SIZE, IMG_SMALL_SIZE } from '../utils/constants';
@@ -22,14 +22,25 @@ const Main = () => {
 
   const [wait, setWait] = useState(false);
 
-  const calcNextTurn = () => {
+  const calcNextTurn = (heroes, treasures) => {
+    console.log('calcNextTurn');
 
+    for (const heroPositionId in heroes) {
+      if (heroes.hasOwnProperty(heroPositionId)) {
+        console.log(heroPositionId);
+        const idd = heroPositionId;
+
+
+      }
+    }
 
 
   }
 
   const nextTurn = async () => {
     console.log('myFunc');
+
+    //calcNextTurn(heroes);
 
     const { didTickHappen } = mockApproveHeroTurn;
 
@@ -54,9 +65,9 @@ const Main = () => {
   }
 
   useEffect(() => {
-    console.log(wait);
+    console.log('wait', wait);
 
-    const interval = setInterval(() => {
+    /*const interval = setInterval(() => {
         nextTurn().then((resolve) => {
           setWait(true);
         }
@@ -66,7 +77,7 @@ const Main = () => {
     return () => {
         clearInterval(interval);
         setWait(false);
-    }
+    }*/
    
    }, [wait]);
 
@@ -106,8 +117,11 @@ const Main = () => {
       obstacles: obstacles,
     };
 
+
+    calcNextTurn(canvas.heroes, canvas.treasures);
+
     setCanvas(canvas);
-    setWait(true);
+    //setWait(true);
   }, []);
 
   return (

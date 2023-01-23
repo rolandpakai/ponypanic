@@ -7,7 +7,6 @@ const Canvas = ( props ) => {
   let canvas = [];
   
   if(fields) {
-
     for (let i = width-1; i >= 0; i--) {
       for (let j = 0; j < height; j++) {
         const id = `id-${j}-${i}`;

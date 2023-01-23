@@ -1,8 +1,3 @@
-:root {
-  --pony: 'pony';
-  --zelda: 'zelda';
-}
-
 .header {
   text-align: center;
   padding: 2.5rem;
@@ -17,8 +12,8 @@
     margin: 0;
     padding: 0;
     position: relative;
-    width: auto;
-    height: 200px;
+    width: 500px;
+    height: auto;
     text-align: center;
   }
 
@@ -89,11 +84,19 @@
   left: 0;
   width: 100%;
   bottom: 0;
-  height: 150px;
+  height: 50px;
 
-  .footer-content {
+  .footer-left {
     bottom: 0;
     left: 0;
     position: fixed;
+    padding: 0 10px 0 10px;
+  }
+
+  .footer-right {
+    bottom: 0;
+    right: 0;
+    position: fixed;
+    padding: 0 10px 0 10px;
   }
 }

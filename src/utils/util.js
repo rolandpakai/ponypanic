@@ -12,12 +12,12 @@ export const arrayToMap = (array, size, level, type) => {
   const map = {};
 
   array.forEach((el) => {
-    const id = `id-${el.position.x}-${el.position.y}`;
+    const idd = `id-${el.position.x}-${el.position.y}`;
     el.size = size;
     el.level = level;
     el.type = type;
 
-    map[id] = el;
+    map[idd] = el;
   });
 
   return map;

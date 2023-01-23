@@ -1,6 +1,12 @@
-export const TREASURE_COUNT = 4;
+export const TREASURE_COUNT = 9;
 export const IMG_BIG_SIZE = '64px';
 export const IMG_SMALL_SIZE = '32px';
+export const DEFAULT_THEME = 'pony';
+
+export const THEMES_SELECT_OPTIONS = [
+  { value: 'pony', label: 'Pony' },
+  { value: 'zelda', label: 'Zelda' },
+]
 
 export const MAP_STATUS = {
   CREATED: 'CREATED',

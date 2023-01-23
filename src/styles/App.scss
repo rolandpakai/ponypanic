@@ -1,10 +1,15 @@
-.light-mode {
+:root {
+  --pony: 'pony';
+  --zelda: 'zelda';
+}
+
+.theme-pony {
   --font-color: #101212;
-  --body-bg-color: #ffffff;
+  --body-bg-color: #FFD8F6;
 
 }
 
-.dark-mode {
+.theme-zelda {
   --font-color: #cccccc;
   --body-bg-color: #101212;
 }

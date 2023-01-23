@@ -1,30 +1,27 @@
-import { createContext, useContext, useState, useLayoutEffect } from "react";
+import { createContext, useState, useLayoutEffect } from "react";
+import { DEFAULT_THEME } from '../utils/constants';
 
 export const ThemeContext = createContext({
   theme: 'dark', 
-  toggleTheme: () => {},
+  selectTheme: () => {},
 });
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(DEFAULT_THEME);
 
-  const toggleTheme = () => {
-    setTheme((theme) => (theme === "light" ? "dark" : "light"));
+  const selectTheme = ({value, label}) => {
+    setTheme(value);
   }
 
   useLayoutEffect(() => {
-    if (theme === "light") {
-      document.documentElement.classList.remove("dark-mode");
-      document.documentElement.classList.add("light-mode");
-    } else {
-      document.documentElement.classList.remove("light-mode");
-      document.documentElement.classList.add("dark-mode");
-    }
+    const element = document.documentElement;
+    element.classList.remove(...element.classList);
+    document.documentElement.classList.add(`theme-${theme}`);
   }, [theme]);
 
   const value = {
     theme, 
-    toggleTheme,
+    selectTheme,
   }
 
   return (
@@ -33,15 +30,3 @@ export const ThemeProvider = ({ children }) => {
     </ThemeContext.Provider>
   );
 };
-
-/*const useTheme = () => {
-  const context = useContext(ThemeContext);
-
-  if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-
-  return context;
-};*/
-
-//export { ThemeProvider, useTheme };
