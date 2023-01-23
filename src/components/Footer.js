@@ -1,4 +1,5 @@
 import { React, useContext } from 'react';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { THEMES_SELECT_OPTIONS, DEFAULT_THEME } from '../utils/constants';
 import Select from 'react-select'
@@ -12,7 +13,18 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-content">
         <div className="footer-left">
-          FOOTER {theme}
+          <ul>
+            <li>
+              <a href="https://www.linkedin.com/in/roland-p%C3%A1kai-6a2041249/" target="_blank" rel="noreferrer">
+                <FaLinkedin size={"1.5em"}/>
+              </a> 
+            </li>
+            <li>
+              <a href="https://github.com/rolandpakai" target="_blank" rel="noreferrer">
+                <FaGithub size={"1.5em"}/>
+              </a> 
+            </li>
+          </ul>
         </div>
         <div className="footer-right">
           <Select
