@@ -213,7 +213,7 @@ Maze.prototype.nextPoints = function(path) {
   me.MOVE_POINTS.forEach(function (n) {
     var point = { x: cp.x + n.x, y: cp.y + n.y, label: n.label };
 
-    if ((!pp || !me.samePoint(point, pp)) && me.pointExists(point)) {
+    if (me.pointExists(point)) {
       nps.push(point);
     }
   });
