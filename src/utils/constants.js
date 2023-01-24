@@ -1,3 +1,5 @@
+export const PLAYER_TOKEN = "755_I2goWlc7TitRaFhCOigzVkBGJVpCfn1LY1JnZzoqUFBiWzlRZiNQREU=";
+
 export const TREASURE_COUNT = 9;
 export const IMG_BIG_SIZE = '64px';
 export const IMG_SMALL_SIZE = '32px';

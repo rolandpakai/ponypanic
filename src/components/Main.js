@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { mockStoryBegin, mockMapState, mockMapResource, mockApproveHeroTurn, mockMapStateAfterTurn } from '../api/api.mock';
-import { FIELD_TYPE, PATH_REGEX} from '../utils/constants';
+import { apiStoryBegin, apiMapResource, apiMapState } from '../api/api';
+import { PLAYER_TOKEN, FIELD_TYPE, PATH_REGEX} from '../utils/constants';
 import { arrayToMap, obstacleMapToArray, xyTOij } from '../utils/util';
 import { IMG_BIG_SIZE, IMG_SMALL_SIZE } from '../utils/constants';
 import Maze from '../maze-solver/maze'; 
@@ -10,47 +10,47 @@ const getImageSize = (mapSize) => {
   return mapSize > 10 ?  IMG_SMALL_SIZE : IMG_BIG_SIZE;
 }
 
-  //Performance 
-  const calcDirection = (pathsList) => {
-    let direction = '';
+//Performance 
+const calcDirection = (pathsList) => {
+  let direction = '';
 
-    if(pathsList.length > 0){
-      //Hero-0
-      const paths = pathsList[0];
+  if(pathsList.length > 0){
+    //Hero-0
+    const paths = pathsList[0];
+    
+    /*const pathSteps = paths[0].map((p) => {
+      return p.match(PATH_REGEX);
+    });*/
+    
+    const pathLengths = paths.map((path) => {
+      const ways = path.match(PATH_REGEX);
       
-      /*const pathSteps = paths[0].map((p) => {
-        return p.match(PATH_REGEX);
-      });*/
-      
-      const pathLengths = paths.map((path) => {
-        const ways = path.match(PATH_REGEX);
+      const length = ways.reduce((acc, way) => {
+        let stepLength = 0;
+        const match = way.match(/^\d+/);
         
-        const length = ways.reduce((acc, way) => {
-          let stepLength = 0;
-          const match = way.match(/^\d+/);
-          
-          if(match) {
-            stepLength = parseInt(match[0], 10);
-          } else {
-            stepLength = 1;
-          }
-          
-          return acc + stepLength;
-        }, 0);
+        if(match) {
+          stepLength = parseInt(match[0], 10);
+        } else {
+          stepLength = 1;
+        }
         
-        return length;
-      });
+        return acc + stepLength;
+      }, 0);
       
-      const minLength = Math.min(...pathLengths);
-      const minLengthIndex = pathLengths.indexOf(minLength);
-      const minPath = paths[minLengthIndex];
-      const firstStepInMinPath = minPath.match(PATH_REGEX)[0]
-      
-      direction = firstStepInMinPath.charAt(firstStepInMinPath.length-1);
-    }
-
-    return direction;
+      return length;
+    });
+    
+    const minLength = Math.min(...pathLengths);
+    const minLengthIndex = pathLengths.indexOf(minLength);
+    const minPath = paths[minLengthIndex];
+    const firstStepInMinPath = minPath.match(PATH_REGEX)[0]
+    
+    direction = firstStepInMinPath.charAt(firstStepInMinPath.length-1);
   }
+
+  return direction;
+}
 
 const Main = () => {
   const [canvas, setCanvas] = useState({});
@@ -76,23 +76,15 @@ const Main = () => {
     console.log('CLICK')
 
     const paths = maze.findPaths(true);
-    //console.log('paths',paths);
+    console.log('paths',paths);
     const direction = calcDirection(paths);
     console.log(direction);
   }
 
   const updateMaze = (mazeArg) => {
-    //console.log('mazeArg', mazeArg)
-
+    console.log('mazeArg', mazeArg)
     const maze = new Maze(mazeArg);
     setMaze(maze);
-
-    /*
-    const paths = maze.findPaths(true);
-    //console.log('paths',paths);
-
-    const direction = calcDirection(paths);
-    console.log(direction)*/
   }
 
   /*const nextTurn = async () => {
@@ -122,7 +114,7 @@ const Main = () => {
   }*/
 
   useEffect(() => {
-    console.log('wait', wait);
+    //console.log('wait', wait);
 
     /*const interval = setInterval(() => {
         nextTurn().then((resolve) => {
@@ -139,43 +131,48 @@ const Main = () => {
    }, [wait]);
 
   useEffect(() => {
-    const {storyPlaythroughToken, playthroughState: {currentLevel, isCurrentLevelFinished} } = mockStoryBegin;
-    const { map } = mockMapState;
-    const { compressedObstacles: {coordinateMap} } = mockMapResource;
-    const size = getImageSize(map.width);
 
-    setStoryPlaythroughToken(storyPlaythroughToken);
-    setCurrentLevel(currentLevel);
-    setIsCurrentLevelFinished(isCurrentLevelFinished);
-    setElapsedTickCount(map.elapsedTickCount);
-    setMapStatus(map.status);
-    setIsGameOver(map.isGameOver);
-    setFieldSize(size);
+    const fetchData = async () => {
+      const {storyPlaythroughToken, playthroughState: {currentLevel, isCurrentLevelFinished} } = await apiStoryBegin(PLAYER_TOKEN);
+      const { compressedObstacles: {coordinateMap} } = await apiMapResource(storyPlaythroughToken);
+      const { map, heroes } = await apiMapState(storyPlaythroughToken);
 
-    const obstaclesList = obstacleMapToArray(coordinateMap);
-    const heroes = arrayToMap(mockMapState.heroes, size, currentLevel, FIELD_TYPE.HERO);
-    const treasures = arrayToMap(map.treasures, size, currentLevel, FIELD_TYPE.TREASURE);
-    const obstacles = arrayToMap(obstaclesList, size, currentLevel, FIELD_TYPE.OBSTACLE);
+      const size = getImageSize(map.width);
+      const obstaclesList = obstacleMapToArray(coordinateMap);
+      const heroesList = arrayToMap(heroes, size, currentLevel, FIELD_TYPE.HERO);
+      const treasures = arrayToMap(map.treasures, size, currentLevel, FIELD_TYPE.TREASURE);
+      const obstacles = arrayToMap(obstaclesList, size, currentLevel, FIELD_TYPE.OBSTACLE);
 
-    const enemies = {};
-    const bullets = {};
+      const enemies = {};
+      const bullets = {};
 
-    const canvas = {
-      width: map.width,
-      height: map.height,
-      currentLevel: currentLevel,
-      fieldSize: size,
-      fields: {},
-      heroes: heroes,
-      enemies: enemies,
-      bullets: bullets,
-      treasures: treasures,
-      obstacles: obstacles,
-      updateMaze: updateMaze
-    };
+      const canvas = {
+        width: map.width,
+        height: map.height,
+        currentLevel: currentLevel,
+        fieldSize: size,
+        fields: {},
+        heroes: heroesList,
+        enemies: enemies,
+        bullets: bullets,
+        treasures: treasures,
+        obstacles: obstacles,
+        updateMaze: updateMaze
+      };
 
-    setCanvas(canvas);
-    //setWait(true);
+      setStoryPlaythroughToken(storyPlaythroughToken);
+      setCurrentLevel(currentLevel);
+      setIsCurrentLevelFinished(isCurrentLevelFinished);
+
+      setElapsedTickCount(map.elapsedTickCount);
+      setMapStatus(map.status);
+      setIsGameOver(map.isGameOver);
+      setFieldSize(size);
+
+      setCanvas(canvas);
+    }
+
+    fetchData();
   }, []);
 
   return (
