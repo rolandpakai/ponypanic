@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Maze from '../maze-solver/maze'; 
 import { mockStoryBegin, mockMapState, mockMapResource, mockApproveHeroTurn, mockMapStateAfterTurn } from '../api/api.mock';
 import { FIELD_TYPE } from '../utils/constants';
 import { arrayToMap, obstacleMapToArray } from '../utils/util';
@@ -11,6 +12,7 @@ const getImageSize = (mapSize) => {
 
 const Main = () => {
   const [canvas, setCanvas] = useState({});
+  //const [maze, setMaze] = useState({});
 
   const [storyPlaythroughToken, setStoryPlaythroughToken] = useState('');
   const [currentLevel, setCurrentLevel] = useState(0);
@@ -22,23 +24,13 @@ const Main = () => {
 
   const [wait, setWait] = useState(false);
 
-  const calcNextTurn = (heroes, treasures) => {
-    console.log('calcNextTurn');
 
-    for (const heroPositionId in heroes) {
-      if (heroes.hasOwnProperty(heroPositionId)) {
-        console.log(heroPositionId);
-        const idd = heroPositionId;
+  const nextTurn = () => {
 
-
-      }
-    }
-
-
+  
   }
 
-  const nextTurn = async () => {
-    console.log('myFunc');
+  /*const nextTurn = async () => {
 
     //calcNextTurn(heroes);
 
@@ -62,7 +54,7 @@ const Main = () => {
     return new Promise((resolve, reject) => {
       return resolve('resolve')
     })
-  }
+  }*/
 
   useEffect(() => {
     console.log('wait', wait);
@@ -109,16 +101,12 @@ const Main = () => {
       currentLevel: currentLevel,
       fieldSize: size,
       fields: {},
-      canvas: [],
       heroes: heroes,
       enemies: enemies,
       bullets: bullets,
       treasures: treasures,
       obstacles: obstacles,
     };
-
-
-    calcNextTurn(canvas.heroes, canvas.treasures);
 
     setCanvas(canvas);
     //setWait(true);
@@ -134,6 +122,7 @@ const Main = () => {
               />
           </div>
         </div>
+        <button onClick={nextTurn}>NEXT TURN</button>
       </div>
     </main>
   )

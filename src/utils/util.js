@@ -8,6 +8,10 @@ export const timeoutPromise = (timeout) => {
   });
 }
 
+export const xyTOij = (x, y, height) => {
+  return { i: x, j: height - y - 1 }
+}
+
 export const arrayToMap = (array, size, level, type) => {
   const map = {};
 

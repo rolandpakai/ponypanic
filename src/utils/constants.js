@@ -2,6 +2,7 @@ export const TREASURE_COUNT = 9;
 export const IMG_BIG_SIZE = '64px';
 export const IMG_SMALL_SIZE = '32px';
 export const DEFAULT_THEME = 'pony';
+export const PATH_REGEX = /(\d*[UDRL]|[UDRL])/g;
 
 export const THEMES_SELECT_OPTIONS = [
   { value: 'pony', label: 'Pony' },

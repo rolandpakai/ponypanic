@@ -25,11 +25,6 @@ export const mockMapResource = {
     }
   }
 }
-/*
-"coordinateMap": {
-  "1": [1],
-  "2": [1,2]
-}*/
 
 //GET /playGameApi/v1/play/mapState
 //param: "story-playthrough-token"
@@ -37,8 +32,8 @@ export const mockMapState = {
   "message": "Here is the current state of the map. Use the play/approveHeroTurn endpoint to make your Hero do something!",
   "map": {
     "id": 102932,
-    "width": 10,
-    "height": 10,
+    "width": 5,
+    "height": 5,
     "elapsedTickCount": 0,
     "status": "CREATED",
     "treasures": [
@@ -49,6 +44,15 @@ export const mockMapState = {
           "y": 2
         },
         "name": "Strange object",
+        "collectedByHeroId": null
+      },
+      {
+        "id": 2,
+        "position": {
+          "x": 4,
+          "y": 2
+        },
+        "name": "Strange object 2",
         "collectedByHeroId": null
       }
     ],
@@ -97,6 +101,15 @@ export const mockMapStateAfterTurn = {
           "y": 2
         },
         "name": "Strange object",
+        "collectedByHeroId": null
+      },
+      {
+        "id": 2,
+        "position": {
+          "x": 4,
+          "y": 2
+        },
+        "name": "Strange object 2",
         "collectedByHeroId": null
       }
     ],
