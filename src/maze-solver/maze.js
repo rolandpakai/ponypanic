@@ -51,16 +51,6 @@ Maze.prototype.parseMazeString = function () {
     return false;
   }
 
-  /*sizes = arr.shift(); 
-
-  if (typeof sizes === 'string') {
-    sizes = sizes.split(' ');
-  } else if (!Array.isArray(sizes)) {
-    return false;
-  }
-
-  me.options.mazeWidth = parseInt(sizes[0], 10);
-  me.options.mazeHeight = parseInt(sizes[1], 10);*/
   me.options.maze = [];
 
   for (var a = 0; a < arr.length; a++) {
