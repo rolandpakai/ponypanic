@@ -1,5 +1,3 @@
-'use strict';
-
 function Maze() {
   var me = this;
 
@@ -41,7 +39,7 @@ Maze.prototype.check = function () {
 
 Maze.prototype.parseMazeString = function () {
   var me = this;
-  var arr, sizes;
+  var arr;
 
   if (typeof me.options.maze === 'string') {
     arr = me.options.maze.split('\n');
@@ -101,8 +99,6 @@ Maze.prototype.checkMazeHeight = function () {
 };
 
 Maze.prototype.checkMazeValue = function (y, val, x) {
-  var me = this;
-
   if ([0, '0', 1, '1'].indexOf(val) === -1) {
     throw new Error('Maze symbol at line ' + y + ' and col ' + x + ' should be 0 or 1, but it\'s equal to: ' + val);
   }
@@ -207,7 +203,6 @@ Maze.prototype.nextPoints = function(path) {
   var me = this;
 
   var cp = path[path.length - 1]; // current point
-  var pp = path[path.length - 2]; // previous point
   var nps = []; // new points
 
   me.MOVE_POINTS.forEach(function (n) {
@@ -390,7 +385,7 @@ Maze.prototype.compactPath = function (path) {
 Maze.prototype.compactPortion = function(obj, d) {
   var portion = '';
 
-  if (obj.dir && obj.dir != d) {
+  if (obj.dir && obj.dir !== d) {
     portion += (obj.c > 1 ? obj.c : '') + obj.dir;
     obj.dir = undefined;
     obj.c = 0;
