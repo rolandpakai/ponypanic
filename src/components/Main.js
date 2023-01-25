@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { apiStoryBegin, apiMapResource, apiMapState, apiApproveHeroTurn, apiPlaythroughState } from '../api/api';
 import { PLAYER_TOKEN, FIELD_TYPE, MAP_STATUS } from '../utils/constants';
 import { arrayToMap, obstacleMapToArray, calcDirection, getHeroAction, getImageSize } from '../utils/util';
 import Maze from '../maze-solver/maze'; 
 import Canvas from './Canvas';
+import PopupDialog from './PopupDialog';
+import CustomButton from './CustomButton';
 
 
 const Main = () => {
@@ -19,6 +21,8 @@ const Main = () => {
   const [fieldSize, setFieldSize] = useState('64px');
 
   const [heroTurn, setHeroTurn] = useState({});
+
+  const [dialogProps, setDialogProps] = useState({open:false, handleClose: ()=>{}});
   
   const nextTurn = async (heroTurn) => {
     const { didTickHappen, message, tickLogs } = await apiApproveHeroTurn(heroTurn)
@@ -31,7 +35,7 @@ const Main = () => {
         setIsGameOver(map.isGameOver); 
 
         if(map.status === MAP_STATUS.WON) {
-
+          //api: playthroughState
         } else if(map.status === MAP_STATUS.LOST) {
 
         }
@@ -54,11 +58,34 @@ const Main = () => {
     }
   }
 
+  const handleClose = () => {
+    console.log('CLOSE')
+
+
+    setDialogProps({...dialogProps, open: false});
+  };
+
+  const handleClickOpen = () => {
+
+    const mydialogProps = {
+      ...dialogProps, 
+      open: true,
+      dialogContentText: 'GAME OVER',
+      buttonOkText: 'CONTINUE',
+      buttonCancelText: 'END', 
+      handleOk: handleClose,
+      handleCancel: handleClose,
+    }
+
+    setDialogProps(mydialogProps);
+  };
+
   const nextTurnHandle = () => {
     console.log('CLICK')
     heroTurn.storyPlaythroughToken = storyPlaythroughToken;
 
-    nextTurn(heroTurn);
+    handleClickOpen();
+    //nextTurn(heroTurn);
   }
 
   const updateMaze = (mazeArg) => {
@@ -129,28 +156,21 @@ const Main = () => {
   }, []);
 
   return (
-    <main className="main">
-      <div className="main-container">
-        <div className="sub-container">
-          <div className="panel-left">
-              <Canvas 
-                {...canvas}
-              />
+    <Fragment>
+      <main className="main">
+        <div className="main-container">
+          <div className="sub-container">
+            <div className="panel-left">
+                <Canvas 
+                  {...canvas}
+                />
+            </div>
           </div>
+          <CustomButton onClick={nextTurnHandle} />
         </div>
-        <button className="custom-button" onClick={nextTurnHandle}>
-          <span className="button-container">
-            <span className="button-container ">
-              <img alt="" aria-hidden="true" src="./button-background.svg" className="button-img-background" />
-            </span>
-            <img alt="" src="./button.svg" className="button-img" />
-          </span>
-          <div className="button-title-container">
-            <div className="button-title">HERO TURN</div>
-          </div>
-        </button>
-      </div>
-    </main>
+      </main>
+    <PopupDialog {...dialogProps} />
+    </Fragment>
   )
 }
 

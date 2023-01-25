@@ -131,12 +131,12 @@ export const mockMapStateAfterTurn = {
   ]
 }
 
-//GET /playGameApi/v1/play/mapState
+//GET /playGameApi/v1/play/playthroughState
 //param: "story-playthrough-token"
 export const mockPlaythroughState = {
   "storyTitle": "Adventures of Your Teeny-Weeny Pony",
   "currentLevel": 1,
   "isCurrentLevelFinished": true,
-  "currentMapStatus": "WON",
+  "currentMapStatus": "WON", // LOST
   "storyLine": "Oh neigh! What is this place? Am I stuck here? Hey, my fellow developer, do you see that treasure? - it might get us out. Help me to reach it by clicking the arrows!"
 }
