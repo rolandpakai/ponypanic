@@ -1,7 +1,8 @@
-import Header from './components/Header';
-import Main from './components/Main';
-import Footer from './components/Footer';
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
+
+import { NewGameContext } from './contexts/NewGameContext';
+import MapScreen from './components/MapScreen';
+import TitleScreen from './components/TitleScreen';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -12,11 +13,14 @@ import './styles/Styles.scss';
 
 
 const App = () => {
+  const { newGame } = useContext(NewGameContext);
+
   return (
     <Fragment>
-      <Header />
-      <Main />
-      <Footer />
+      { newGame 
+        ? <MapScreen />
+        : <TitleScreen />
+      }  
     </Fragment>
   );
 }

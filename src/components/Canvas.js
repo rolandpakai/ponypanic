@@ -38,7 +38,7 @@ const Canvas = ( props ) => {
             field = treasures[id];
             end.push({ x: xy.i, y: xy.j, label: end.length + 1000, id: field.id  })
           } 
-          
+
           if(heroes[id]) {
             field = heroes[id];
             start.push({ x: xy.i, y: xy.j, label: start.length, id: field.id })

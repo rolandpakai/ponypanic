@@ -1,7 +1,6 @@
 
-
 const CustomButton = (props) => {
-  const { onClick } = {...props};
+  const { onClick, title } = {...props};
 
   return (
     <button className="custom-button" onClick={onClick}>
@@ -12,7 +11,7 @@ const CustomButton = (props) => {
         <img alt="" src="./button.svg" className="button-img" />
       </span>
       <div className="button-title-container">
-        <div className="button-title">HERO TURN</div>
+        <div className="button-title">{title}</div>
       </div>
     </button>
   )
