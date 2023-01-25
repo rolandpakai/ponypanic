@@ -1,6 +1,6 @@
 import { useMemo, useContext } from "react";
 import { ThemeContext } from '../contexts/ThemeContext';
-import { FIELD_TYPE, TREASURE_COUNT } from '../utils/constants';
+import { FIELD_TYPE, TREASURE_COUNT, MAP_COUNT } from '../utils/constants';
 import { randomInteger } from '../utils/util';
 
 const Field = ( props ) => {
@@ -9,7 +9,7 @@ const Field = ( props ) => {
 
   let randomTreasure = useMemo(() => randomInteger(1, TREASURE_COUNT), [position]);
 
-  const mapLevel = level > 11 ? 11 : level;
+  const mapLevel = level > MAP_COUNT ? MAP_COUNT : level;
 
   const divStyle = {
     width: size,

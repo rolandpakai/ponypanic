@@ -1,6 +1,8 @@
-export const PLAYER_TOKEN = "755_I2goWlc7TitRaFhCOigzVkBGJVpCfn1LY1JnZzoqUFBiWzlRZiNQREU=";
+export const PLAYER_TOKEN = process.env.REACT_APP_PLAYER_TOKEN; 
+// "760_I1ljZlZXWmUsSH0sVzNvajVmQH4yc11oUiQpPmNoLlVzUCQiSkh+aEY=";
 
 export const TREASURE_COUNT = 9;
+export const MAP_COUNT = 11;
 export const IMG_BIG_SIZE = '64px';
 export const IMG_SMALL_SIZE = '32px';
 export const DEFAULT_THEME = 'pony';
