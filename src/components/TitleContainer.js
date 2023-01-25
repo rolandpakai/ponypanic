@@ -25,7 +25,6 @@ const TitleContainer = () => {
       </Box>
     </Container>
   </Fragment>
-
   )
 }
 

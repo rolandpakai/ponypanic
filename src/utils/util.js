@@ -14,13 +14,11 @@ export const xyTOij = (x, y, height) => {
   return { i: x, j: height - y - 1 }
 }
 
-export const arrayToMap = (array, size, level, type) => {
+export const arrayToMap = (array, type) => {
   const map = {};
 
   array.forEach((el) => {
     const idd = `id-${el.position.x}-${el.position.y}`;
-    el.size = size;
-    el.level = level;
     el.type = type;
 
     map[idd] = el;

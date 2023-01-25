@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 const PopupDialog = (props) => {
   //const [open, setOpen] = useState(false);
-  const { dialogContentText, buttonOkText, buttonCancelText, open, handleOk, handleCancel } = {...props};
+  const { dialogContentText, buttonOkText, buttonCancelText, open, okHandler, cancelHandler } = {...props};
 
   return (
     <Dialog
@@ -28,8 +28,8 @@ const PopupDialog = (props) => {
       </DialogContentText>
     </DialogContent>
     <DialogActions>
-      <Button onClick={handleCancel}>{buttonCancelText}</Button>
-      <Button onClick={handleOk} autoFocus>{buttonOkText}</Button>
+      <Button onClick={cancelHandler}>{buttonCancelText}</Button>
+      <Button onClick={okHandler} autoFocus>{buttonOkText}</Button>
     </DialogActions>
   </Dialog>
   )

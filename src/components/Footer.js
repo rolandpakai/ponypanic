@@ -20,7 +20,7 @@ const Footer = () => {
               </a> 
             </li>
             <li>
-              <a href="https://github.com/rolandpakai" target="_blank" rel="noreferrer">
+              <a href="https://github.com/rolandpakai/ponypanic" target="_blank" rel="noreferrer">
                 <FaGithub size={"1.5em"}/>
               </a> 
             </li>

@@ -140,3 +140,16 @@ export const mockPlaythroughState = {
   "currentMapStatus": "WON", // LOST
   "storyLine": "Oh neigh! What is this place? Am I stuck here? Hey, my fellow developer, do you see that treasure? - it might get us out. Help me to reach it by clicking the arrows!"
 }
+
+//POST /playGameApi/v1/story/resetLevel
+//param: "story-playthrough-token"
+export const mockResetLevel = {
+    "message": "All set with a fresh map. No more deadlocks in your way. Use the play/mapResource endpoint to get the resources of your current map",
+    "playthroughState": {
+      "storyTitle": "Adventures of Your Teeny-Weeny Pony",
+      "currentLevel": 1,
+      "isCurrentLevelFinished": false,
+      "currentMapStatus": "CREATED",
+      "storyLine": "Oh neigh! What is this place? Am I stuck here? Hey, my fellow developer, do you see that treasure? - it might get us out. Help me to reach it by clicking the arrows!"
+    }
+}

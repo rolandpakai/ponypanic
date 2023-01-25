@@ -36,16 +36,23 @@ const Canvas = ( props ) => {
 
           if(treasures[id]) {
             field = treasures[id];
+            field.size = fieldSize;
+            field.level = currentLevel;
+            //field = {...field, ....treasures[id]}
             end.push({ x: xy.i, y: xy.j, label: end.length + 1000, id: field.id  })
           } 
 
           if(heroes[id]) {
             field = heroes[id];
+            field.size = fieldSize;
+            field.level = currentLevel;
             start.push({ x: xy.i, y: xy.j, label: start.length, id: field.id })
           } 
           
           if(obstacles[id]) {
             field = obstacles[id];
+            field.size = fieldSize;
+            field.level = currentLevel;
             mazeMap[xy.j][xy.i] = 0;
           } 
 

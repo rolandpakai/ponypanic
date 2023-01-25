@@ -16,6 +16,22 @@ export const apiStoryBegin = async (playerToken) => {
   });
 }
 
+export const apiResetLevel = async (playerToken) => {
+  const headers = new Headers();
+  headers.append('player-token', playerToken);
+
+  const options = {
+      method: 'POST',
+      headers: headers,
+  };
+  
+  return fetch( API_URL + "/playGameApi/v1/story/resetLevel", options )
+    .then( response => response.json() )
+    .then( response => {
+      return response;
+  });
+}
+
 export const apiMapResource = async (storyPlaythroughToken) => {
   const headers = new Headers();
   headers.append('story-playthrough-token', storyPlaythroughToken);
