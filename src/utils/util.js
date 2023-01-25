@@ -1,3 +1,5 @@
+import { PATH_REGEX, HERO_ACTION, IMG_BIG_SIZE, IMG_SMALL_SIZE } from '../utils/constants';
+
 export const randomInteger = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -45,4 +47,64 @@ export const addEntityToMap = (map, array, type) => {
     el.type = type;
     map[id] = el;
   })
+}
+
+export const getImageSize = (mapSize) => {
+  return mapSize > 10 ?  IMG_SMALL_SIZE : IMG_BIG_SIZE;
+}
+
+export const getHeroAction = (direction) => {
+  let action = HERO_ACTION.NOTHING;
+
+  switch (direction) {
+    case 'U': {action = HERO_ACTION.MOVE_UP; break;}
+    case 'D': {action = HERO_ACTION.MOVE_DOWN; break;}
+    case 'L': {action = HERO_ACTION.MOVE_LEFT; break;}
+    case 'R': {action = HERO_ACTION.MOVE_RIGHT; break;}
+    default: action = HERO_ACTION.NOTHING;
+  }
+
+  return action;
+}
+
+
+export const calcDirection = (pathsList) => {
+  let direction = '';
+
+  if(pathsList.length > 0){
+    //Hero-0
+    const paths = pathsList[0];
+    
+    /*const pathSteps = paths[0].map((p) => {
+      return p.match(PATH_REGEX);
+    });*/
+    
+    const pathLengths = paths.map((path) => {
+      const ways = path.match(PATH_REGEX);
+      
+      const length = ways.reduce((acc, way) => {
+        let stepLength = 0;
+        const match = way.match(/^\d+/);
+        
+        if(match) {
+          stepLength = parseInt(match[0], 10);
+        } else {
+          stepLength = 1;
+        }
+        
+        return acc + stepLength;
+      }, 0);
+      
+      return length;
+    });
+    
+    const minLength = Math.min(...pathLengths);
+    const minLengthIndex = pathLengths.indexOf(minLength);
+    const minPath = paths[minLengthIndex];
+    const firstStepInMinPath = minPath.match(PATH_REGEX)[0]
+    
+    direction = firstStepInMinPath.charAt(firstStepInMinPath.length-1);
+  }
+
+  return direction;
 }

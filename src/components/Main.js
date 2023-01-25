@@ -1,60 +1,14 @@
 import { useEffect, useState } from 'react';
-import { apiStoryBegin, apiMapResource, apiMapState } from '../api/api';
-import { PLAYER_TOKEN, FIELD_TYPE, PATH_REGEX} from '../utils/constants';
-import { arrayToMap, obstacleMapToArray, xyTOij } from '../utils/util';
-import { IMG_BIG_SIZE, IMG_SMALL_SIZE } from '../utils/constants';
+import { apiStoryBegin, apiMapResource, apiMapState, apiApproveHeroTurn, apiPlaythroughState } from '../api/api';
+import { PLAYER_TOKEN, FIELD_TYPE, MAP_STATUS } from '../utils/constants';
+import { arrayToMap, obstacleMapToArray, calcDirection, getHeroAction, getImageSize } from '../utils/util';
 import Maze from '../maze-solver/maze'; 
 import Canvas from './Canvas';
 
-const getImageSize = (mapSize) => {
-  return mapSize > 10 ?  IMG_SMALL_SIZE : IMG_BIG_SIZE;
-}
-
-//Performance 
-const calcDirection = (pathsList) => {
-  let direction = '';
-
-  if(pathsList.length > 0){
-    //Hero-0
-    const paths = pathsList[0];
-    
-    /*const pathSteps = paths[0].map((p) => {
-      return p.match(PATH_REGEX);
-    });*/
-    
-    const pathLengths = paths.map((path) => {
-      const ways = path.match(PATH_REGEX);
-      
-      const length = ways.reduce((acc, way) => {
-        let stepLength = 0;
-        const match = way.match(/^\d+/);
-        
-        if(match) {
-          stepLength = parseInt(match[0], 10);
-        } else {
-          stepLength = 1;
-        }
-        
-        return acc + stepLength;
-      }, 0);
-      
-      return length;
-    });
-    
-    const minLength = Math.min(...pathLengths);
-    const minLengthIndex = pathLengths.indexOf(minLength);
-    const minPath = paths[minLengthIndex];
-    const firstStepInMinPath = minPath.match(PATH_REGEX)[0]
-    
-    direction = firstStepInMinPath.charAt(firstStepInMinPath.length-1);
-  }
-
-  return direction;
-}
 
 const Main = () => {
   const [canvas, setCanvas] = useState({});
-  const [maze, setMaze] = useState({});
+  //const [maze, setMaze] = useState({});
 
   const [storyPlaythroughToken, setStoryPlaythroughToken] = useState('');
   const [currentLevel, setCurrentLevel] = useState(0);
@@ -64,77 +18,75 @@ const Main = () => {
   const [isCurrentLevelFinished , setIsCurrentLevelFinished] = useState(false);
   const [fieldSize, setFieldSize] = useState('64px');
 
-  const [wait, setWait] = useState(false);
-
-
-  const nextTurn = () => {
-
+  const [heroTurn, setHeroTurn] = useState({});
   
+  const nextTurn = async (heroTurn) => {
+    const { didTickHappen, message, tickLogs } = await apiApproveHeroTurn(heroTurn)
+    console.log('didTickHappen', didTickHappen);
+
+    if(didTickHappen) {
+      const { map, heroes } = await apiMapState(storyPlaythroughToken);
+
+      if(map.isGameOver) {
+        setIsGameOver(map.isGameOver); 
+
+        if(map.status === MAP_STATUS.WON) {
+
+        } else if(map.status === MAP_STATUS.LOST) {
+
+        }
+        //Popup: Congratulation: Reset Level | Next Level
+        //playthroughState
+      } else {
+        //MAP_STATUS.CRATED || MAP_STATUS.PLAYING
+      }
+
+      const heroesList = arrayToMap(heroes, fieldSize, currentLevel, FIELD_TYPE.HERO);
+      const enemies = {};
+      const bullets = {};
+
+      setCanvas({
+        ...canvas,
+        heroes: heroesList,
+        enemies: enemies,
+        bullets: bullets,
+      });
+    }
   }
 
   const nextTurnHandle = () => {
     console.log('CLICK')
+    heroTurn.storyPlaythroughToken = storyPlaythroughToken;
 
-    const paths = maze.findPaths(true);
-    console.log('paths',paths);
-    const direction = calcDirection(paths);
-    console.log(direction);
+    nextTurn(heroTurn);
   }
 
   const updateMaze = (mazeArg) => {
-    console.log('mazeArg', mazeArg)
+    //console.log('mazeArg', mazeArg)
     const maze = new Maze(mazeArg);
-    setMaze(maze);
-  }
+    const paths = maze.findPaths(true);
+    //console.log('paths',paths);
+    const direction = calcDirection(paths);
+    const heroAction = getHeroAction(direction);
+    //console.log(direction);
+    const heroId = mazeArg.start[0].id;
+    //console.log("heroId",heroId);
 
-  /*const nextTurn = async () => {
-
-    //calcNextTurn(heroes);
-
-    const { didTickHappen } = mockApproveHeroTurn;
-
-    if(didTickHappen) {
-      const {map, heroes} = mockMapStateAfterTurn;
-
-      if(map.isGameOver) {
-        setIsGameOver(map.isGameOver); //Level over
-        //Popup: Congratulation: Reset Level | Next Level
-      } else {
-        const newHeroes = arrayToMap(heroes, fieldSize, currentLevel, FIELD_TYPE.HERO);
-        canvas.heroes = newHeroes;
-
-        setCanvas(canvas);
-        //setWait(true);
-      }
+    const newHeroTurn = {
+      storyPlaythroughToken,
+      heroId,
+      action: heroAction
     }
 
-    return new Promise((resolve, reject) => {
-      return resolve('resolve')
-    })
-  }*/
-
-  useEffect(() => {
-    //console.log('wait', wait);
-
-    /*const interval = setInterval(() => {
-        nextTurn().then((resolve) => {
-          setWait(true);
-        }
-        )
-    }, 5000);
-
-    return () => {
-        clearInterval(interval);
-        setWait(false);
-    }*/
-   
-   }, [wait]);
+    //setMaze(maze);
+    setHeroTurn(newHeroTurn);
+  }
 
   useEffect(() => {
 
     const fetchData = async () => {
       const {storyPlaythroughToken, playthroughState: {currentLevel, isCurrentLevelFinished} } = await apiStoryBegin(PLAYER_TOKEN);
-      const { compressedObstacles: {coordinateMap} } = await apiMapResource(storyPlaythroughToken);
+      const { mapId, compressedObstacles: {coordinateMap} } = await apiMapResource(storyPlaythroughToken);
       const { map, heroes } = await apiMapState(storyPlaythroughToken);
 
       const size = getImageSize(map.width);
@@ -147,6 +99,7 @@ const Main = () => {
       const bullets = {};
 
       const canvas = {
+        id: mapId,
         width: map.width,
         height: map.height,
         currentLevel: currentLevel,
@@ -185,7 +138,17 @@ const Main = () => {
               />
           </div>
         </div>
-        <button onClick={nextTurnHandle}>NEXT TURN</button>
+        <button className="custom-button" onClick={nextTurnHandle}>
+          <span className="button-container">
+            <span className="button-container ">
+              <img alt="" aria-hidden="true" src="./button-background.svg" className="button-img-background" />
+            </span>
+            <img alt="" src="./button.svg" className="button-img" />
+          </span>
+          <div className="button-title-container">
+            <div className="button-title">HERO TURN</div>
+          </div>
+        </button>
       </div>
     </main>
   )

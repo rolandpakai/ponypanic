@@ -1,5 +1,4 @@
 export const PLAYER_TOKEN = process.env.REACT_APP_PLAYER_TOKEN; 
-// "760_I1ljZlZXWmUsSH0sVzNvajVmQH4yc11oUiQpPmNoLlVzUCQiSkh+aEY=";
 
 export const TREASURE_COUNT = 9;
 export const MAP_COUNT = 11;
