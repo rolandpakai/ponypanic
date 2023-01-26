@@ -13,7 +13,6 @@ const MapContainer = () => {
   const { newGame, setNewGame } = useContext(NewGameContext);
 
   const [canvas, setCanvas] = useState({});
-  //const [maze, setMaze] = useState({});
   const [storyPlaythroughToken, setStoryPlaythroughToken] = useState('');
   /*
   const [currentLevel, setCurrentLevel] = useState(0);
@@ -35,7 +34,6 @@ const MapContainer = () => {
     const heroAction = getHeroAction(direction);
     console.log(direction);
     const heroId = mazeArg.start[0].id;
-    //console.log("heroId",heroId);
 
     const newHeroTurn = {
       storyPlaythroughToken,
@@ -43,7 +41,6 @@ const MapContainer = () => {
       action: heroAction
     }
 
-    //setMaze(maze);
     setHeroTurn(newHeroTurn);
   }
 
@@ -70,6 +67,7 @@ const MapContainer = () => {
       bullets: bullets,
       treasures: treasures,
       obstacles: obstacles,
+      collected: {},
       updateMaze: updateMaze,
       currentLevel: currentLevel,
     };
@@ -82,7 +80,6 @@ const MapContainer = () => {
     const mapState = await apiMapState(storyPlaythroughToken);
 
     const newCanvas = getCanvasData(mapResource, mapState)
-    newCanvas.currentLevel = currentLevel;
 
     setCanvas(newCanvas);
   }
@@ -93,32 +90,9 @@ const MapContainer = () => {
     const mapState = await apiMapState(storyPlaythroughToken);
 
     const newCanvas = getCanvasData(mapResource, mapState, currentLevel)
-    //newCanvas.currentLevel = currentLevel;
 
     setDialogProps({...dialogProps, open: false});
-    //setCanvas(newCanvas);
-
-    /*setCanvas({
-      ...newCanvas
-    });*/
-
-    //setCanvas(newCanvas);
-
-    console.log('newCanvas.obstacles', newCanvas.obstacles)
-
-    setCanvas({
-      ...canvas,
-      mapId: newCanvas.mapId,
-      width: newCanvas.width,
-      height: newCanvas.height,
-      fieldSize: newCanvas.fieldSize,
-      heroes: newCanvas.heroes,
-      enemies: newCanvas.enemies,
-      bullets: newCanvas.bullets,
-      treasures: newCanvas.treasures,
-      obstacles: newCanvas.obstacles,
-      currentLevel: newCanvas.currentLevel,
-    });
+    setCanvas(newCanvas);
   }
 
   const endHandler = () => {
@@ -173,15 +147,23 @@ const MapContainer = () => {
         }
       } else {
         //MAP_STATUS.CRATED || MAP_STATUS.PLAYING
-        const heroesList = arrayToMap(heroes, FIELD_TYPE.HERO);
-        const enemies = {};
-        const bullets = {};
-  
+        const updates = {
+          heroes: arrayToMap(heroes, FIELD_TYPE.HERO),
+          enemies: {},
+          bullets: {},
+        }
+
+        const treasures = arrayToMap(map.treasures, FIELD_TYPE.TREASURE);
+        const collectedList = Object.values(treasures).filter((treasure)=>treasure.collectedByHeroId!=null);
+        
+        if(collectedList.length > 0) {
+          const collected = arrayToMap(collectedList, FIELD_TYPE.COLLECTED_TREASURE);
+          updates.collected = collected;
+        }
+
         setCanvas({
           ...canvas,
-          heroes: heroesList,
-          enemies: enemies,
-          bullets: bullets,
+          ...updates
         });
       }
     }

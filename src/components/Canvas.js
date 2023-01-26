@@ -7,7 +7,7 @@ import { xyTOij } from '../utils/util';
 const Canvas = ( props ) => {
   const { theme } = useContext(ThemeContext);
   const [fields, setFields] = useState([]);
-  const { width, height, currentLevel, fieldSize, heroes, enemies, bullets, treasures, obstacles, updateMaze } = {...props};
+  const { width, height, currentLevel, fieldSize, heroes, enemies, bullets, treasures, collected, obstacles, updateMaze } = {...props};
 
   useEffect(() => {
     const fields = [];
@@ -17,6 +17,7 @@ const Canvas = ( props ) => {
 
     if(heroes) {
 
+      console.log('collected', collected)
       for (let i = width-1; i >= 0; i--) {
         for (let j = 0; j < height; j++) {
           const id = `id-${j}-${i}`;
@@ -34,25 +35,18 @@ const Canvas = ( props ) => {
             type: FIELD_TYPE.FLOOR
           };
 
-          if(treasures[id]) {
-            field = treasures[id];
-            field.size = fieldSize;
-            field.level = currentLevel;
-            //field = {...field, ....treasures[id]}
+          if(treasures[id] && !collected[id]) {
+            field = {...field, ...treasures[id]};
             end.push({ x: xy.i, y: xy.j, label: (end.length + 1000).toString(), id: field.id  })
           } 
 
           if(heroes[id]) {
-            field = heroes[id];
-            field.size = fieldSize;
-            field.level = currentLevel;
+            field = {...field, ...heroes[id]};
             start.push({ x: xy.i, y: xy.j, label: (start.length).toString(), id: field.id })
           } 
           
           if(obstacles[id]) {
-            field = obstacles[id];
-            field.size = fieldSize;
-            field.level = currentLevel;
+            field = {...field, ...obstacles[id]};
             mazeMap[xy.j][xy.i] = 0;
           } 
 
