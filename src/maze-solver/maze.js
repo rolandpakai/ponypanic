@@ -73,6 +73,7 @@ Maze.prototype.checkMaze = function () {
 
   me.checkMazeHeight();
   me.options.maze = me.options.maze.map(me.checkMazeRow.bind(me));
+  me.onlyOnes = me.options.maze.every(row => row.every(element => element === 1));
 };
 
 Maze.prototype.checkMazeRow = function (row, y) {
@@ -210,11 +211,14 @@ Maze.prototype.nextPoints = function(path) {
     var point = { x: cp.x + n.x, y: cp.y + n.y, label: n.label };
 
     if (me.pointExists(point)) {
-      if((pp === undefined) ||  
-        (pp && !me.samePoint(point, pp)) ||  
-        (me.includesPoint(me.endPoints, point) > -1) ||  
-        (me.includesPoint(me.startPoints, point) > -1)) {
+      if( me.onlyOnes) {
+        if(pp === undefined ||  (pp && !me.samePoint(point, pp))  ||  (me.includesPoint(me.endPoints, point) > -1)   ||  (me.includesPoint(me.startPoints, point) > -1) ) {
           nps.push(point);
+        }
+      } else {
+        if(pp === undefined ||  (pp && !me.samePoint(point, pp))) {
+          nps.push(point);
+        }
       }
     }
   });
