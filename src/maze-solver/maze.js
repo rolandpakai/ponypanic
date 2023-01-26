@@ -203,13 +203,19 @@ Maze.prototype.nextPoints = function(path) {
   var me = this;
 
   var cp = path[path.length - 1]; // current point
+  var pp = path[path.length - 2]; // previous point
   var nps = []; // new points
 
   me.MOVE_POINTS.forEach(function (n) {
     var point = { x: cp.x + n.x, y: cp.y + n.y, label: n.label };
 
     if (me.pointExists(point)) {
-      nps.push(point);
+      if((pp === undefined) ||  
+        (pp && !me.samePoint(point, pp)) ||  
+        (me.includesPoint(me.endPoints, point) > -1) ||  
+        (me.includesPoint(me.startPoints, point) > -1)) {
+          nps.push(point);
+      }
     }
   });
 
