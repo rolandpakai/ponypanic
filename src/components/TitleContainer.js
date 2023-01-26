@@ -2,7 +2,6 @@ import { Fragment, useContext } from 'react';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { NewGameContext } from '../contexts/NewGameContext';
 
-import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import CustomButton from './CustomButton';
@@ -14,13 +13,16 @@ const TitleContainer = () => {
   const onClickHandler = () => {
     setNewGame(true);
   }
-
+  
   return (
     <Fragment>
-    <CssBaseline />
-    <Container  maxWidth="sm">
-      <Box sx={{ width: '550px', height: '550px', backgroundImage: `url('./themes/${theme}/title-screen.png')` }} />
-      <Box sx={{}} >
+    <Container maxWidth="lg">
+      <Box sx={{  
+        height: '550px', 
+        backgroundPosition: 'center', 
+        backgroundRepeat: 'no-repeat', 
+        backgroundImage: `url('./themes/${theme}/title-screen.png')` }} />
+      <Box>
         <CustomButton onClick={onClickHandler} title={"NEW GAME"} />
       </Box>
     </Container>
