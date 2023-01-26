@@ -153,3 +153,16 @@ export const mockResetLevel = {
       "storyLine": "Oh neigh! What is this place? Am I stuck here? Hey, my fellow developer, do you see that treasure? - it might get us out. Help me to reach it by clicking the arrows!"
     }
 }
+
+//POST /playGameApi/v1/story/nextLevel
+//param: "story-playthrough-token"
+export const mocknextLevel = {
+  "message": "Good job! Keep it up! Use the play/mapResource endpoint to get the resources of your new map",
+  "playthroughState": {
+    "storyTitle": "Adventures of Your Teeny-Weeny Pony",
+    "currentLevel": 2,
+    "isCurrentLevelFinished": false,
+    "currentMapStatus": "CREATED",
+    "storyLine": "Wow, did we teleport? Look, more treasures across the obstacles! Let's see what happens when we collect them!"
+  }
+}

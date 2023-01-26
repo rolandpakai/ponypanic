@@ -9,23 +9,39 @@ export const apiStoryBegin = async (playerToken) => {
       headers: headers,
   };
   
-  return fetch( API_URL + "/playGameApi/v1/story/begin", options )
+  return fetch( API_URL + '/playGameApi/v1/story/begin', options )
     .then( response => response.json() )
     .then( response => {
       return response;
   });
 }
 
-export const apiResetLevel = async (playerToken) => {
+export const apiResetLevel = async (storyPlaythroughToken) => {
   const headers = new Headers();
-  headers.append('player-token', playerToken);
+  headers.append('story-playthrough-token', storyPlaythroughToken);
 
   const options = {
       method: 'POST',
       headers: headers,
   };
   
-  return fetch( API_URL + "/playGameApi/v1/story/resetLevel", options )
+  return fetch( API_URL + '/playGameApi/v1/story/resetLevel', options )
+    .then( response => response.json() )
+    .then( response => {
+      return response;
+  });
+}
+
+export const apiNextLevel = async (storyPlaythroughToken) => {
+  const headers = new Headers();
+  headers.append('story-playthrough-token', storyPlaythroughToken);
+
+  const options = {
+      method: 'POST',
+      headers: headers,
+  };
+  
+  return fetch( API_URL + '/playGameApi/v1/story/nextLevel', options )
     .then( response => response.json() )
     .then( response => {
       return response;
@@ -41,7 +57,7 @@ export const apiMapResource = async (storyPlaythroughToken) => {
     headers: headers,
   };
 
-  return fetch( API_URL + "/playGameApi/v1/play/mapResource", options )
+  return fetch( API_URL + '/playGameApi/v1/play/mapResource', options )
     .then( response => response.json() )
     .then( response => {
       return response;
@@ -57,7 +73,7 @@ export const apiMapState = async (storyPlaythroughToken) => {
     headers: headers,
   };
 
-  return fetch( API_URL + "/playGameApi/v1/play/mapState", options )
+  return fetch( API_URL + '/playGameApi/v1/play/mapState', options )
     .then( response => response.json() )
     .then( response => {
       return response;
@@ -82,7 +98,7 @@ export const apiApproveHeroTurn = async (heroTurn) => {
     body: JSON.stringify( params ) 
   };
 
-  return fetch( API_URL + "/playGameApi/v1/play/approveHeroTurn", options )
+  return fetch( API_URL + '/playGameApi/v1/play/approveHeroTurn', options )
     .then( response => response.json() )
     .then( response => {
       return response;
@@ -99,7 +115,7 @@ export const apiPlaythroughState = async (storyPlaythroughToken) => {
     headers: headers,
   };
 
-  return fetch( API_URL + "/playGameApi/v1/story/playthroughState", options )
+  return fetch( API_URL + '/playGameApi/v1/story/playthroughState', options )
     .then( response => response.json() )
     .then( response => {
       return response;
