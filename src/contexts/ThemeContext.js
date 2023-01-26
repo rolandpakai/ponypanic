@@ -1,4 +1,4 @@
-import { createContext, useState, useLayoutEffect } from "react";
+import { createContext, useState, useLayoutEffect, useEffect } from "react";
 import { DEFAULT_THEME } from '../utils/constants';
 
 export const ThemeContext = createContext({
@@ -10,8 +10,19 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(DEFAULT_THEME);
 
   const selectTheme = ({value, label}) => {
+    localStorage.setItem('pony-panic-theme', value);
     setTheme(value);
   }
+
+  useEffect(() => {
+    const localStorageTheme = localStorage.getItem('pony-panic-theme');
+    if(localStorageTheme) {
+      setTheme(localStorageTheme);
+    } else {
+      localStorage.setItem('pony-panic-theme', DEFAULT_THEME);
+      setTheme(DEFAULT_THEME);
+    }
+  }, [])
 
   useLayoutEffect(() => {
     const element = document.documentElement;
