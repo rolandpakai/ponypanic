@@ -2,12 +2,31 @@ import { useEffect, useState, useContext } from 'react';
 import { ThemeContext } from '../contexts/ThemeContext';
 import Field from "./Field";
 import { FIELD_TYPE } from '../utils/constants';
-import { xyTOij } from '../utils/util';
+import { xyTOij, calcDirection, getHeroAction } from '../utils/util';
+import Maze from '../maze-solver/maze'; 
 
 const Canvas = ( props ) => {
   const { theme } = useContext(ThemeContext);
   const [fields, setFields] = useState([]);
-  const { width, height, currentLevel, fieldSize, heroes, enemies, bullets, treasures, collected, obstacles, updateMaze } = {...props};
+  const { width, height, fieldSize, heroes, enemies, bullets, treasures, collected, obstacles, currentLevel, updateHeroTurn } = {...props};
+
+  const updateMaze = (mazeArg) => {
+    console.log('mazeArg', mazeArg)
+    const maze = new Maze(mazeArg);
+    const paths = maze.findPaths(true);
+    console.log('paths',paths);
+    const direction = calcDirection(paths);
+    const heroAction = getHeroAction(direction);
+    console.log(direction);
+    const heroId = mazeArg.start[0].id;
+
+    const newHeroTurn = {
+      heroId,
+      action: heroAction
+    }
+
+    updateHeroTurn(newHeroTurn)
+  }
 
   useEffect(() => {
     const fields = [];
@@ -60,8 +79,7 @@ const Canvas = ( props ) => {
         start: start,
         end: end
       };
-      //console.log(mazeMap);
-      //calcMaze(mazeArg);
+      
       updateMaze(mazeArg);
 
       setFields(fields);

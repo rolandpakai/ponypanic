@@ -3,8 +3,7 @@ import { Fragment, useEffect, useState, useContext } from 'react';
 import { NewGameContext } from '../contexts/NewGameContext';
 import { apiStoryBegin, apiMapResource, apiMapState, apiApproveHeroTurn, apiPlaythroughState, apiResetLevel, apiNextLevel } from '../api/api';
 import { PLAYER_TOKEN, FIELD_TYPE, MAP_STATUS } from '../utils/constants';
-import { arrayToMap, obstacleMapToArray, calcDirection, getHeroAction, getImageSize } from '../utils/util';
-import Maze from '../maze-solver/maze'; 
+import { arrayToMap, obstacleMapToArray, getImageSize } from '../utils/util';
 import Canvas from './Canvas';
 import PopupDialog from './PopupDialog';
 import CustomButton from './CustomButton';
@@ -25,23 +24,8 @@ const MapContainer = () => {
   const [heroTurn, setHeroTurn] = useState({});
   const [dialogProps, setDialogProps] = useState({open:false});
 
-  const updateMaze = (mazeArg) => {
-    console.log('mazeArg', mazeArg)
-    const maze = new Maze(mazeArg);
-    const paths = maze.findPaths(true);
-    console.log('paths',paths);
-    const direction = calcDirection(paths);
-    const heroAction = getHeroAction(direction);
-    console.log(direction);
-    const heroId = mazeArg.start[0].id;
-
-    const newHeroTurn = {
-      storyPlaythroughToken,
-      heroId,
-      action: heroAction
-    }
-
-    setHeroTurn(newHeroTurn);
+  const updateHeroTurn = (heroTurn) => {
+    setHeroTurn(heroTurn)
   }
 
   const getCanvasData = (mapResource, mapState, currentLevel) => {
@@ -68,8 +52,8 @@ const MapContainer = () => {
       treasures: treasures,
       obstacles: obstacles,
       collected: {},
-      updateMaze: updateMaze,
       currentLevel: currentLevel,
+      updateHeroTurn: updateHeroTurn,
     };
 
   }
@@ -79,7 +63,7 @@ const MapContainer = () => {
     const mapResource= await apiMapResource(storyPlaythroughToken);
     const mapState = await apiMapState(storyPlaythroughToken);
 
-    const newCanvas = getCanvasData(mapResource, mapState)
+    const newCanvas = getCanvasData(mapResource, mapState, currentLevel)
 
     setCanvas(newCanvas);
   }
@@ -131,7 +115,6 @@ const MapContainer = () => {
 
   const nextTurn = async (heroTurn) => {
     const { didTickHappen, message, tickLogs } = await apiApproveHeroTurn(heroTurn)
-    console.log('didTickHappen', didTickHappen);
 
     if(didTickHappen) {
       const { map, heroes } = await apiMapState(storyPlaythroughToken);
@@ -148,11 +131,10 @@ const MapContainer = () => {
       } else {
         //MAP_STATUS.CRATED || MAP_STATUS.PLAYING
         const updates = {
-          heroes: arrayToMap(heroes, FIELD_TYPE.HERO),
+          heroes: arrayToMap(heroes, FIELD_TYPE.HERO, heroTurn),
           enemies: {},
           bullets: {},
         }
-
         const treasures = arrayToMap(map.treasures, FIELD_TYPE.TREASURE);
         const collectedList = Object.values(treasures).filter((treasure)=>treasure.collectedByHeroId!=null);
         

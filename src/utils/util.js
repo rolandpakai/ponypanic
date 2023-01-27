@@ -14,12 +14,16 @@ export const xyTOij = (x, y, height) => {
   return { i: x, j: height - y - 1 }
 }
 
-export const arrayToMap = (array, type) => {
+export const arrayToMap = (array, type, turn) => {
   const map = {};
 
   array.forEach((el) => {
     const idd = `id-${el.position.x}-${el.position.y}`;
     el.type = type;
+
+    if(turn && turn.heroId && turn.heroId === el.id) {
+      el.action = turn.action;
+    }
 
     map[idd] = el;
   });
@@ -60,6 +64,16 @@ export const getHeroAction = (direction) => {
     case 'L': {action = HERO_ACTION.MOVE_LEFT; break;}
     case 'R': {action = HERO_ACTION.MOVE_RIGHT; break;}
     default: action = HERO_ACTION.NOTHING;
+  }
+
+  return action;
+}
+
+export const validateHeroAction = (heroAction) => {
+  let action = HERO_ACTION.MOVE_RIGHT.toLowerCase();
+
+  if(heroAction && HERO_ACTION[heroAction]) {
+    action = HERO_ACTION[heroAction].toLowerCase();
   }
 
   return action;

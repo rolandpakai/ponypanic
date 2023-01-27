@@ -1,11 +1,11 @@
 import { useMemo, useContext } from "react";
 import { ThemeContext } from '../contexts/ThemeContext';
 import { FIELD_TYPE, TREASURE_COUNT, MAP_COUNT } from '../utils/constants';
-import { randomInteger } from '../utils/util';
+import { randomInteger, validateHeroAction } from '../utils/util';
 
 const Field = ( props ) => {
   const { theme } = useContext(ThemeContext);
-  const { id, collectedByHeroId, health, name, playerId, position, size, score, type, level } = {...props};
+  const { id, collectedByHeroId, health, name, playerId, position, size, score, action, type, level } = {...props};
 
   let randomTreasure = useMemo(() => randomInteger(1, TREASURE_COUNT), [position]);
 
@@ -27,9 +27,19 @@ const Field = ( props ) => {
   };
 
   switch (type) {
-    case FIELD_TYPE.HERO: {imgStyle.src = `./themes/${theme}/heroes/stand-right.png`;break;}
-    case FIELD_TYPE.TREASURE: {imgStyle.src = `./themes/${theme}/treasures/treasure-${randomTreasure}.png`;break;}
-    case FIELD_TYPE.OBSTACLE: {imgStyle.src = `./themes/${theme}/maps/map-${mapLevel}/block.png`;break;}
+    case FIELD_TYPE.HERO: {
+      const heroAction = validateHeroAction(action);
+      imgStyle.src = `./themes/${theme}/heroes/${heroAction}.png`;
+      break;
+  }
+    case FIELD_TYPE.TREASURE: {
+      imgStyle.src = `./themes/${theme}/treasures/treasure-${randomTreasure}.png`;
+      break;
+    }
+    case FIELD_TYPE.OBSTACLE: {
+      imgStyle.src = `./themes/${theme}/maps/map-${mapLevel}/block.png`;
+      break;
+    }
     default: imgStyle.backgroundImage = '';
   }
 
