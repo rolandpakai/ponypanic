@@ -36,13 +36,13 @@ export const HERO_ACTION = {
 
 export const HERO_STATE = {
   STAND: 'stand', 
-  SHILD: 'shild',
+  SHIELD: 'shield',
   ATTACK: 'attack',
 }
 
 export const HERO_MOVE = {
   LEFT: 'left', 
-  SHILD: 'right',
+  RIGHT: 'right',
   UP: 'up',
   DOWN: 'down',
 }
