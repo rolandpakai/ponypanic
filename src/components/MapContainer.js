@@ -10,17 +10,8 @@ import CustomButton from './CustomButton';
 
 const MapContainer = () => {
   const { newGame, setNewGame } = useContext(NewGameContext);
-
   const [canvas, setCanvas] = useState({});
   const [storyPlaythroughToken, setStoryPlaythroughToken] = useState('');
-  /*
-  const [currentLevel, setCurrentLevel] = useState(0);
-  const [elapsedTickCount, setElapsedTickCount] = useState(0);
-  const [mapStatus, setMapStatus] = useState('');
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [isCurrentLevelFinished , setIsCurrentLevelFinished] = useState(false);
-  const [fieldSize, setFieldSize] = useState('64px');
-*/
   const [heroTurn, setHeroTurn] = useState({});
   const [dialogProps, setDialogProps] = useState({open:false});
 
@@ -114,13 +105,12 @@ const MapContainer = () => {
   };
 
   const nextTurn = async (heroTurn) => {
-    const { didTickHappen, message, tickLogs } = await apiApproveHeroTurn(heroTurn)
+    const { didTickHappen, message, tickLogs } = await apiApproveHeroTurn(storyPlaythroughToken, heroTurn)
 
     if(didTickHappen) {
       const { map, heroes } = await apiMapState(storyPlaythroughToken);
 
       if(map.isGameOver) {
-        //setIsGameOver(map.isGameOver); 
         const {currentLevel, currentMapStatus, isCurrentLevelFinished} = await apiPlaythroughState(storyPlaythroughToken);
         
         if(map.status === MAP_STATUS.WON) {
@@ -151,18 +141,9 @@ const MapContainer = () => {
     }
   }
 
-  //For Testing
-  const handleClickOpen = () => {
-
-    setDialogProps(dialogPropsStatus[MAP_STATUS.WON]);
-         
-  };
-
   const nextTurnHandle = () => {
-    console.log('CLICK')
     heroTurn.storyPlaythroughToken = storyPlaythroughToken;
 
-    //handleClickOpen();
     nextTurn(heroTurn);
   }
 
@@ -170,48 +151,11 @@ const MapContainer = () => {
 
     const fetchData = async () => {
       const {storyPlaythroughToken, playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiStoryBegin(PLAYER_TOKEN);
-      
-      //const { mapId, compressedObstacles: {coordinateMap} } = await apiMapResource(storyPlaythroughToken);
-      //const { map, heroes } = await apiMapState(storyPlaythroughToken);
       const mapResource = await apiMapResource(storyPlaythroughToken);
       const mapState = await apiMapState(storyPlaythroughToken);
-      
       const canvas = getCanvasData(mapResource, mapState, currentLevel)
-      //canvas.currentLevel = currentLevel;
-
-      /*const size = getImageSize(map.width);
-      const obstaclesList = obstacleMapToArray(coordinateMap);
-      const heroesList = arrayToMap(heroes, size, currentLevel, FIELD_TYPE.HERO);
-      const treasures = arrayToMap(map.treasures, size, currentLevel, FIELD_TYPE.TREASURE);
-      const obstacles = arrayToMap(obstaclesList, size, currentLevel, FIELD_TYPE.OBSTACLE);
-
-      const enemies = {};
-      const bullets = {};*/
-
-      /*const canvas = {
-        mapId: mapId,
-        width: map.width,
-        height: map.height,
-        currentLevel: currentLevel,
-        fieldSize: size,
-        fields: {},
-        heroes: heroesList,
-        enemies: enemies,
-        bullets: bullets,
-        treasures: treasures,
-        obstacles: obstacles,
-        updateMaze: updateMaze
-      };*/
 
       setStoryPlaythroughToken(storyPlaythroughToken);
-      //setCurrentLevel(currentLevel);
-      //setIsCurrentLevelFinished(isCurrentLevelFinished);
-
-     /* setElapsedTickCount(map.elapsedTickCount);
-      setMapStatus(map.status);
-      setIsGameOver(map.isGameOver);
-      setFieldSize(size);*/
-
       setCanvas(canvas);
     }
 
