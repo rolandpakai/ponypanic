@@ -2,14 +2,15 @@ import { Fragment, useEffect, useState, useContext } from 'react';
 
 import { NewGameContext } from '../contexts/NewGameContext';
 import { apiStoryBegin, apiMapResource, apiMapState, apiApproveHeroTurn, apiPlaythroughState, apiResetLevel, apiNextLevel } from '../api/api';
-import { PLAYER_TOKEN, FIELD_TYPE, MAP_STATUS } from '../utils/constants';
+import { GAME_MODE, PLAYER_TOKEN, FIELD_TYPE, MAP_STATUS } from '../utils/constants';
 import { arrayToMap, obstacleMapToArray, getImageSize } from '../utils/util';
 import Canvas from './Canvas';
 import PopupDialog from './PopupDialog';
 import CustomButton from './CustomButton';
 
 const MapContainer = () => {
-  const { newGame, setNewGame } = useContext(NewGameContext);
+  const [gameMode, setGameMode] = useState(GAME_MODE.STORY);
+  const {newGame, setNewGame} = useContext(NewGameContext);
   const [canvas, setCanvas] = useState({});
   const [storyPlaythroughToken, setStoryPlaythroughToken] = useState('');
   const [heroTurn, setHeroTurn] = useState({});
@@ -28,9 +29,8 @@ const MapContainer = () => {
     const heroesList = arrayToMap(heroes, FIELD_TYPE.HERO);
     const treasures = arrayToMap(map.treasures, FIELD_TYPE.TREASURE);
     const obstacles = arrayToMap(obstaclesList, FIELD_TYPE.OBSTACLE);
-
-    const enemies = {};
-    const bullets = {};
+    const enemies = arrayToMap(map.enemies, FIELD_TYPE.ENEMY);
+    const bullets = arrayToMap(map.bullets, FIELD_TYPE.BULLET);
 
     return {
       mapId: mapId,
@@ -44,12 +44,13 @@ const MapContainer = () => {
       obstacles: obstacles,
       collected: {},
       currentLevel: currentLevel,
+      gameMode: gameMode,
       updateHeroTurn: updateHeroTurn,
     };
 
   }
 
-  const resetLevel = async (storyPlaythroughToken) => {
+  const resetLevel = async () => {
     const { playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiResetLevel(storyPlaythroughToken);
     const mapResource= await apiMapResource(storyPlaythroughToken);
     const mapState = await apiMapState(storyPlaythroughToken);
@@ -59,7 +60,7 @@ const MapContainer = () => {
     setCanvas(newCanvas);
   }
 
-  const nextLevel = async (storyPlaythroughToken) => {
+  const nextLevel = async () => {
     const { playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiNextLevel(storyPlaythroughToken);
     const mapResource = await apiMapResource(storyPlaythroughToken);
     const mapState = await apiMapState(storyPlaythroughToken);
@@ -75,14 +76,14 @@ const MapContainer = () => {
     setNewGame(false);
   };
 
-  const continueHandler = async () => {
+  const continueHandler = () => {
     console.log('continueHandler')
-    await resetLevel(storyPlaythroughToken);
+    resetLevel(storyPlaythroughToken);
   };
 
   const nextHandler = () => {
     console.log('nextHandler')
-    nextLevel(storyPlaythroughToken);
+    nextLevel();
   };
 
   const dialogPropsStatus = {
@@ -122,8 +123,8 @@ const MapContainer = () => {
         //MAP_STATUS.CRATED || MAP_STATUS.PLAYING
         const updates = {
           heroes: arrayToMap(heroes, FIELD_TYPE.HERO, heroTurn),
-          enemies: {},
-          bullets: {},
+          enemies: arrayToMap(map.enemies, FIELD_TYPE.ENEMY),
+          bullets: arrayToMap(map.bullets, FIELD_TYPE.BULLET),
         }
         const treasures = arrayToMap(map.treasures, FIELD_TYPE.TREASURE);
         const collectedList = Object.values(treasures).filter((treasure)=>treasure.collectedByHeroId!=null);

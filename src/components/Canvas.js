@@ -1,31 +1,37 @@
 import { useEffect, useState, useContext } from 'react';
+
 import { ThemeContext } from '../contexts/ThemeContext';
+import { FIELD_TYPE, GAME_MODE } from '../utils/constants';
+import { xyTOij, getDirections, getHeroAction } from '../utils/util';
 import Field from "./Field";
-import { FIELD_TYPE } from '../utils/constants';
-import { xyTOij, calcDirection, getHeroAction } from '../utils/util';
 import Maze from '../maze-solver/maze'; 
 
 const Canvas = ( props ) => {
   const { theme } = useContext(ThemeContext);
   const [fields, setFields] = useState([]);
-  const { width, height, fieldSize, heroes, enemies, bullets, treasures, collected, obstacles, currentLevel, updateHeroTurn } = {...props};
+  const { width, height, fieldSize, heroes, enemies, bullets, treasures, collected, obstacles, currentLevel, gameMode, updateHeroTurn } = {...props};
 
   const updateMaze = (mazeArg) => {
     console.log('mazeArg', mazeArg)
     const maze = new Maze(mazeArg);
     const paths = maze.findPaths(true);
-    console.log('paths',paths);
-    const direction = calcDirection(paths);
-    const heroAction = getHeroAction(direction);
-    console.log(direction);
-    const heroId = mazeArg.start[0].id;
+    
+    const directions = getDirections(paths);
 
-    const newHeroTurn = {
-      heroId,
-      action: heroAction
+    if(directions.length > 0) {
+      if(gameMode === GAME_MODE.STORY) {
+        const direction = directions[0];
+        const heroAction = getHeroAction(direction);
+        console.log(direction);
+        const heroId = mazeArg.start[0].id;
+
+        const newHeroTurn = {
+          heroId,
+          action: heroAction
+        }
+        updateHeroTurn(newHeroTurn)
+      }
     }
-
-    updateHeroTurn(newHeroTurn)
   }
 
   useEffect(() => {
@@ -63,6 +69,16 @@ const Canvas = ( props ) => {
             field = {...field, ...heroes[id]};
             start.push({ x: xy.i, y: xy.j, label: (start.length).toString(), id: field.id })
           } 
+
+          if(enemies[id]) {
+            field = {...field, ...enemies[id]};
+            mazeMap[xy.j][xy.i] = 0;
+          } 
+
+          if(bullets[id]) {
+            field = {...field, ...bullets[id]};
+            mazeMap[xy.j][xy.i] = 0;
+          } 
           
           if(obstacles[id]) {
             field = {...field, ...obstacles[id]};
@@ -79,7 +95,7 @@ const Canvas = ( props ) => {
         start: start,
         end: end
       };
-      
+
       updateMaze(mazeArg);
 
       setFields(fields);

@@ -79,44 +79,44 @@ export const validateHeroAction = (heroAction) => {
   return action;
 }
 
+export const calcDirection = (paths) => {
 
-export const calcDirection = (pathsList) => {
-  let direction = '';
-
-  if(pathsList.length > 0){
-    //Hero-0
-    const paths = pathsList[0];
+  const pathLengths = paths.map((path) => {
+    const ways = path.match(PATH_REGEX);
     
-    /*const pathSteps = paths[0].map((p) => {
-      return p.match(PATH_REGEX);
-    });*/
-    
-    const pathLengths = paths.map((path) => {
-      const ways = path.match(PATH_REGEX);
+    const length = ways.reduce((acc, way) => {
+      let stepLength = 0;
+      const match = way.match(/^\d+/);
       
-      const length = ways.reduce((acc, way) => {
-        let stepLength = 0;
-        const match = way.match(/^\d+/);
-        
-        if(match) {
-          stepLength = parseInt(match[0], 10);
-        } else {
-          stepLength = 1;
-        }
-        
-        return acc + stepLength;
-      }, 0);
+      if(match) {
+        stepLength = parseInt(match[0], 10);
+      } else {
+        stepLength = 1;
+      }
       
-      return length;
-    });
+      return acc + stepLength;
+    }, 0);
     
-    const minLength = Math.min(...pathLengths);
-    const minLengthIndex = pathLengths.indexOf(minLength);
-    const minPath = paths[minLengthIndex];
-    const firstStepInMinPath = minPath.match(PATH_REGEX)[0]
-    
-    direction = firstStepInMinPath.charAt(firstStepInMinPath.length-1);
-  }
+    return length;
+  });
+  
+  const minLength = Math.min(...pathLengths);
+  const minLengthIndex = pathLengths.indexOf(minLength);
+  const minPath = paths[minLengthIndex];
+  const firstStepInMinPath = minPath.match(PATH_REGEX)[0]
+  const direction = firstStepInMinPath.charAt(firstStepInMinPath.length-1);
 
   return direction;
+}
+
+export const getDirections = (pathsList) => {
+  let directions = [];
+
+  if(pathsList.length > 0){
+    directions = pathsList.map((paths) => {
+      return calcDirection(paths)
+    })
+  }
+
+  return directions;
 }

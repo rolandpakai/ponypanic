@@ -1,6 +1,6 @@
 import { useMemo, useContext } from "react";
 import { ThemeContext } from '../contexts/ThemeContext';
-import { FIELD_TYPE, TREASURE_COUNT, MAP_COUNT } from '../utils/constants';
+import { FIELD_TYPE, TREASURE_COUNT, MAP_COUNT, ENEMY_COUNT } from '../utils/constants';
 import { randomInteger, validateHeroAction } from '../utils/util';
 
 const Field = ( props ) => {

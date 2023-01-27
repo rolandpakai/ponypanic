@@ -1,11 +1,18 @@
 export const PLAYER_TOKEN = process.env.REACT_APP_PLAYER_TOKEN; 
 
+export const ENEMY_COUNT = 5;
 export const TREASURE_COUNT = 9;
 export const MAP_COUNT = 11;
+export const KICK_DAMAGE_= 0.6;
 export const IMG_BIG_SIZE = '64px';
 export const IMG_SMALL_SIZE = '32px';
 export const DEFAULT_THEME = 'pony';
 export const PATH_REGEX = /(\d*[UDRL]|[UDRL])/g;
+
+export const GAME_MODE = {
+  STORY: 0,
+  FREESTYLE: 1,
+} 
 
 export const THEMES_SELECT_OPTIONS = [
   { value: 'pony', label: 'Pony' },

@@ -56,7 +56,18 @@ export const mockMapState = {
         "collectedByHeroId": null
       }
     ],
-    "enemies": [],
+    "enemies": [{
+      "id": 1,
+      "position": {
+        "x": 3,
+        "y": 3
+      },
+      "moveProbability": 0,
+      "shootProbability": 0,
+      "onTouchDamage": 1.1,
+      "bulletDamage": 0,
+      "health": 0.5
+    }],
     "bullets": [],
     "isGameOver": false
   },
