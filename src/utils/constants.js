@@ -41,19 +41,6 @@ export const HERO_ACTION = {
   KICK_DOWN: 'KICK_DOWN',
 }
 
-export const HERO_STATE = {
-  STAND: 'stand', 
-  SHIELD: 'shield',
-  ATTACK: 'attack',
-}
-
-export const HERO_MOVE = {
-  LEFT: 'left', 
-  RIGHT: 'right',
-  UP: 'up',
-  DOWN: 'down',
-}
-
 export const FIELD_TYPE = {
   HERO: 'HERO',
   TREASURE: 'TREASURE',

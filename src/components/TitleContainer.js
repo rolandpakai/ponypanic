@@ -1,7 +1,7 @@
 import { Fragment, useContext } from 'react'; 
+
 import { ThemeContext } from '../contexts/ThemeContext';
 import { NewGameContext } from '../contexts/NewGameContext';
-
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import CustomButton from './CustomButton';

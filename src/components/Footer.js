@@ -1,6 +1,7 @@
 import { React, useContext } from 'react';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
+
 import { ThemeContext } from '../contexts/ThemeContext';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { THEMES_SELECT_OPTIONS, DEFAULT_THEME } from '../utils/constants';
 import Select from 'react-select'
 

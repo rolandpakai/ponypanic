@@ -119,7 +119,6 @@ const MapContainer = () => {
           setDialogProps(dialogPropsStatus[MAP_STATUS.LOST]);
         }
       } else {
-        //MAP_STATUS.CRATED || MAP_STATUS.PLAYING
         const updates = {
           heroes: arrayToMap(heroes, FIELD_TYPE.HERO, heroTurn),
           enemies: arrayToMap(map.enemies, FIELD_TYPE.ENEMY),
@@ -148,7 +147,6 @@ const MapContainer = () => {
   }
 
   useEffect(() => {
-
     const fetchData = async () => {
       const {storyPlaythroughToken, playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiStoryBegin(PLAYER_TOKEN);
       const mapResource = await apiMapResource(storyPlaythroughToken);

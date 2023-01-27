@@ -1,8 +1,8 @@
 import { useEffect, useState, useContext } from 'react';
 
 import { ThemeContext } from '../contexts/ThemeContext';
-import { FIELD_TYPE, GAME_MODE } from '../utils/constants';
 import { xyTOij, getDirections, getHeroAction } from '../utils/util';
+import { FIELD_TYPE, GAME_MODE } from '../utils/constants';
 import Field from "./Field";
 import Maze from '../maze-solver/maze'; 
 
@@ -16,6 +16,7 @@ const Canvas = ( props ) => {
     const maze = new Maze(mazeArg);
     const paths = maze.findPaths(true);
     console.log('Maze path', paths)
+
     const directions = getDirections(paths);
 
     if(directions.length > 0) {
