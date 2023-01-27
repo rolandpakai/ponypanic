@@ -7,8 +7,8 @@ const Field = ( props ) => {
   const { theme } = useContext(ThemeContext);
   const { id, collectedByHeroId, health, name, playerId, position, size, score, action, type, level } = {...props};
 
-  let randomTreasure = useMemo(() => randomInteger(1, TREASURE_COUNT), [position]);
-  let randomEnemy = useMemo(() => randomInteger(1, ENEMY_COUNT), [position]);
+  let randomTreasure = useMemo(() => randomInteger(1, TREASURE_COUNT), [level]);
+  let randomEnemy = useMemo(() => randomInteger(1, ENEMY_COUNT), [level]);
 
   const mapLevel = level > MAP_COUNT ? MAP_COUNT : level;
 
