@@ -54,9 +54,9 @@ const MapContainer = () => {
     const { playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiResetLevel(storyPlaythroughToken);
     const mapResource= await apiMapResource(storyPlaythroughToken);
     const mapState = await apiMapState(storyPlaythroughToken);
-
     const newCanvas = getCanvasData(mapResource, mapState, currentLevel)
 
+    setDialogProps({...dialogProps, open: false});
     setCanvas(newCanvas);
   }
 
@@ -64,7 +64,6 @@ const MapContainer = () => {
     const { playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiNextLevel(storyPlaythroughToken);
     const mapResource = await apiMapResource(storyPlaythroughToken);
     const mapState = await apiMapState(storyPlaythroughToken);
-
     const newCanvas = getCanvasData(mapResource, mapState, currentLevel)
 
     setDialogProps({...dialogProps, open: false});
