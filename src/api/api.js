@@ -80,8 +80,8 @@ export const apiMapState = async (storyPlaythroughToken) => {
   });
 }
 
-export const apiApproveHeroTurn = async (heroTurn) => {
-  const { storyPlaythroughToken, heroId, action } = heroTurn;
+export const apiApproveHeroTurn = async (storyPlaythroughToken, heroTurn) => {
+  const { heroId, action } = heroTurn;
 
   const headers = new Headers();
   headers.append('Content-Type', 'application/json');
