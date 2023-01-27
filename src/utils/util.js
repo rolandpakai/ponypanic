@@ -18,7 +18,7 @@ export const arrayToMap = (array, type, turn) => {
   const map = {};
 
   array.forEach((el) => {
-    const idd = `id-${el.position.x}-${el.position.y}`;
+    const idd = `${el.position.x}-${el.position.y}`;
     el.type = type;
 
     if(turn && turn.heroId && turn.heroId === el.id) {
@@ -31,7 +31,7 @@ export const arrayToMap = (array, type, turn) => {
   return map;
 }
 
-export const obstacleMapToArray = (map) => {
+export const mapToArray = (map) => {
   const array = [];
   
   for (const x in map) {

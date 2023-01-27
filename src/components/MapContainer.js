@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState, useContext } from 'react';
 import { NewGameContext } from '../contexts/NewGameContext';
 import { apiStoryBegin, apiMapResource, apiMapState, apiApproveHeroTurn, apiPlaythroughState, apiResetLevel, apiNextLevel } from '../api/api';
 import { GAME_MODE, PLAYER_TOKEN, FIELD_TYPE, MAP_STATUS } from '../utils/constants';
-import { arrayToMap, obstacleMapToArray, getImageSize } from '../utils/util';
+import { arrayToMap, mapToArray, getImageSize } from '../utils/util';
 import Canvas from './Canvas';
 import PopupDialog from './PopupDialog';
 import CustomButton from './CustomButton';
@@ -25,7 +25,7 @@ const MapContainer = () => {
     const { map, heroes } = mapState;
 
     const size = getImageSize(map.width);
-    const obstaclesList = obstacleMapToArray(coordinateMap);
+    const obstaclesList = mapToArray(coordinateMap);
     const heroesList = arrayToMap(heroes, FIELD_TYPE.HERO);
     const treasures = arrayToMap(map.treasures, FIELD_TYPE.TREASURE);
     const obstacles = arrayToMap(obstaclesList, FIELD_TYPE.OBSTACLE);

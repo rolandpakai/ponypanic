@@ -2,51 +2,113 @@ import { useEffect, useState, useContext } from 'react';
 
 import { ThemeContext } from '../contexts/ThemeContext';
 import { xyTOij, getDirections, getHeroAction } from '../utils/util';
-import { FIELD_TYPE, GAME_MODE } from '../utils/constants';
+import { FIELD_TYPE, GAME_MODE, MOVE_POINTS } from '../utils/constants';
 import Field from "./Field";
 import Maze from '../maze-solver/maze'; 
+
+const getHeroTurnKick = (heroKicks) => {
+  const heroKick = heroKicks[0];
+  const newHeroTurn = {
+    heroId: heroKick.id,
+    action: heroKick.action,
+  }
+
+  return newHeroTurn;
+}
+
+const getMazeDirections = (mazeArg) => {
+  const maze = new Maze(mazeArg);
+  const paths = maze.findPaths(true);
+  const directions = getDirections(paths);
+
+  return directions;
+}
+
+const getHeroTurnMove = (mazeArg, gameMode) => {
+  const directions = getMazeDirections(mazeArg);
+  let newHeroTurn = {};
+
+  if(directions.length > 0) {
+    if(gameMode === GAME_MODE.STORY) {
+      const direction = directions[0];
+      const heroAction = getHeroAction(direction);
+      const heroId = mazeArg.start[0].id;
+
+      newHeroTurn = {
+        heroId,
+        action: heroAction
+      }
+    }
+  }
+
+  return newHeroTurn;
+}
+
+const getHeroTurn = (heroKicks, mazeArg, gameMode) => {
+  let newHeroTurn = {};
+  console.log('heroKick', heroKicks)
+  console.log('mazeArg', mazeArg)
+
+  if(heroKicks.length > 0) {
+    newHeroTurn = getHeroTurnKick(heroKicks);
+  } else {
+    newHeroTurn = getHeroTurnMove(mazeArg, gameMode);
+  }
+
+  return newHeroTurn;
+}
+
+const getHeroKickRange = (heroes, gameMode) => {
+  let heroKickRange = [];
+
+  const heroKickRanges = Object.values(heroes).map((hero) => {
+    const kickPoints = MOVE_POINTS.reduce((acc, move) => {
+      const point1 = { id: hero.id, x: hero.position.x + move.x, y: hero.position.y + move.y, action: move.action };
+      const point2 = { id: hero.id, x: hero.position.x + move.x*2, y: hero.position.y + move.y*2, action: move.action };
+      const id1 = `${point1.x}-${point1.y}`;
+      const id2 = `${point2.x}-${point2.y}`;
+      acc[id1] = point1;
+      acc[id2] = point2;
+
+      return acc
+    }, {});
+
+    return kickPoints;
+  })
+
+  if(heroKickRanges.length > 0) {
+    if(gameMode === GAME_MODE.STORY) {
+      heroKickRange = heroKickRanges[0];
+    }
+  }
+
+  return heroKickRange;
+}
 
 const Canvas = ( props ) => {
   const { theme } = useContext(ThemeContext);
   const [fields, setFields] = useState([]);
   const { width, height, fieldSize, heroes, enemies, bullets, treasures, collected, obstacles, currentLevel, gameMode, updateHeroTurn } = {...props};
 
-  const updateMaze = (mazeArg) => {
-    console.log('mazeArg', mazeArg)
-    const maze = new Maze(mazeArg);
-    const paths = maze.findPaths(true);
-    console.log('Maze path', paths)
-
-    const directions = getDirections(paths);
-
-    if(directions.length > 0) {
-      if(gameMode === GAME_MODE.STORY) {
-        const direction = directions[0];
-        const heroAction = getHeroAction(direction);
-        console.log(direction);
-        const heroId = mazeArg.start[0].id;
-
-        const newHeroTurn = {
-          heroId,
-          action: heroAction
-        }
-        updateHeroTurn(newHeroTurn)
-      }
-    }
-  }
-
   useEffect(() => {
     const fields = [];
-    const mazeMap = Array.from(Array(height), () => []);
     const start = [];
     const end = [];
-
+    let heroKicks = {};
+    const heroKick = [];
+    const mazeMap = Array.from(Array(height), () => []);
+    
     if(heroes) {
+      const hasEnemy = !(Object.keys(enemies).length === 0);
 
-      console.log('collected', collected)
+      if(hasEnemy) {
+        const heroKickRange = getHeroKickRange(heroes, gameMode);
+        heroKicks = {...heroKickRange};
+      }
+
       for (let i = width-1; i >= 0; i--) {
         for (let j = 0; j < height; j++) {
-          const id = `id-${j}-${i}`;
+          const id = `${j}-${i}`;
           const xy = xyTOij(j, i ,height);
           mazeMap[xy.j][xy.i] = 1;
 
@@ -72,7 +134,12 @@ const Canvas = ( props ) => {
           } 
 
           if(enemies[id]) {
-            field = {...field, ...enemies[id]};
+            if(enemies[id].health > 0) {
+              if(heroKicks[id]) {
+                heroKick.push(heroKicks[id])
+              }
+              field = {...field, ...enemies[id]};
+            }
           } 
 
           if(bullets[id]) {
@@ -95,8 +162,9 @@ const Canvas = ( props ) => {
         end: end
       };
 
-      updateMaze(mazeArg);
-
+      const newHeroTurn = getHeroTurn(heroKick, mazeArg, gameMode);
+      console.log('newHeroTurn', newHeroTurn)
+      updateHeroTurn(newHeroTurn)
       setFields(fields);
     }
   }, [heroes, enemies, bullets]);

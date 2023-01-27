@@ -50,3 +50,10 @@ export const FIELD_TYPE = {
   FLOOR: 'FLOOR',
   COLLECTED_TREASURE: 'COLLECTED_TREASURE',
 }
+
+export const MOVE_POINTS = [
+  { x:  0, y:  1, action: HERO_ACTION.KICK_DOWN },
+  { x:  0, y: -1, action: HERO_ACTION.KICK_UP },
+  { x:  1, y:  0, action: HERO_ACTION.KICK_RIGHT },
+  { x: -1, y:  0, action: HERO_ACTION.KICK_LEFT }
+];
