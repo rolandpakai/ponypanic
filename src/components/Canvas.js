@@ -15,7 +15,7 @@ const Canvas = ( props ) => {
     console.log('mazeArg', mazeArg)
     const maze = new Maze(mazeArg);
     const paths = maze.findPaths(true);
-    
+    console.log('Maze path', paths)
     const directions = getDirections(paths);
 
     if(directions.length > 0) {
@@ -72,12 +72,10 @@ const Canvas = ( props ) => {
 
           if(enemies[id]) {
             field = {...field, ...enemies[id]};
-            mazeMap[xy.j][xy.i] = 0;
           } 
 
           if(bullets[id]) {
             field = {...field, ...bullets[id]};
-            mazeMap[xy.j][xy.i] = 0;
           } 
           
           if(obstacles[id]) {

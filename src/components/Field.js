@@ -8,6 +8,7 @@ const Field = ( props ) => {
   const { id, collectedByHeroId, health, name, playerId, position, size, score, action, type, level } = {...props};
 
   let randomTreasure = useMemo(() => randomInteger(1, TREASURE_COUNT), [position]);
+  let randomEnemy = useMemo(() => randomInteger(1, ENEMY_COUNT), [position]);
 
   const mapLevel = level > MAP_COUNT ? MAP_COUNT : level;
 
@@ -31,7 +32,15 @@ const Field = ( props ) => {
       const heroAction = validateHeroAction(action);
       imgStyle.src = `./themes/${theme}/heroes/${heroAction}.png`;
       break;
-  }
+    } 
+    case FIELD_TYPE.ENEMY: {
+      imgStyle.src = `./themes/${theme}/enemies/enemy-${randomEnemy}.png`;
+      break;
+    }
+    case FIELD_TYPE.BULLET: {
+      imgStyle.src = `./themes/${theme}/bullets/bullet.png`;
+      break;
+    }
     case FIELD_TYPE.TREASURE: {
       imgStyle.src = `./themes/${theme}/treasures/treasure-${randomTreasure}.png`;
       break;
