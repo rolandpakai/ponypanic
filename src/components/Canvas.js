@@ -1,8 +1,7 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 
-import { ThemeContext } from '../contexts/ThemeContext';
-import { xyTOij, getDirections, getHeroAction } from '../utils/util';
-import { FIELD_TYPE, GAME_MODE, MOVE_POINTS } from '../utils/constants';
+import { xyTOij } from '../utils/util';
+import { FIELD_TYPE, GAME_MODE, MOVE_POINTS, HERO_ACTION, PATH_REGEX } from '../utils/constants';
 import Field from "./Field";
 import Maze from '../maze-solver/maze'; 
 
@@ -16,12 +15,69 @@ const getHeroTurnKick = (heroKicks) => {
   return newHeroTurn;
 }
 
+const calcDirection = (paths) => {
+
+  const pathLengths = paths.map((path) => {
+    const ways = path.match(PATH_REGEX);
+    
+    const length = ways.reduce((acc, way) => {
+      let stepLength = 0;
+      const match = way.match(/^\d+/);
+      
+      if(match) {
+        stepLength = parseInt(match[0], 10);
+      } else {
+        stepLength = 1;
+      }
+      
+      return acc + stepLength;
+    }, 0);
+    
+    return length;
+  });
+  
+  const minLength = Math.min(...pathLengths);
+  const minLengthIndex = pathLengths.indexOf(minLength);
+  const minPath = paths[minLengthIndex];
+  const firstStepInMinPath = minPath.match(PATH_REGEX)[0]
+  const direction = firstStepInMinPath.charAt(firstStepInMinPath.length-1);
+
+  return direction;
+}
+
+const getDirections = (pathsList) => {
+  let directions = [];
+
+  if(pathsList.length > 0){
+    directions = pathsList.map((paths) => {
+      return calcDirection(paths)
+    })
+  }
+
+  return directions;
+}
+
 const getMazeDirections = (mazeArg) => {
   const maze = new Maze(mazeArg);
   const paths = maze.findPaths(true);
+  console.log('paths', paths);
   const directions = getDirections(paths);
 
   return directions;
+}
+
+export const getHeroAction = (direction) => {
+  let action = HERO_ACTION.NOTHING;
+
+  switch (direction) {
+    case 'U': {action = HERO_ACTION.MOVE_UP; break;}
+    case 'D': {action = HERO_ACTION.MOVE_DOWN; break;}
+    case 'L': {action = HERO_ACTION.MOVE_LEFT; break;}
+    case 'R': {action = HERO_ACTION.MOVE_RIGHT; break;}
+    default: action = HERO_ACTION.NOTHING;
+  }
+
+  return action;
 }
 
 const getHeroTurnMove = (mazeArg, gameMode) => {
@@ -86,7 +142,6 @@ const getHeroKickRange = (heroes, gameMode) => {
 }
 
 const Canvas = ( props ) => {
-  const { theme } = useContext(ThemeContext);
   const [fields, setFields] = useState([]);
   const { width, height, fieldSize, heroes, enemies, bullets, treasures, collected, obstacles, currentLevel, gameMode, updateHeroTurn } = {...props};
 
