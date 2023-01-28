@@ -90,6 +90,24 @@ const Canvas = ( props ) => {
   const [fields, setFields] = useState([]);
   const { width, height, fieldSize, heroes, enemies, bullets, treasures, collected, obstacles, currentLevel, gameMode, updateHeroTurn } = {...props};
 
+  
+  const addField = (x, y, fieldType, fieldSize, currentLevel, fields) => {
+    const id = `${x}-${y}`;
+
+    let field = {
+      id: id,
+      position: {
+        x: x,
+        y: y,
+      },
+      size: fieldSize,
+      level: currentLevel,
+      type: fieldType
+    };
+
+    fields.push(<Field key={id} {...field} />);
+  }
+
   useEffect(() => {
     const fields = [];
     const start = [];
@@ -106,11 +124,19 @@ const Canvas = ( props ) => {
         heroKicks = {...heroKickRange};
       }
 
+      for (let j = -1; j <= height; j++) {
+        addField(j, height, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
+      }
+
       for (let i = width-1; i >= 0; i--) {
         for (let j = 0; j < height; j++) {
           const id = `${j}-${i}`;
           const xy = xyTOij(j, i ,height);
           mazeMap[xy.j][xy.i] = 1;
+
+          if(j === 0) {
+            addField(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
+          }
 
           let field = {
             id: id,
@@ -152,7 +178,15 @@ const Canvas = ( props ) => {
           } 
 
           fields.push(<Field key={id} {...field} />);
+
+          if(j === width-1) {
+            addField(width, i, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
+          }
       } }
+
+      for (let j = -1; j <= height; j++) {
+        addField(j, -1, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
+      }
 
       const mazeArg = {
         mazeWidth: width,
@@ -170,7 +204,7 @@ const Canvas = ( props ) => {
   }, [heroes, enemies, bullets]);
 
   const canvasStyle = {
-    gridTemplateColumns: `repeat(${width}, auto)`,
+    gridTemplateColumns: `repeat(${width + 2}, auto)`,
     //backgroundImage: `url('./themes/${theme}/maps/map-${currentLevel}/block.png')`,
     //padding: fieldSize,
   }
