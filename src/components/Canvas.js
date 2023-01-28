@@ -172,7 +172,7 @@ const Canvas = ( props ) => {
     const end = [];
     let heroKicks = {};
     const heroKick = [];
-    const mazeMap = Array.from(Array(height), () => []);
+    const maze = Array.from(Array(height), () => []);
     
     if(heroes) {
       const hasEnemy = !(Object.keys(enemies).length === 0);
@@ -190,7 +190,7 @@ const Canvas = ( props ) => {
         for (let j = 0; j < height; j++) {
           const id = `${j}-${i}`;
           const xy = xyTOij(i, j ,height);
-          mazeMap[xy.i][xy.j] = 0;
+          maze[xy.i][xy.j] = 0;
 
           if(j === 0) {
             addField(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
@@ -232,7 +232,7 @@ const Canvas = ( props ) => {
           
           if(obstacles[id]) {
             field = {...field, ...obstacles[id]};
-            mazeMap[xy.i][xy.j] = 1;
+            maze[xy.i][xy.j] = 1;
           } 
 
           fields.push(<Field key={id} {...field} />);
@@ -251,11 +251,11 @@ const Canvas = ( props ) => {
       }
 
       const mazeArg = {
-        maze: mazeMap,
+        maze: maze,
         start: start,
         end: end,
       };
-
+      console.log('mazeArg', mazeArg)
       const newHeroTurn = getHeroTurn(heroKick, mazeArg);
 
       updateHeroTurn(newHeroTurn)
