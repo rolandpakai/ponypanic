@@ -10,8 +10,8 @@ export const DEFAULT_THEME = 'pony';
 export const PATH_REGEX = /(\d*[UDRL]|[UDRL])/g;
 
 export const GAME_MODE = {
-  STORY: 0,
-  FREESTYLE: 1,
+  STORY: 'STORY',
+  FREESTYLE: 'FREESTYLE',
 } 
 
 export const THEMES_SELECT_OPTIONS = [
@@ -51,7 +51,7 @@ export const FIELD_TYPE = {
   COLLECTED_TREASURE: 'COLLECTED_TREASURE',
 }
 
-export const MOVE_POINTS = [
+export const KICK_POINTS = [
   { x:  0, y:  1, action: HERO_ACTION.KICK_DOWN },
   { x:  0, y: -1, action: HERO_ACTION.KICK_UP },
   { x:  1, y:  0, action: HERO_ACTION.KICK_RIGHT },

@@ -11,7 +11,7 @@ export const timeoutPromise = (timeout) => {
 }
 
 export const xyTOij = (x, y, height) => {
-  return { i: x, j: height - y - 1 }
+  return { i: height - x - 1, j: y }
 }
 
 export const arrayToMap = (array, type, turn) => {

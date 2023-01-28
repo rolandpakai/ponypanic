@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { xyTOij } from '../utils/util';
-import { FIELD_TYPE, GAME_MODE, MOVE_POINTS, HERO_ACTION, PATH_REGEX } from '../utils/constants';
+import { FIELD_TYPE, GAME_MODE, KICK_POINTS, HERO_ACTION, PATH_REGEX } from '../utils/constants';
 import Field from "./Field";
 import Maze from '../maze-solver/maze2'; 
 
@@ -15,58 +15,7 @@ const getHeroTurnKick = (heroKicks) => {
   return newHeroTurn;
 }
 
-const calcDirection = (paths) => {
-
-  const pathLengths = paths.map((path) => {
-    const ways = path.match(PATH_REGEX);
-    
-    const length = ways.reduce((acc, way) => {
-      let stepLength = 0;
-      const match = way.match(/^\d+/);
-      
-      if(match) {
-        stepLength = parseInt(match[0], 10);
-      } else {
-        stepLength = 1;
-      }
-      
-      return acc + stepLength;
-    }, 0);
-    
-    return length;
-  });
-  
-  const minLength = Math.min(...pathLengths);
-  const minLengthIndex = pathLengths.indexOf(minLength);
-  const minPath = paths[minLengthIndex];
-  const firstStepInMinPath = minPath.match(PATH_REGEX)[0]
-  const direction = firstStepInMinPath.charAt(firstStepInMinPath.length-1);
-
-  return direction;
-}
-
-const getDirections = (pathsList) => {
-  let directions = [];
-
-  if(pathsList.length > 0){
-    directions = pathsList.map((paths) => {
-      return calcDirection(paths)
-    })
-  }
-
-  return directions;
-}
-
-const getMazeDirections = (mazeArg) => {
-  const maze = new Maze(mazeArg);
-  const paths = maze.findPaths(true);
-  console.log('paths', paths);
-  const directions = getDirections(paths);
-
-  return directions;
-}
-
-export const getHeroAction = (direction) => {
+const getHeroAction = (direction) => {
   let action = HERO_ACTION.NOTHING;
 
   switch (direction) {
@@ -80,35 +29,89 @@ export const getHeroAction = (direction) => {
   return action;
 }
 
-const getHeroTurnMove = (mazeArg, gameMode) => {
-  const directions = getMazeDirections(mazeArg);
-  let newHeroTurn = {};
+const getMazePaths = (mazeArg) => {
+  let paths = [];
+  
+  paths = mazeArg.end.map((end) => {
+    const maze = [...mazeArg.maze];
+    maze[end.x][end.y] = 2; 
+    
+    const arg = {
+      start: [mazeArg.start.x, mazeArg.start.y],
+      end: [end.x, end.y],
+      maze: maze,
+    }
+    
+    const result = Maze(arg);
+    const path = result[0];
 
-  if(directions.length > 0) {
-    if(gameMode === GAME_MODE.STORY) {
-      const direction = directions[0];
-      const heroAction = getHeroAction(direction);
-      const heroId = mazeArg.start[0].id;
+    if(path.length > 1) {
+      path.shift();
+    }
 
-      newHeroTurn = {
-        heroId,
-        action: heroAction
-      }
+    const steps = path.map((step) => {
+      return step[0];
+    })
+
+    return steps;
+  })
+ 
+  return paths;
+}
+
+const getShortestMazePath = (paths) => {
+  let path = [];
+
+  if(paths.length > 0) {
+    if(paths.length === 1) {
+      path = paths[0];
+    } else {
+      const pathLengths = paths.map((path) => {
+        return path.length;
+      })
+
+      const minLength = Math.min(...pathLengths);
+      const minLengthIndex = pathLengths.indexOf(minLength);
+      path = paths[minLengthIndex];
     }
   }
 
-  return newHeroTurn;
+  return path;
+
 }
 
-const getHeroTurn = (heroKicks, mazeArg, gameMode) => {
+const getDirection = (path) => {
+  let direction = '';
+
+  if(path.length > 0){
+    direction = path[0];
+  }
+
+  return direction;
+}
+
+const getHeroTurnMove = (mazeArg) => {
+  
+  const paths = getMazePaths(mazeArg);
+  const path = getShortestMazePath(paths);
+  const direction = getDirection(path);
+  const heroAction = getHeroAction(direction);
+  
+  const heroTurn = {
+    heroId: mazeArg.id,
+    action: heroAction
+  }
+
+  return heroTurn;
+}
+
+const getHeroTurn = (heroKicks, mazeArg) => {
   let newHeroTurn = {};
-  console.log('heroKick', heroKicks)
-  console.log('mazeArg', mazeArg)
 
   if(heroKicks.length > 0) {
     newHeroTurn = getHeroTurnKick(heroKicks);
   } else {
-    //newHeroTurn = getHeroTurnMove(mazeArg, gameMode);
+    newHeroTurn = getHeroTurnMove(mazeArg);
   }
 
   return newHeroTurn;
@@ -118,7 +121,7 @@ const getHeroKickRange = (heroes, gameMode) => {
   let heroKickRange = [];
 
   const heroKickRanges = Object.values(heroes).map((hero) => {
-    const kickPoints = MOVE_POINTS.reduce((acc, move) => {
+    const kickPoints = KICK_POINTS.reduce((acc, move) => {
       const point1 = { id: hero.id, x: hero.position.x + move.x, y: hero.position.y + move.y, action: move.action };
       const point2 = { id: hero.id, x: hero.position.x + move.x*2, y: hero.position.y + move.y*2, action: move.action };
       const id1 = `${point1.x}-${point1.y}`;
@@ -165,7 +168,7 @@ const Canvas = ( props ) => {
 
   useEffect(() => {
     const fields = [];
-    const start = [];
+    let start = [];
     const end = [];
     let heroKicks = {};
     const heroKick = [];
@@ -186,8 +189,8 @@ const Canvas = ( props ) => {
       for (let i = width-1; i >= 0; i--) {
         for (let j = 0; j < height; j++) {
           const id = `${j}-${i}`;
-          const xy = xyTOij(j, i ,height);
-          mazeMap[xy.j][xy.i] = 1;
+          const xy = xyTOij(i, j ,height);
+          mazeMap[xy.i][xy.j] = 0;
 
           if(j === 0) {
             addField(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
@@ -206,12 +209,12 @@ const Canvas = ( props ) => {
 
           if(treasures[id] && !collected[id]) {
             field = {...field, ...treasures[id]};
-            end.push({ x: xy.i, y: xy.j, label: (end.length + 1000).toString(), id: field.id  })
+            end.push({ x: xy.i, y: xy.j, id: field.id })
           } 
 
           if(heroes[id]) {
             field = {...field, ...heroes[id]};
-            start.push({ x: xy.i, y: xy.j, label: (start.length).toString(), id: field.id })
+            start.push({ x: xy.i, y: xy.j, id: field.id })
           } 
 
           if(enemies[id]) {
@@ -229,7 +232,7 @@ const Canvas = ( props ) => {
           
           if(obstacles[id]) {
             field = {...field, ...obstacles[id]};
-            mazeMap[xy.j][xy.i] = 0;
+            mazeMap[xy.i][xy.j] = 1;
           } 
 
           fields.push(<Field key={id} {...field} />);
@@ -243,16 +246,18 @@ const Canvas = ( props ) => {
         addField(j, -1, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
       }
 
+      if(gameMode === GAME_MODE.STORY) {
+        start = start[0];
+      }
+
       const mazeArg = {
-        mazeWidth: width,
-        mazeHeight: height,
         maze: mazeMap,
         start: start,
-        end: end
+        end: end,
       };
 
-      const newHeroTurn = getHeroTurn(heroKick, mazeArg, gameMode);
-      console.log('newHeroTurn', newHeroTurn)
+      const newHeroTurn = getHeroTurn(heroKick, mazeArg);
+
       updateHeroTurn(newHeroTurn)
       setFields(fields);
     }
@@ -260,8 +265,6 @@ const Canvas = ( props ) => {
 
   const canvasStyle = {
     gridTemplateColumns: `repeat(${width + 2}, auto)`,
-    //backgroundImage: `url('./themes/${theme}/maps/map-${currentLevel}/block.png')`,
-    //padding: fieldSize,
   }
   
   return (
