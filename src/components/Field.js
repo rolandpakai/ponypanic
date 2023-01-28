@@ -37,11 +37,11 @@ const Field = ( props ) => {
       break;
     } 
     case FIELD_TYPE.ENEMY: {
-      imgStyle.src = `./themes/${theme}/enemies/enemy-${randomEnemy}.png`;
+      imgStyle.src = `./themes/${theme}/enemies/enemy-${id}.png`;
       break;
     }
     case FIELD_TYPE.ENEMY_BULLET: {
-      imgStyle.src = `./themes/${theme}/enemies/enemy-bullet-${randomEnemy}.png`;
+      imgStyle.src = `./themes/${theme}/enemies/enemy-bullet-${id}.png`;
       break;
     }
     case FIELD_TYPE.BULLET: {

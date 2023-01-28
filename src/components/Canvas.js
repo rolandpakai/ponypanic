@@ -231,7 +231,7 @@ const Canvas = ( props ) => {
           } 
 
           if(enemies[id] && bullets[id]) {
-            field = {...field, ...bullets[id], type: FIELD_TYPE.ENEMY_BULLET};
+            field = {...field, ...enemies[id], type: FIELD_TYPE.ENEMY_BULLET};
           } 
           
           if(obstacles[id]) {
