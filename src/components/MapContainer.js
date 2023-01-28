@@ -71,17 +71,14 @@ const MapContainer = () => {
   }
 
   const endHandler = () => {
-    console.log('endHandler');
     setNewGame(false);
   };
 
   const continueHandler = () => {
-    console.log('continueHandler')
     resetLevel(storyPlaythroughToken);
   };
 
   const nextHandler = () => {
-    console.log('nextHandler')
     nextLevel();
   };
 
