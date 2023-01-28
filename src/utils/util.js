@@ -45,9 +45,9 @@ export const mapToArray = (map) => {
 
 export const addEntityToMap = (map, array, type) => {
   array.forEach((el) => {
-    const id = `id-${el.position.x}-${el.position.y}`;
+    const idd = `${el.position.x}-${el.position.y}`;
     el.type = type;
-    map[id] = el;
+    map[idd] = el;
   })
 }
 
