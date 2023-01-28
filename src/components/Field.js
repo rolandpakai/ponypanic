@@ -8,14 +8,15 @@ const Field = ( props ) => {
   const { theme } = useContext(ThemeContext);
   const { id, collectedByHeroId, health, name, playerId, position, size, score, action, type, level } = {...props};
 
-  let randomTreasure = useMemo(() => randomInteger(1, TREASURE_COUNT), [level]);
-  let randomEnemy = useMemo(() => randomInteger(1, ENEMY_COUNT), [level]);
+  let randomTreasure = useMemo(() => randomInteger(1, TREASURE_COUNT), []);
+  let randomEnemy = useMemo(() => randomInteger(1, ENEMY_COUNT), []);
 
   const mapLevel = level > MAP_COUNT ? MAP_COUNT : level;
 
   const divStyle = {
     width: size,
     height: size,
+    display: 'flex',
     backgroundSize: size,
     backgroundRepeat: 'no-repeat',
     backgroundImage: `url('./themes/${theme}/maps/map-${mapLevel}/floor.png')`,
@@ -25,6 +26,7 @@ const Field = ( props ) => {
     width: size,
     height: size,
     backgroundRepeat: 'no-repeat',
+    margin: 'auto',
     src: '',
   };
 
@@ -38,8 +40,14 @@ const Field = ( props ) => {
       imgStyle.src = `./themes/${theme}/enemies/enemy-${randomEnemy}.png`;
       break;
     }
+    case FIELD_TYPE.ENEMY_BULLET: {
+      imgStyle.src = `./themes/${theme}/enemies/enemy-bullet-${randomEnemy}.png`;
+      break;
+    }
     case FIELD_TYPE.BULLET: {
       imgStyle.src = `./themes/${theme}/bullets/bullet.png`;
+      imgStyle.width = 'auto';
+      imgStyle.height = 'auto';
       break;
     }
     case FIELD_TYPE.TREASURE: {

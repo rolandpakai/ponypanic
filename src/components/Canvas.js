@@ -229,6 +229,10 @@ const Canvas = ( props ) => {
           if(bullets[id]) {
             field = {...field, ...bullets[id]};
           } 
+
+          if(enemies[id] && bullets[id]) {
+            field = {...field, ...bullets[id], type: FIELD_TYPE.ENEMY_BULLET};
+          } 
           
           if(obstacles[id]) {
             field = {...field, ...obstacles[id]};
