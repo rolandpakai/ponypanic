@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { xyTOij } from '../utils/util';
 import { FIELD_TYPE, GAME_MODE, MOVE_POINTS, HERO_ACTION, PATH_REGEX } from '../utils/constants';
 import Field from "./Field";
-import Maze from '../maze-solver/maze'; 
+import Maze from '../maze-solver/maze2'; 
 
 const getHeroTurnKick = (heroKicks) => {
   const heroKick = heroKicks[0];
@@ -108,7 +108,7 @@ const getHeroTurn = (heroKicks, mazeArg, gameMode) => {
   if(heroKicks.length > 0) {
     newHeroTurn = getHeroTurnKick(heroKicks);
   } else {
-    newHeroTurn = getHeroTurnMove(mazeArg, gameMode);
+    //newHeroTurn = getHeroTurnMove(mazeArg, gameMode);
   }
 
   return newHeroTurn;
