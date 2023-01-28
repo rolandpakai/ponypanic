@@ -1,6 +1,6 @@
 .header {
   text-align: center;
-  padding: 2.5rem;
+  padding: 2.0rem;
 
   .header-span {
     box-sizing: border-box;
@@ -52,15 +52,13 @@
   }
 
   .panel-left {
-    aspect-ratio: 1 / 1;
     width: 100%;
-    //max-height: 75vh;
-    //max-width: 75vh;
     flex: 3 1 0%;
     overflow: hidden;
     justify-content: center;
     align-items: center;
     display: flex;
+    border: 5px solid #3a3b3b;
   }
 
   .panel-right {
@@ -152,7 +150,7 @@
   cursor: pointer;
   transition-duration: 0.1s;
   transition-timing-function: ease-in-out;
-  margin-bottom: 0.25rem;
+  padding: 0.5rem;
 
   .button-container {
     box-sizing: border-box; 

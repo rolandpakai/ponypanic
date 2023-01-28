@@ -52,7 +52,7 @@ export const addEntityToMap = (map, array, type) => {
 }
 
 export const getImageSize = (mapSize) => {
-  return mapSize > 10 ?  IMG_SMALL_SIZE : IMG_BIG_SIZE;
+  return mapSize > 9 ?  IMG_SMALL_SIZE : IMG_BIG_SIZE;
 }
 
 export const getHeroAction = (direction) => {
