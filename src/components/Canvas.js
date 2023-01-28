@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { xyTOij } from '../utils/util';
-import { FIELD_TYPE, GAME_MODE, KICK_POINTS, HERO_ACTION, PATH_REGEX } from '../utils/constants';
+import { FIELD_TYPE, GAME_MODE, KICK_POINTS, HERO_ACTION } from '../utils/constants';
 import Field from "./Field";
-import Maze from '../maze-solver/maze2'; 
+import Maze from '../maze-solver/maze'; 
 
 const getHeroTurnKick = (heroKicks) => {
   const heroKick = heroKicks[0];

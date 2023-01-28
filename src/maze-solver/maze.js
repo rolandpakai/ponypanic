@@ -1,408 +1,174 @@
-function Maze() {
-  var me = this;
+//https://github.com/Talkwondo/the-maze-gunner
+const Maze = (args) => {
+  const { maze, start, end } = { ...args };
+  const movesBase = [
+    [-1, 0],
+    [0, -1],
+    [0, +1],
+    [+1, 0]
+  ]
+  const _widthLength = maze.length
+  const _heightLength = maze[0].length
 
-  me.options = arguments[0] || {};
-
-  me.startPoints = me.options.start || [];
-  me.endPoints = me.options.end || [];
-  me.paths = [];
-
-  me.lookupObjects = [];
-  me.curLookUpIndex = false;
-  me.completedObjects = [];
-
-  me.MOVE_POINTS = [
-    { x:  0, y:  1, label: 'D' },
-    { x:  0, y: -1, label: 'U' },
-    { x:  1, y:  0, label: 'R' },
-    { x: -1, y:  0, label: 'L' }
-  ];
-}
-
-Maze.prototype.check = function () {
-  var me = this;
-
-  if (!me.options.maze) {
-    throw Error('Maze not specified');
-  }
-
-  if (!Array.isArray(me.options.maze) && typeof me.options.maze !== 'string') {
-    throw new Error('Maze should be array or string');
-  }
-
-  me.parseMazeString();
-
-  me.checkMaze();
-  me.checkStartPoints();
-  me.checkEndPoints();
-};
-
-Maze.prototype.parseMazeString = function () {
-  var me = this;
-  var arr;
-
-  if (typeof me.options.maze === 'string') {
-    arr = me.options.maze.split('\n');
-  } else if (Array.isArray(me.options.maze)) {
-    arr = me.options.maze;
-  } else {
-    return false;
-  }
-
-  me.options.maze = [];
-
-  for (var a = 0; a < arr.length; a++) {
-    if (arr[a].length === 0) {
-      continue;
-    }
-
-    if (typeof arr[a] === 'string') {
-      me.options.maze.push(arr[a].split(''));
-    } else if (Array.isArray(arr[a])) {
-      me.options.maze.push(arr[a]);
-    } else {
-      return false;
+  class Node {
+    constructor (point, value) {
+      this.left = null
+      this.right = null
+      this.forward = null
+      this.backward = null
+      this.value = value
+      this.point = point
     }
   }
 
-  return true;
-};
+  class Tree {
+    constructor () {
+      this.root = null
+    }
 
-Maze.prototype.checkMaze = function () {
-  var me = this;
+    grow (pos, maze, track, currentNode) {
+      const [y, x] = pos.point
+      const [ey, ex] = end
+      const moves = ((y, x, ey, ex) => {
+        switch (true) {
+          case ey < y && ex > x:
+            return [movesBase[0], movesBase[2], movesBase[1], movesBase[3]]
+          case ey < y && ex < x: 
+            return [movesBase[0], movesBase[1], movesBase[3], movesBase[2]]
 
-  me.checkMazeHeight();
-  me.options.maze = me.options.maze.map(me.checkMazeRow.bind(me));
-  me.onlyOnes = me.options.maze.every(row => row.every(element => element === 1));
-};
+          case ey > y && ex > x:
+            return [movesBase[3], movesBase[2], movesBase[0], movesBase[1]]
+          case ey > y && ex < x: 
+            return [movesBase[3], movesBase[1], movesBase[2], movesBase[0]]
 
-Maze.prototype.checkMazeRow = function (row, y) {
-  var me = this;
-  me.checkMazeWidth(row, y);
+          case ex === x && ey > y:
+            return [movesBase[3], movesBase[1], movesBase[2], movesBase[0]]
+          case ex === x && ey < y:
+            return [movesBase[0], movesBase[1], movesBase[2], movesBase[3]]
 
-  return row.map(me.checkMazeValue.bind(me, y));
-};
+          case ey === y && ex > x:
+            return [movesBase[2], movesBase[0], movesBase[3], movesBase[1]]
+          case ey === y && ex < x:
+            return [movesBase[1], movesBase[0], movesBase[3], movesBase[2]]
 
-Maze.prototype.checkMazeWidth = function (row, y) {
-  var me = this;
-
-  if (row.length !== me.options.mazeWidth) {
-    throw new Error('Maze line ' + y + ' width of ' + row.length + ' is not equal to stated width of ' + me.options.mazeWidth);
-  }
-};
-
-Maze.prototype.checkMazeHeight = function () {
-  var me = this;
-
-  if (me.options.maze.length !== me.options.mazeHeight) {
-    throw new Error('Maze height of ' + me.options.maze.length + ' is not equal to stated height of ' + me.options.mazeHeight);
-  }
-};
-
-Maze.prototype.checkMazeValue = function (y, val, x) {
-  if ([0, '0', 1, '1'].indexOf(val) === -1) {
-    throw new Error('Maze symbol at line ' + y + ' and col ' + x + ' should be 0 or 1, but it\'s equal to: ' + val);
-  }
-
-  return parseInt(val, 10);
-};
-
-Maze.prototype.checkStartPoints = function () {
-  var me = this;
-
-  if (me.startPoints.length === 0) {
-    throw new Error('At least one start point should be specified');
-  }
-
-  me.startPoints.map(me.checkPoint.bind(me));
-}
-
-Maze.prototype.checkEndPoints = function () {
-  var me = this;
-
-  if (me.endPoints.length === 0) {
-    throw new Error('At least one end point should be specified');
-  }
-
-  me.endPoints.map(me.checkPoint.bind(me));
-}
-
-Maze.prototype.checkPoint = function (point) {
-  var me = this;
-
-  if (typeof me.options.maze[point.y] === 'undefined') {
-    throw new Error('Row `' + point.y + '` doesn\'t exists');
-  }
-
-  if (typeof me.options.maze[point.y][point.x] === 'undefined') {
-    throw new Error('There is no column `' + point.x + '` at row `' + point.y + '`');
-  }
-
-  if ([1, '1'].indexOf(me.options.maze[point.y][point.x]) === -1) {
-    throw new Error('Point at row `' + point.y + '` and column `' + point.x + '` should be equal to `1`');
-  }
-};
-
-Maze.prototype.pointExists = function (point) {
-  var me = this;
-
-  if (typeof me.options.maze[point.y] === 'undefined' || typeof me.options.maze[point.y][point.x] === 'undefined' || [1, '1'].indexOf(me.options.maze[point.y][point.x]) === -1) {
-    return false;
-  }
-
-  return true;
-};
-
-Maze.prototype.findPaths = function (returnArray) {
-  var me = this;
-
-  me.check();
-  me.setup();
-
-  while (me.lookupObjects.length > 0) {
-    me.lookupObjects.map(me.processLookUpObject.bind(me));
-    me.moveCompleted();
-  }
-
-  return me.printDirections(returnArray);
-};
-
-Maze.prototype.setup = function () {
-  var me = this;
-
-  me.startPoints.map(me.setupObject.bind(me));
-};
-
-Maze.prototype.setupObject = function (start) {
-  this.lookupObjects.push({
-    start: start,
-    paths: [[start]],
-    completed: false
-  });
-};
-
-Maze.prototype.processLookUpObject = function (object, index) {
-  var me = this;
-
-  me.curLookUpIndex = index;
-  object.paths.map(me.nextStep.bind(me));
-};
-
-Maze.prototype.nextStep = function(path) {
-  var me = this;
-  var newPoints = me.nextPoints(path);
-  var paths = me.lookupObjects[me.curLookUpIndex].paths;
-
-  if (newPoints.length > 0) {
-    me.lookupObjects[me.curLookUpIndex].paths = paths.concat(newPoints.map(me.clonePath.bind(me, path)));
-  }
-
-  me.removePath(path);
-};
-
-Maze.prototype.nextPoints = function(path) {
-  var me = this;
-
-  var cp = path[path.length - 1]; // current point
-  var pp = path[path.length - 2]; // previous point
-  var nps = []; // new points
-
-  me.MOVE_POINTS.forEach(function (n) {
-    var point = { x: cp.x + n.x, y: cp.y + n.y, label: n.label };
-
-    if (me.pointExists(point)) {
-      if( me.onlyOnes) {
-        if(pp === undefined ||  (pp && !me.samePoint(point, pp))  ||  (me.includesPoint(me.endPoints, point) > -1)   ||  (me.includesPoint(me.startPoints, point) > -1) ) {
-          nps.push(point);
+          default:
+            return movesBase
         }
-      } else {
-        if(pp === undefined ||  (pp && !me.samePoint(point, pp))) {
-          nps.push(point);
+      })(y, x, ey, ex)
+      if (track.length === 1) {
+        this.root = startPose
+        currentNode = this.root
+      }
+      const path = moves.map(([yMove, xMove]) => [y + yMove, x + xMove])
+
+      const filter = path.filter((path) => {
+        if (path[0] > _widthLength - 1 || path[0] < 0 || path[1] > _heightLength - 1 ||
+                        path[1] < 0 || maze[path[0]][path[1]] === 1) {
+          return false
         }
-      }
+        if (maze[path[0]][path[1]] === 2) {
+          this.addTwo(pos, path, currentNode, maze)
+          return false
+        }
+        return track.findIndex(index => index[0] === path[0] && index[1] === path[1]) === -1
+      })
+      const nodeArr = filter.map(pos => {
+        const node = new Node(pos, maze[pos[0]][pos[1]])
+        if (maze[pos[0]][pos[1]] !== 2) {
+          track.push(pos)
+        }
+        return node
+      })
+
+      nodeArr.forEach((position, index) => {
+        if (index === 1) {
+          const index = track.findIndex(index => index[0] === position.point[0] && index[1] === position.point[1])
+          track = track.slice(0, index + 1)
+        }
+        switch (true) {
+          case position.point[0] < pos.point[0]:
+            currentNode.backward = position
+            this.grow(position, maze, track, currentNode.backward)
+            break
+          case position.point[0] > pos.point[0]:
+            currentNode.forward = position
+            this.grow(position, maze, track, currentNode.forward)
+            break
+          case position.point[1] < pos.point[1]:
+            currentNode.left = position
+            this.grow(position, maze, track, currentNode.left)
+            break
+          case position.point[1] > pos.point[1]:
+            currentNode.right = position
+            this.grow(position, maze, track, currentNode.right)
+            break
+          default:
+        }
+      })
     }
-  });
 
-  return me.removeClashedPoints(nps);
-};
-
-Maze.prototype.removeClashedPoints = function (points) {
-  var me = this;
-  var clashed = [];
-  var paths = me.lookupObjects[me.curLookUpIndex].paths;
-
-  paths.forEach(function (path) {
-    points.forEach(function (point, idx) {
-      if (me.includesPoint(path, point) > -1) {
-        clashed.push(idx);
-      }
-    });
-  });
-
-  clashed.forEach(function (idx) {
-    points.splice(idx, 1);
-  });
-
-  return points;
-};
-
-Maze.prototype.clonePath = function(path, newPoint) {
-  var me = this;
-  var newPath = [];
-
-  path.forEach(function (point) {
-    newPath.push({ x: point.x, y: point.y, label: point.label });
-  });
-
-  newPath.push({ x: newPoint.x, y: newPoint.y, label: newPoint.label });
-
-  if (me.includesPoint(me.endPoints, newPoint) > -1) {
-    me.completedPath(newPath);
-  }
-
-  return newPath;
-};
-
-Maze.prototype.removePath = function(path) {
-  var me = this;
-  var idx = me.lookupObjects[me.curLookUpIndex].paths.indexOf(path);
-
-  if (idx > -1) {
-    me.lookupObjects[me.curLookUpIndex].paths.splice(idx, 1);
-  }
-};
-
-Maze.prototype.completedPath = function(path) {
-  var me = this;
-
-  if (!Array.isArray(me.lookupObjects[me.curLookUpIndex].completed)) {
-    me.lookupObjects[me.curLookUpIndex].completed = [];
-  }
-
-  me.lookupObjects[me.curLookUpIndex].completed.push(path);
-};
-
-Maze.prototype.moveCompleted = function () {
-  var me = this;
-  var lookUpObjs = [];
-
-  me.lookupObjects.forEach(function (object) {
-    if (object.paths.length === 0 || me.isCompleted(object)) {
-      me.completedObjects.push(object);
-    } else {
-      lookUpObjs.push(object);
-    }
-  });
-
-  me.lookupObjects = lookUpObjs;
-};
-
-Maze.prototype.isCompleted = function (object) {
-  var me = this;
-  var completed = object.completed;
-  var endPoints = me.endPoints;
-
-  var match;
-
-  // all end points should be last point at least on one comleted path
-  for (var i = 0; i < endPoints.length; i++) {
-    match = false;
-
-    for (var c = 0; c < completed.length; c++) {
-      if (me.samePoint(completed[c][completed[c].length-1], endPoints[i])) {
-        match = true;
-        break;
+    addTwo (pos, path, currentNode, maze) {
+      const node = new Node(path, maze[path[0]][path[1]])
+      switch (true) {
+        case path[0] < pos.point[0]:
+          currentNode.backward = node
+          break
+        case path[0] > pos.point[0]:
+          currentNode.forward = node
+          break
+        case path[1] < pos.point[1]:
+          currentNode.left = node
+          break
+        case path[1] > pos.point[1]:
+          currentNode.right = node
+          break
+        default:
       }
     }
 
-    if (!match) {
-      return false;
+    dfsShort (node, arr, shortestPath, label) {	
+      arr.push([label, node.point])
+      if (node.value === 2) {
+        shortestPath.push([...arr])
+      }
+      if (node.left) {
+        this.dfsShort(node.left, arr, shortestPath, 'L')
+      }
+      if (node.right) {
+        this.dfsShort(node.right, arr, shortestPath, 'R')
+      }
+      if (node.forward) {
+        this.dfsShort(node.forward, arr, shortestPath, 'D')
+      }
+      if (node.backward) {
+        this.dfsShort(node.backward, arr, shortestPath, 'U')
+      }
+      arr.pop()
+      if (!arr.length) {
+        return shortestPath
+      }
     }
   }
+  const startPose = new Node([start[0], start[1]], maze[start[0]][start[1]])
+  const tree = new Tree()
+  tree.grow(startPose, maze, [[start[0], start[1]]])
+  const short = tree.dfsShort(tree.root, [], [], '0')
+  const shortest = short => (short.length) ? short.sort((a, b) => a.length - b.length)[0] : false
+  const treeVision = JSON.stringify(traverse(tree.root))
 
-  return true;
-};
+  function traverse (node) {
+    const tree = { value: node.value, pos: node.point }
+    tree.left = node.left === null ? null : traverse(node.left)
+    tree.right = node.right === null ? null : traverse(node.right)
+    tree.forward = node.forward === null ? null : traverse(node.forward)
+    tree.backward = node.backward === null ? null : traverse(node.backward)
 
-Maze.prototype.includesPoint = function (points, point) {
-  var pointIndex = -1;
-
-  for (var p = 0; p < points.length; p++) {
-    if (this.samePoint(points[p], point)) {
-      pointIndex = p;
-      break;
-    }
+    return tree
   }
 
-  return pointIndex;
-};
-
-Maze.prototype.samePoint = function (a, b) {
-  return a.x === b.x && a.y === b.y;
+  return [shortest(short), treeVision]
 }
 
-Maze.prototype.printDirections = function (asArray) {
-  var me = this;
-  var output;
-
-  me.completedObjects.sort(function (a, b) {
-    if (a.start.label > b.start.label) {
-      return 1;
-    } else if (a.start.label < b.start.label) {
-      return -1;
-    } else {
-      return 0;
-    }
-  });
-
-  output = me.completedObjects.map(me.literalDirections.bind(me));
-
-  return asArray ? output : output.join(' ');
-}
-
-Maze.prototype.literalDirections = function(obj) {
-  var me = this;
-
-  if (obj.completed.length > 0) {
-    return obj.completed.map(me.literalPath.bind(me));
-  }
-
-  return '';
-}
-
-Maze.prototype.literalPath = function (path) {
-  return this.compactPath(path.map(this.literalPoint));
-}
-
-Maze.prototype.literalPoint = function (point) {
-  return point.label;
-}
-
-Maze.prototype.compactPath = function (path) {
-  var pathStr = '';
-  var obj = { c: 0 };
-
-  path.forEach(function (d, idx) {
-    pathStr += this.compactPortion(obj, d);
-    obj.dir = d;
-    obj.c++;
-  }, this);
-
-  pathStr += this.compactPortion(obj);
-
-  return pathStr.substr(1);
-}
-
-Maze.prototype.compactPortion = function(obj, d) {
-  var portion = '';
-
-  if (obj.dir && obj.dir !== d) {
-    portion += (obj.c > 1 ? obj.c : '') + obj.dir;
-    obj.dir = undefined;
-    obj.c = 0;
-  }
-
-  return portion;
-}
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = exports = Maze;
