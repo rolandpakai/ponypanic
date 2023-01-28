@@ -1,5 +1,6 @@
 //https://github.com/Talkwondo/the-maze-gunner
-const Maze = (maze, startPoint, exitPoint) => {
+const Maze = (args) => {
+  const { maze, start, end } = { ...args };
   const movesBase = [
     [-1, 0],
     [0, -1],
@@ -27,7 +28,7 @@ const Maze = (maze, startPoint, exitPoint) => {
 
     grow (pos, maze, track, currentNode) {
       const [y, x] = pos.point
-      const [ey, ex] = exitPoint
+      const [ey, ex] = end
       const moves = ((y, x, ey, ex) => {
         switch (true) {
           case ey < y && ex > x:
@@ -59,6 +60,7 @@ const Maze = (maze, startPoint, exitPoint) => {
         currentNode = this.root
       }
       const path = moves.map(([yMove, xMove]) => [y + yMove, x + xMove])
+
       const filter = path.filter((path) => {
         if (path[0] > _widthLength - 1 || path[0] < 0 || path[1] > _heightLength - 1 ||
                         path[1] < 0 || maze[path[0]][path[1]] === 1) {
@@ -125,7 +127,7 @@ const Maze = (maze, startPoint, exitPoint) => {
     }
 
     dfsShort (node, arr, shortestPath, label) {	
-      arr.push([node.point, label])
+      arr.push([label, node.point])
       if (node.value === 2) {
         shortestPath.push([...arr])
       }
@@ -147,9 +149,9 @@ const Maze = (maze, startPoint, exitPoint) => {
       }
     }
   }
-  const startPose = new Node([startPoint[0], startPoint[1]], maze[startPoint[0]][startPoint[1]])
+  const startPose = new Node([start[0], start[1]], maze[start[0]][start[1]])
   const tree = new Tree()
-  tree.grow(startPose, maze, [[startPoint[0], startPoint[1]]])
+  tree.grow(startPose, maze, [[start[0], start[1]]])
   const short = tree.dfsShort(tree.root, [], [], '0')
   const shortest = short => (short.length) ? short.sort((a, b) => a.length - b.length)[0] : false
   const treeVision = JSON.stringify(traverse(tree.root))
