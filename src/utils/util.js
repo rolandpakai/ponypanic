@@ -1,4 +1,6 @@
-import { PATH_REGEX, HERO_ACTION, IMG_BIG_SIZE, IMG_SMALL_SIZE } from '../utils/constants';
+import { HERO_ACTION, IMG_BIG_SIZE, IMG_SMALL_SIZE } from '../utils/constants';
+import { GAME_MODE, KICK_POINTS} from '../utils/constants';
+import Maze from '../maze-solver/maze'; 
 
 export const randomInteger = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -63,4 +65,146 @@ export const validateHeroAction = (heroAction) => {
   }
 
   return action;
+}
+
+export const getHeroTurnKick = (heroKicks) => {
+  const heroKick = heroKicks[0];
+  const newHeroTurn = {
+    heroId: heroKick.id,
+    action: heroKick.action,
+  }
+
+  return newHeroTurn;
+}
+
+export const getHeroAction = (direction) => {
+  let action = HERO_ACTION.NOTHING;
+
+  switch (direction) {
+    case 'U': {action = HERO_ACTION.MOVE_UP; break;}
+    case 'D': {action = HERO_ACTION.MOVE_DOWN; break;}
+    case 'L': {action = HERO_ACTION.MOVE_LEFT; break;}
+    case 'R': {action = HERO_ACTION.MOVE_RIGHT; break;}
+    default: action = HERO_ACTION.NOTHING;
+  }
+
+  return action;
+}
+
+export const getMazePaths = (mazeArg) => {
+  let paths = [];
+  
+  paths = mazeArg.end.map((end) => {
+    const maze = [...mazeArg.maze];
+    maze[end.x][end.y] = 2; 
+    
+    const arg = {
+      start: [mazeArg.start.x, mazeArg.start.y],
+      end: [end.x, end.y],
+      maze: maze,
+    }
+    
+    const result = Maze(arg);
+    const path = result[0];
+
+    if(path.length > 1) {
+      path.shift();
+    }
+
+    const steps = path.map((step) => {
+      return step[0];
+    })
+
+    return steps;
+  })
+ 
+  return paths;
+}
+
+export const getShortestMazePath = (paths) => {
+  let path = [];
+
+  if(paths.length > 0) {
+    if(paths.length === 1) {
+      path = paths[0];
+    } else {
+      const pathLengths = paths.map((path) => {
+        return path.length;
+      })
+
+      const minLength = Math.min(...pathLengths);
+      const minLengthIndex = pathLengths.indexOf(minLength);
+      path = paths[minLengthIndex];
+    }
+  }
+
+  return path;
+
+}
+
+export const getDirection = (path) => {
+  let direction = '';
+
+  if(path.length > 0){
+    direction = path[0];
+  }
+
+  return direction;
+}
+
+export const getHeroTurnMove = (mazeArg) => {
+  
+  const paths = getMazePaths(mazeArg);
+  console.log('paths', paths);
+  console.log('getHeroTurnMove mazeArg', mazeArg);
+  const path = getShortestMazePath(paths);
+  console.log('path', path);
+  const direction = getDirection(path);
+  const heroAction = getHeroAction(direction);
+  
+  const heroTurn = {
+    heroId: mazeArg.id,
+    action: heroAction
+  }
+
+  return heroTurn;
+}
+
+export const getHeroTurn = (heroKicks, mazeArg) => {
+  let newHeroTurn = {};
+
+  if(heroKicks.length > 0) {
+    newHeroTurn = getHeroTurnKick(heroKicks);
+  } else {
+    newHeroTurn = getHeroTurnMove(mazeArg);
+  }
+
+  return newHeroTurn;
+}
+
+export const getHeroKickRange = (heroes, gameMode) => {
+  let heroKickRange = [];
+
+  const heroKickRanges = Object.values(heroes).map((hero) => {
+    const kickPoints = KICK_POINTS.reduce((acc, move) => {
+      const point1 = { id: hero.id, x: hero.position.x + move.x, y: hero.position.y + move.y, action: move.action };
+      const point2 = { id: hero.id, x: hero.position.x + move.x*2, y: hero.position.y + move.y*2, action: move.action };
+      const id1 = `${point1.x}-${point1.y}`;
+      const id2 = `${point2.x}-${point2.y}`;
+      acc[id1] = point1;
+      acc[id2] = point2;
+
+      return acc
+    }, {});
+
+    return kickPoints;
+  })
+
+  if(heroKickRanges.length > 0) {
+    if(gameMode === GAME_MODE.STORY) {
+      heroKickRange = heroKickRanges[0];
+    }
+  }
+
+  return heroKickRange;
 }

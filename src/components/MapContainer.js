@@ -3,10 +3,11 @@ import { Fragment, useEffect, useState, useContext } from 'react';
 import { NewGameContext } from '../contexts/NewGameContext';
 import { apiStoryBegin, apiMapResource, apiMapState, apiApproveHeroTurn, apiPlaythroughState, apiResetLevel, apiNextLevel } from '../api/api';
 import { GAME_MODE, PLAYER_TOKEN, FIELD_TYPE, MAP_STATUS } from '../utils/constants';
-import { arrayToMap, mapToArray, getImageSize } from '../utils/util';
+import { xyTOij, arrayToMap, mapToArray, getImageSize, getHeroKickRange, getHeroTurn, getMazePaths, getShortestMazePath } from '../utils/util';
 import Canvas from './Canvas';
 import PopupDialog from './PopupDialog';
 import CustomButton from './CustomButton';
+import Field from "./Field";
 
 const MapContainer = () => {
   const [gameMode, setGameMode] = useState(GAME_MODE.STORY);
@@ -16,8 +17,157 @@ const MapContainer = () => {
   const [heroTurn, setHeroTurn] = useState({});
   const [dialogProps, setDialogProps] = useState({open:false});
 
-  const updateHeroTurn = (heroTurn) => {
+  const [canvasFields, setCanvasFields] = useState([]);
+
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+  const [mapId, setMapId] = useState(0);
+
+  /*const updateHeroTurn = (heroTurn) => {
     setHeroTurn(heroTurn)
+  }*/
+
+  const addField = (x, y, fieldType, fieldSize, currentLevel, fields) => {
+    const id = `${x}-${y}`;
+
+    let field = {
+      id: id,
+      position: {
+        x: x,
+        y: y,
+      },
+      size: fieldSize,
+      level: currentLevel,
+      type: fieldType
+    };
+
+    fields.push(<Field key={id} {...field} />);
+  }
+
+  const getCanvasFields = (props) => {
+    const { 
+      width, 
+      height, 
+      fieldSize, 
+      heroes, 
+      enemies, 
+      bullets,
+      treasures, 
+      collected, 
+      obstacles, 
+      currentLevel, 
+      elapsedTickCount,
+      gameMode 
+    } = {...props};
+
+    const fields = [];
+
+    let start = [];
+    const end = [];
+    let heroKicks = {};
+    const heroKick = [];
+    const maze = Array.from(Array(height), () => []);
+    
+    //if(heroes) {
+      const hasEnemy = !(Object.keys(enemies).length === 0);
+
+      if(hasEnemy) {
+        const heroKickRange = getHeroKickRange(heroes, gameMode);
+        heroKicks = {...heroKickRange};
+      }
+
+      for (let j = -1; j <= height; j++) {
+        addField(j, height, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
+      }
+
+      for (let i = width-1; i >= 0; i--) {
+        for (let j = 0; j < height; j++) {
+          const id = `${j}-${i}`;
+          const xy = xyTOij(i, j ,height);
+          maze[xy.i][xy.j] = 0;
+
+          if(j === 0) {
+            addField(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
+          }
+
+          let field = {
+            id: id,
+            position: {
+              x: j,
+              y: i,
+            },
+            size: fieldSize,
+            level: currentLevel,
+            type: FIELD_TYPE.FLOOR
+          };
+
+          if(treasures[id] && !collected[id]) {
+            field = {...field, ...treasures[id]};
+            end.push({ x: xy.i, y: xy.j, id: field.id })
+          } 
+
+          if(heroes[id]) {
+            field = {...field, ...heroes[id]};
+            start.push({ x: xy.i, y: xy.j, id: field.id })
+          } 
+
+          if(enemies[id]) {
+            if(enemies[id].health > 0) {
+              if(heroKicks[id]) {
+                heroKick.push(heroKicks[id])
+              }
+              field = {...field, ...enemies[id]};
+            }
+          } 
+
+          if(bullets[id]) {
+            field = {...field, ...bullets[id]};
+          } 
+
+          if(enemies[id] && bullets[id]) {
+            field = {...field, ...enemies[id], type: FIELD_TYPE.ENEMY_BULLET};
+          } 
+          
+          if(obstacles[id]) {
+            field = {...field, ...obstacles[id]};
+            maze[xy.i][xy.j] = 1;
+          } 
+
+          fields.push(<Field key={id} {...field} />);
+
+          if(j === width-1) {
+            addField(width, i, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
+          }
+      } }
+
+      for (let j = -1; j <= height; j++) {
+        addField(j, -1, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
+      }
+
+
+
+      if(gameMode === GAME_MODE.STORY) {
+        start = start[0];
+      }
+
+      const mazeArg = {
+        id: start.id,
+        maze: maze,
+        start: start,
+        end: end,
+      };
+      console.log('mazeArg', mazeArg)
+      const newHeroTurn = getHeroTurn(heroKick, mazeArg);
+      console.log('newHeroTurn', newHeroTurn);
+      if(elapsedTickCount === 0) {
+        //const paths = getMazePaths(mazeArg);
+        //const path = getShortestMazePath(paths);
+      }
+
+      setHeroTurn(newHeroTurn)
+    //}
+
+    return fields;
   }
 
   const getCanvasData = (mapResource, mapState, currentLevel) => {
@@ -43,9 +193,10 @@ const MapContainer = () => {
       treasures: treasures,
       obstacles: obstacles,
       collected: {},
+      elapsedTickCount: map.elapsedTickCount,
       currentLevel: currentLevel,
       gameMode: gameMode,
-      updateHeroTurn: updateHeroTurn,
+      //updateHeroTurn: updateHeroTurn,
     };
 
   }
@@ -54,20 +205,32 @@ const MapContainer = () => {
     const { playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiResetLevel(storyPlaythroughToken);
     const mapResource= await apiMapResource(storyPlaythroughToken);
     const mapState = await apiMapState(storyPlaythroughToken);
-    const newCanvas = getCanvasData(mapResource, mapState, currentLevel)
+    const canvas = getCanvasData(mapResource, mapState, currentLevel)
+    const canvasFields = getCanvasFields(canvas);
+
+    setWidth(canvas.width);
+    setHeight(canvas.height);
+    setMapId(canvas.mapId);
+    setCanvas(canvas);
+    setCanvasFields(canvasFields);
 
     setDialogProps({...dialogProps, open: false});
-    setCanvas(newCanvas);
   }
 
   const nextLevel = async () => {
     const { playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiNextLevel(storyPlaythroughToken);
     const mapResource = await apiMapResource(storyPlaythroughToken);
     const mapState = await apiMapState(storyPlaythroughToken);
-    const newCanvas = getCanvasData(mapResource, mapState, currentLevel)
+    const canvas = getCanvasData(mapResource, mapState, currentLevel)
+    const canvasFields = getCanvasFields(canvas);
+
+    setWidth(canvas.width);
+    setHeight(canvas.height);
+    setMapId(canvas.mapId);
+    setCanvas(canvas);
+    setCanvasFields(canvasFields);
 
     setDialogProps({...dialogProps, open: false});
-    setCanvas(newCanvas);
   }
 
   const endHandler = () => {
@@ -129,10 +292,15 @@ const MapContainer = () => {
           updates.collected = collected;
         }
 
-        setCanvas({
+        const newCanvas = {
           ...canvas,
           ...updates
-        });
+        }
+
+        setCanvas(newCanvas);
+
+        const canvasFields = getCanvasFields(newCanvas);
+        setCanvasFields(canvasFields);
       }
     }
   }
@@ -148,10 +316,18 @@ const MapContainer = () => {
       const {storyPlaythroughToken, playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiStoryBegin(PLAYER_TOKEN);
       const mapResource = await apiMapResource(storyPlaythroughToken);
       const mapState = await apiMapState(storyPlaythroughToken);
-      const canvas = getCanvasData(mapResource, mapState, currentLevel)
+      const canvas = getCanvasData(mapResource, mapState, currentLevel);
+      const canvasFields = getCanvasFields(canvas);
+
+      setWidth(canvas.width);
+      setHeight(canvas.height);
+      setMapId(canvas.mapId);
+      setCanvas(canvas);
+      setCanvasFields(canvasFields);
+
+
 
       setStoryPlaythroughToken(storyPlaythroughToken);
-      setCanvas(canvas);
     }
 
     fetchData();
@@ -164,7 +340,10 @@ const MapContainer = () => {
           <div className="sub-container">
             <div className="panel-left">
                 <Canvas 
-                  {...canvas}
+                  id={mapId}
+                  width={width}
+                  height={height}
+                  fields={canvasFields}
                 />
             </div>
           </div>
