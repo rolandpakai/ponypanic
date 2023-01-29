@@ -142,35 +142,6 @@ export const getShortestMazePath = (paths) => {
 
 }
 
-/*export const getDirection = (path) => {
-  let direction = '';
-
-  if(path.length > 0){
-    direction = path[0];
-  }
-
-  return direction;
-}*/
-
-
-/*export const getHeroTurnMove = (mazeArg) => {
-  
-  const paths = getMazePaths(mazeArg);
-  console.log('paths', paths);
-  console.log('getHeroTurnMove mazeArg', mazeArg);
-  const path = getShortestMazePath(paths);
-  console.log('path', path);
-  const direction = getDirection(path);
-  const heroAction = getHeroAction(direction);
-  
-  const heroTurn = {
-    heroId: mazeArg.start.id,
-    action: heroAction
-  }
-
-  return heroTurn;
-}*/
-
 export const getNextDirection = (path, step) => {
   let direction = '';
 
