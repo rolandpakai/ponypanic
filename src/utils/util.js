@@ -67,16 +67,6 @@ export const validateHeroAction = (heroAction) => {
   return action;
 }
 
-export const getHeroTurnKick = (heroKicks) => {
-  const heroKick = heroKicks[0];
-  const newHeroTurn = {
-    heroId: heroKick.id,
-    action: heroKick.action,
-  }
-
-  return newHeroTurn;
-}
-
 export const getHeroAction = (direction) => {
   let action = HERO_ACTION.NOTHING;
 
@@ -152,7 +142,7 @@ export const getNextDirection = (path, step) => {
   return direction;
 }
 
-export const getHeroTurnMove = (path, step) => {
+export const getHeroNextAction = (path, step) => {
   const direction = getNextDirection(path, step);
   const heroAction = getHeroAction(direction);
 
@@ -160,7 +150,6 @@ export const getHeroTurnMove = (path, step) => {
 }
 
 export const getHeroMazePath = (mazeArg) => {
-  console.log('mazeArg', mazeArg)
   const paths = getMazePaths(mazeArg);
   console.log('paths', paths);
   const path = getShortestMazePath(paths);
@@ -169,48 +158,31 @@ export const getHeroMazePath = (mazeArg) => {
   return path;
 }
 
-export const getHeroTurn = (heroKicks, mazeArg) => {
-  let newHeroTurn = {};
+export const getHeroNextTurn = (hero, mazePath, hasEnemy, step) => {
+  let nextHeroTurn = {};
 
-  if(heroKicks.length > 0) {
-    newHeroTurn = getHeroTurnKick(heroKicks);
+  if(hasEnemy && hero.enemyInKickRange && hero.enemyInKickRange.length > 0) {
+    const point = hero.enemyInKickRange[0];
+
+    nextHeroTurn = {
+      heroId: hero.id,
+      action: point.action,
+      step: step,
+    }
   } else {
-    newHeroTurn = getHeroTurnMove(mazeArg);
+    const heroAction = getHeroNextAction(mazePath, step);
+
+    nextHeroTurn = {
+      heroId: hero.id,
+      action: heroAction,
+      step: step + 1,
+     }
   }
 
-  return newHeroTurn;
-}
-
-export const getHerosKickRange = (heroes) => {
-
-  const heroKickRanges = Object.values(heroes).reduce((acc, hero) => {
-    const kickPoints = KICK_POINTS.reduce((acc, move) => {
-      const point1 = { id: hero.id, x: hero.position.x + move.x, y: hero.position.y + move.y, action: move.action };
-      const point2 = { id: hero.id, x: hero.position.x + move.x*2, y: hero.position.y + move.y*2, action: move.action };
-      const id1 = `${point1.x}-${point1.y}`;
-      const id2 = `${point2.x}-${point2.y}`;
-      acc[id1] = point1;
-      acc[id2] = point2;
-      return acc
-    }, {});
-
-
-    for (const id in kickPoints) { 
-      if(acc[id]) {
-        acc[id].push(kickPoints[id])
-      } else {
-        acc[id] = kickPoints[id];
-      }
-    }
-
-    return acc;
-  }, {})
-
-  return {...heroKickRanges};
+  return nextHeroTurn;
 }
 
 export const getHeroKickRange = (hero, enemies) => {
-
   const enemyInKickRange = [];
 
   const kickRange = KICK_POINTS.reduce((acc, move) => {
@@ -219,12 +191,12 @@ export const getHeroKickRange = (hero, enemies) => {
     const id1 = `${point1.x}-${point1.y}`;
     const id2 = `${point2.x}-${point2.y}`;
 
-    if(enemies[id1]) {
+    if(enemies[id1] && enemies[id1].health > 0) {
       point1.isEnemy = true;
       enemyInKickRange.push(point1);
     }
 
-    if(enemies[id2]) {
+    if(enemies[id2] && enemies[id2].health > 0) {
       point2.isEnemy = true;
       enemyInKickRange.push(point2);
     }

@@ -2,8 +2,8 @@ import { Fragment, useEffect, useState, useContext } from 'react';
 
 import { NewGameContext } from '../contexts/NewGameContext';
 import { apiStoryBegin, apiMapResource, apiMapState, apiApproveHeroTurn, apiPlaythroughState, apiResetLevel, apiNextLevel } from '../api/api';
+import { xyTOij, arrayToMap, mapToArray, getImageSize, getHeroKickRange, getHeroNextTurn, getHeroMazePath } from '../utils/util';
 import { GAME_MODE, PLAYER_TOKEN, FIELD_TYPE, MAP_STATUS } from '../utils/constants';
-import { xyTOij, arrayToMap, mapToArray, getImageSize, getHeroKickRange, getHeroTurnMove, getHeroMazePath } from '../utils/util';
 import Canvas from './Canvas';
 import PopupDialog from './PopupDialog';
 import CustomButton from './CustomButton';
@@ -23,7 +23,7 @@ const MapContainer = () => {
   const [mapId, setMapId] = useState(0);
 
   const [mazePath, setMazePath] = useState([]);
-
+  const [mazeStep, setMazeStep] = useState(0);
   const [dialogProps, setDialogProps] = useState({open:false});
 
   /*const updateHeroTurn = (heroTurn) => {
@@ -142,47 +142,44 @@ const MapContainer = () => {
       addField(j, -1, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
     }
 
+    let step = mazeStep;
+
+    if(elapsedTickCount === 0) {
+      step = 0;
+    }
+    
+    console.log('elapsedTickCount', elapsedTickCount)
     if(gameMode === GAME_MODE.STORY) {
       let nextHeroTurn = {};
       const start = starts[0];
       const hero = heroes[start.idd];
 
-        if(hasEnemy && hero.enemyInKickRange && hero.enemyInKickRange.length > 0) {
+      if(collected[start.idd] && collected[start.idd].collectedByHeroId === hero.id) {
+        step = 0;
+      }
 
-        } else {
-          if(elapsedTickCount === 0) {
-            console.log('elapsedTickCount', elapsedTickCount)
+      if(step === 0) {
+        const mazeArg = {
+          maze: maze,
+          start: start,
+          ends: ends,
+        };
+        console.log('mazeArg', mazeArg)
+        if(width < 15) {
+        const mazePath = getHeroMazePath(mazeArg);
+        console.log('mazePath', mazePath);
+        nextHeroTurn = getHeroNextTurn(hero, mazePath, hasEnemy, step);
 
-            const mazeArg = {
-              maze: maze,
-              start: start,
-              ends: ends,
-            };
-            
-            const mazePath = getHeroMazePath(mazeArg); 
-            const heroAction = getHeroTurnMove(mazePath, elapsedTickCount);
-
-            nextHeroTurn = {
-              heroId: hero.id,
-              action: heroAction
-            }
-
-            setMazePath(mazePath);
-
-          } else {
-            console.log('elapsedTickCount', elapsedTickCount)
-
-            const heroAction = getHeroTurnMove(mazePath, elapsedTickCount);
-
-            nextHeroTurn = {
-              heroId: hero.id,
-              action: heroAction
-            }
-          }
-
+        setMazePath(mazePath);
         }
+      } else {
+        nextHeroTurn = getHeroNextTurn(hero, mazePath, hasEnemy, step);
+      }
 
-        setHeroTurn(nextHeroTurn)
+      console.log('nextHeroTurn', nextHeroTurn);
+
+      setHeroTurn(nextHeroTurn)
+      setMazeStep(nextHeroTurn.step);
     }
 
     return fields;
@@ -211,32 +208,15 @@ const MapContainer = () => {
       treasures: treasures,
       obstacles: obstacles,
       collected: {},
-      elapsedTickCount: map.elapsedTickCount,
       currentLevel: currentLevel,
+      elapsedTickCount: map.elapsedTickCount,
       gameMode: gameMode,
       //updateHeroTurn: updateHeroTurn,
     };
-
   }
 
-  const resetLevel = async () => {
-    const { playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiResetLevel(storyPlaythroughToken);
-    const mapResource= await apiMapResource(storyPlaythroughToken);
-    const mapState = await apiMapState(storyPlaythroughToken);
-    const canvas = getCanvasData(mapResource, mapState, currentLevel)
-    const canvasFields = getCanvasFields(canvas);
+  const setState = async (storyPlaythroughToken, currentLevel) => {
 
-    setWidth(canvas.width);
-    setHeight(canvas.height);
-    setMapId(canvas.mapId);
-    setCanvas(canvas);
-    setCanvasFields(canvasFields);
-
-    setDialogProps({...dialogProps, open: false});
-  }
-
-  const nextLevel = async () => {
-    const { playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiNextLevel(storyPlaythroughToken);
     const mapResource = await apiMapResource(storyPlaythroughToken);
     const mapState = await apiMapState(storyPlaythroughToken);
     const canvas = getCanvasData(mapResource, mapState, currentLevel)
@@ -249,6 +229,16 @@ const MapContainer = () => {
     setCanvasFields(canvasFields);
 
     setDialogProps({...dialogProps, open: false});
+  }
+
+  const resetLevel = async () => {
+    const { playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiResetLevel(storyPlaythroughToken);
+    setState(storyPlaythroughToken, currentLevel);
+  }
+
+  const nextLevel = async () => {
+    const { playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiNextLevel(storyPlaythroughToken);
+    setState(storyPlaythroughToken, currentLevel);
   }
 
   const endHandler = () => {
@@ -325,25 +315,13 @@ const MapContainer = () => {
   }
 
   const nextTurnHandle = () => {
-    heroTurn.storyPlaythroughToken = storyPlaythroughToken;
-
     nextTurn(heroTurn);
   }
 
   useEffect(() => {
     const fetchData = async () => {
       const {storyPlaythroughToken, playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiStoryBegin(PLAYER_TOKEN);
-      const mapResource = await apiMapResource(storyPlaythroughToken);
-      const mapState = await apiMapState(storyPlaythroughToken);
-      const canvas = getCanvasData(mapResource, mapState, currentLevel);
-      const canvasFields = getCanvasFields(canvas);
-
-      setWidth(canvas.width);
-      setHeight(canvas.height);
-      setMapId(canvas.mapId);
-      setCanvas(canvas);
-      setCanvasFields(canvasFields);
-
+      setState(storyPlaythroughToken, currentLevel);
       setStoryPlaythroughToken(storyPlaythroughToken);
     }
 
