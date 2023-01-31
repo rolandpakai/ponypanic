@@ -1,47 +1,65 @@
-import { React, useContext } from 'react';
+import { useContext } from 'react';
+import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+import Select from '@mui/material/Select';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 import { ThemeContext } from '../contexts/ThemeContext';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { THEMES_SELECT_OPTIONS, DEFAULT_THEME } from '../utils/constants';
-import Select from 'react-select'
+//import Select from 'react-select'
 
 const Footer = () => {
-  const { selectTheme } = useContext(ThemeContext);
+  const { theme, selectTheme } = useContext(ThemeContext);
 
-  const DEFAULT_THEME_OPTION = THEMES_SELECT_OPTIONS.find(theme => theme.value === DEFAULT_THEME);
+  const handleChange = (event) => {
+    selectTheme(event.target.value);
+  };
   
   return (
-    <footer className="footer">
-      <div className="footer-content">
-        <div className="footer-left">
+    <Box className="footer">
+
+        <Box 
+          sx={{
+            float: 'left',
+            padding: '0 5px 5px 5px',
+          }}
+        >
           <ul>
             <li>
-              <a href="https://www.linkedin.com/in/roland-p%C3%A1kai-6a2041249/" target="_blank" rel="noreferrer">
-                <FaLinkedin size={"1.5em"}/>
-              </a> 
+              <Link href="https://www.linkedin.com/in/roland-p%C3%A1kai-6a2041249/" target="_blank" color="inherit">
+                <LinkedInIcon fontSize={'medium'}/>
+              </Link> 
             </li>
             <li>
-              <a href="https://github.com/rolandpakai/ponypanic" target="_blank" rel="noreferrer">
-                <FaGithub size={"1.5em"}/>
-              </a> 
+              <Link href="https://github.com/rolandpakai/ponypanic" target="_blank" color="inherit">
+                <GitHubIcon fontSize={'medium'} />
+              </Link> 
             </li>
           </ul>
-        </div>
-        <div className="footer-right">
+        </Box>
+        <Box 
+          sx={{
+            float: 'right',
+            padding: '0 5px 5px 5px',
+          }}
+        >
           <Select
-            name="theme-select"
-            className="react-select-container"
-            classNamePrefix="react-select"
-            onChange={selectTheme}
-            defaultValue={DEFAULT_THEME_OPTION}
-            options={THEMES_SELECT_OPTIONS}
-            isClearable={false}
-            isSearchable={false}
-            menuPlacement="top"  
-          />
-        </div>
-      </div>
-    </footer>
+            onChange={handleChange}
+            value={theme}
+          >
+            {
+              THEMES_SELECT_OPTIONS.map((option) => {
+                return (
+                  <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+                )
+              })
+            }
+          </Select>
+          </Box>
+    </Box>
   )
 }
 

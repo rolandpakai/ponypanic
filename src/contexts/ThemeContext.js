@@ -10,14 +10,14 @@ export const ThemeContext = createContext({
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(DEFAULT_THEME);
 
-  const selectTheme = ({value, label}) => {
+  const selectTheme = (value) => {
     localStorageSetItem(LOCAL_STORAGE_THEME_NAME, value);
     setTheme(value);
   }
 
   useEffect(() => {
     const localStorageTheme = localStorageGetItem(LOCAL_STORAGE_THEME_NAME);
-    if(localStorageTheme) {
+    if(localStorageTheme && localStorageTheme !== 'undefined') {
       setTheme(localStorageTheme);
     } else {
       localStorageSetItem(LOCAL_STORAGE_THEME_NAME, DEFAULT_THEME);

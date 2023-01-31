@@ -1,4 +1,5 @@
 import { useMemo, useContext } from "react";
+import Box from '@mui/material/Box';
 
 import { ThemeContext } from '../contexts/ThemeContext';
 import { randomInteger, validateHeroAction } from '../utils/util';
@@ -12,15 +13,6 @@ const Field = ( props ) => {
   let randomEnemy = useMemo(() => randomInteger(1, ENEMY_COUNT), []);
 
   const mapLevel = level > MAP_COUNT ? MAP_COUNT : level;
-
-  const divStyle = {
-    width: size,
-    height: size,
-    display: 'flex',
-    backgroundSize: size,
-    backgroundRepeat: 'no-repeat',
-    backgroundImage: `url('./themes/${theme}/maps/map-${mapLevel}/floor.png')`,
-  }
 
   let imgStyle = {
     width: size,
@@ -62,7 +54,14 @@ const Field = ( props ) => {
   }
 
   return (
-      <div style={divStyle}>
+      <Box sx={{
+        width: size,
+        height: size,
+        display: 'flex',
+        backgroundSize: size,
+        backgroundRepeat: 'no-repeat',
+        backgroundImage: `url('./themes/${theme}/maps/map-${mapLevel}/floor.png')`,
+      }}>
         { type !== FIELD_TYPE.FLOOR &&
           <img 
             alt={type}
@@ -71,7 +70,7 @@ const Field = ( props ) => {
             style={imgStyle}
           />
         }
-      </div>
+      </Box>
   )
 }
 

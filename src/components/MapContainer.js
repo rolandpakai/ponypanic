@@ -1,4 +1,7 @@
 import { Fragment, useEffect, useState, useContext } from 'react';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Stack from "@mui/material/Stack";
 
 import { NewGameContext } from '../contexts/NewGameContext';
 import { apiStoryBegin, apiMapResource, apiMapState, apiApproveHeroTurn, apiPlaythroughState, apiResetLevel, apiNextLevel } from '../api/api';
@@ -7,7 +10,7 @@ import { GAME_MODE, PLAYER_TOKEN, FIELD_TYPE, MAP_STATUS } from '../utils/consta
 import { Algorithms, Heuristic } from '../path-finder/constants';
 import Canvas from './Canvas';
 import PopupDialog from './PopupDialog';
-import CustomButton from './CustomButton';
+import Button from './Button';
 import Field from "./Field";
 
 const MapContainer = () => {
@@ -324,20 +327,49 @@ const MapContainer = () => {
 
   return (
     <Fragment>   
-      <main className="main">
-        <div className="main-container">
-          <div className="sub-container">
-            <div className="panel-left">
+      <main className="cmain">
+        <Box>
+          <Container 
+            maxWidth="md" 
+          >
+          <Stack 
+              maxWidth="xs"
+              direction="row" 
+              justifyContent="center" 
+              sx={{
+                padding: '2rem',
+              }}
+            >
+            <Box 
+              sx={{
+                border: '5px solid #3a3b3b',
+              }}
+            >
                 <Canvas 
                   id={mapId}
                   width={width}
                   height={height}
                   fields={canvasFields}
                 />
-            </div>
-          </div>
-          <CustomButton onClick={nextTurnHandle} title={"HERO TURN"}/>
-        </div>
+            </Box>
+            </Stack>
+          </Container>
+
+          <Container 
+            maxWidth="xs" 
+           >
+            <Stack 
+              maxWidth="xs"
+              direction="row" 
+              justifyContent="center" 
+            >
+              <Button onClick={nextTurnHandle} >
+                {"HERO TURN"}
+              </Button>
+            </Stack>
+          </Container>
+
+        </Box>
       </main>
       <PopupDialog {...dialogProps} />
     </Fragment>
