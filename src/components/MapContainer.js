@@ -69,7 +69,6 @@ const MapContainer = () => {
     const endNodes = [];
     const maze = Array.from(Array(height), () => []);
     const hasEnemy = !(Object.keys(enemies).length === 0);
-    const hasBullet = !(Object.keys(enemies).length === 0);
 
     for (let j = -1; j <= height; j++) {
       addField(j, height, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
@@ -278,6 +277,30 @@ const MapContainer = () => {
     if(didTickHappen) {
       const { map, heroes } = await apiMapState(storyPlaythroughToken);
 
+      const updates = {
+        heroes: arrayToMap(heroes, FIELD_TYPE.HERO, heroTurn),
+        enemies: arrayToMap(map.enemies, FIELD_TYPE.ENEMY),
+        bullets: arrayToMap(map.bullets, FIELD_TYPE.BULLET),
+        elapsedTickCount: map.elapsedTickCount,
+      }
+      const treasures = arrayToMap(map.treasures, FIELD_TYPE.TREASURE);
+      const collectedList = Object.values(treasures).filter((treasure)=>treasure.collectedByHeroId!=null);
+      
+      if(collectedList.length > 0) {
+        const collected = arrayToMap(collectedList, FIELD_TYPE.COLLECTED_TREASURE);
+        updates.collected = collected;
+      }
+
+      const newCanvas = {
+        ...canvas,
+        ...updates
+      }
+
+      setCanvas(newCanvas);
+
+      const canvasFields = getCanvasFields(newCanvas);
+      setCanvasFields(canvasFields);
+
       if(map.isGameOver) {
         const {currentLevel, currentMapStatus, isCurrentLevelFinished} = await apiPlaythroughState(storyPlaythroughToken);
         
@@ -286,30 +309,6 @@ const MapContainer = () => {
         } else if(map.status === MAP_STATUS.LOST) {
           setDialogProps(dialogPropsStatus[MAP_STATUS.LOST]);
         }
-      } else {
-        const updates = {
-          heroes: arrayToMap(heroes, FIELD_TYPE.HERO, heroTurn),
-          enemies: arrayToMap(map.enemies, FIELD_TYPE.ENEMY),
-          bullets: arrayToMap(map.bullets, FIELD_TYPE.BULLET),
-          elapsedTickCount: map.elapsedTickCount,
-        }
-        const treasures = arrayToMap(map.treasures, FIELD_TYPE.TREASURE);
-        const collectedList = Object.values(treasures).filter((treasure)=>treasure.collectedByHeroId!=null);
-        
-        if(collectedList.length > 0) {
-          const collected = arrayToMap(collectedList, FIELD_TYPE.COLLECTED_TREASURE);
-          updates.collected = collected;
-        }
-
-        const newCanvas = {
-          ...canvas,
-          ...updates
-        }
-
-        setCanvas(newCanvas);
-
-        const canvasFields = getCanvasFields(newCanvas);
-        setCanvasFields(canvasFields);
       }
     }
   }
