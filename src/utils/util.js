@@ -224,3 +224,11 @@ export const getHeroKickRange = (hero, enemies, bullets) => {
 
   return { kickRange, enemyInKickRange, bulletInRange };
 }
+
+export const localStorageGetItem = (itemName) => {
+  return localStorage.getItem(itemName)
+}
+
+export const localStorageSetItem = (itemName, itemValue) => {
+  return localStorage.setItem(itemName, itemValue)
+}

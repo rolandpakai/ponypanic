@@ -1,5 +1,6 @@
 import { createContext, useState, useLayoutEffect, useEffect } from "react";
-import { DEFAULT_THEME } from '../utils/constants';
+import { DEFAULT_THEME, LOCAL_STORAGE_THEME_NAME } from '../utils/constants';
+import { localStorageGetItem ,localStorageSetItem } from '../utils/util';
 
 export const ThemeContext = createContext({
   theme: 'dark', 
@@ -10,16 +11,16 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(DEFAULT_THEME);
 
   const selectTheme = ({value, label}) => {
-    localStorage.setItem('pony-panic-theme', value);
+    localStorageSetItem(LOCAL_STORAGE_THEME_NAME, value);
     setTheme(value);
   }
 
   useEffect(() => {
-    const localStorageTheme = localStorage.getItem('pony-panic-theme');
+    const localStorageTheme = localStorageGetItem(LOCAL_STORAGE_THEME_NAME);
     if(localStorageTheme) {
       setTheme(localStorageTheme);
     } else {
-      localStorage.setItem('pony-panic-theme', DEFAULT_THEME);
+      localStorageSetItem(LOCAL_STORAGE_THEME_NAME, DEFAULT_THEME);
       setTheme(DEFAULT_THEME);
     }
   }, [])
