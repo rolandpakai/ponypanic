@@ -160,7 +160,16 @@ export const getHeroMazePath = (mazeArg) => {
 export const getHeroNextTurn = (hero, mazePath, hasEnemy, step) => {
   let nextHeroTurn = {};
 
-  if(hasEnemy && hero.enemyInKickRange && hero.enemyInKickRange.length > 0) {
+  if(hasEnemy && hero.bulletInRange && hero.bulletInRange.length > 0) {
+    const point = hero.bulletInRange[0];
+
+    nextHeroTurn = {
+      heroId: hero.id,
+      action: point.action,
+      step: step,
+    }
+
+  } else if(hasEnemy && hero.enemyInKickRange && hero.enemyInKickRange.length > 0) {
     const point = hero.enemyInKickRange[0];
 
     nextHeroTurn = {
@@ -181,12 +190,13 @@ export const getHeroNextTurn = (hero, mazePath, hasEnemy, step) => {
   return nextHeroTurn;
 }
 
-export const getHeroKickRange = (hero, enemies) => {
+export const getHeroKickRange = (hero, enemies, bullets) => {
   const enemyInKickRange = [];
+  const bulletInRange = [];
 
   const kickRange = KICK_POINTS.reduce((acc, move) => {
-    const point1 = { id: hero.id, x: hero.position.x + move.x, y: hero.position.y + move.y, action: move.action, isEnemy: false };
-    const point2 = { id: hero.id, x: hero.position.x + move.x*2, y: hero.position.y + move.y*2, action: move.action, isEnemy: false };
+    const point1 = { id: hero.id, x: hero.position.x + move.x, y: hero.position.y + move.y, action: move.action, isEnemy: false, isBullet: false };
+    const point2 = { id: hero.id, x: hero.position.x + move.x*2, y: hero.position.y + move.y*2, action: move.action, isEnemy: false, isBullet: false };
     const id1 = `${point1.x}-${point1.y}`;
     const id2 = `${point2.x}-${point2.y}`;
 
@@ -200,11 +210,17 @@ export const getHeroKickRange = (hero, enemies) => {
       enemyInKickRange.push(point2);
     }
 
+    if(bullets[id1]) {
+      point1.isBullet = true;
+      point1.action = HERO_ACTION.USE_SHIELD
+      bulletInRange.push(point1);
+    }
+
     acc[id1] = point1;
     acc[id2] = point2;
 
     return acc
   }, {});
 
-  return { kickRange, enemyInKickRange };
+  return { kickRange, enemyInKickRange, bulletInRange };
 }

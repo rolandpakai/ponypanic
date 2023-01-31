@@ -69,6 +69,7 @@ const MapContainer = () => {
     const endNodes = [];
     const maze = Array.from(Array(height), () => []);
     const hasEnemy = !(Object.keys(enemies).length === 0);
+    const hasBullet = !(Object.keys(enemies).length === 0);
 
     for (let j = -1; j <= height; j++) {
       addField(j, height, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
@@ -103,11 +104,13 @@ const MapContainer = () => {
 
         if(heroes[id]) {
           if(hasEnemy) {
-            const { kickRange, enemyInKickRange } = getHeroKickRange(heroes[id], enemies)
+            const { kickRange, enemyInKickRange, bulletInRange } = getHeroKickRange(heroes[id], enemies, bullets)
             heroes[id].kickRange = kickRange;
             heroes[id].enemyInKickRange = enemyInKickRange;
+            heroes[id].bulletInRange = bulletInRange;
             console.log('enemyInKickRange', enemyInKickRange);
             console.log('enemyInKickRange', enemyInKickRange);
+            console.log('bulletInRange', bulletInRange);
           }
 
           field = {...field, ...heroes[id]};
@@ -130,7 +133,6 @@ const MapContainer = () => {
         
         if(obstacles[id]) {
           field = {...field, ...obstacles[id]};
-          console.log(`obstacles ${xy.i}-${xy.j}`)
           maze[xy.i][xy.j] = 2;
         } 
 
