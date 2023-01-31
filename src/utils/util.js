@@ -1,6 +1,6 @@
 import { HERO_ACTION, IMG_BIG_SIZE, IMG_SMALL_SIZE } from '../utils/constants';
 import { KICK_POINTS} from '../utils/constants';
-import Maze from '../maze-solver/maze'; 
+import PathFinder from '../path-finder/PathFinder';
 
 export const randomInteger = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -13,7 +13,7 @@ export const timeoutPromise = (timeout) => {
 }
 
 export const xyTOij = (x, y, height) => {
-  return { i: height - x - 1, j: y }
+  return { i: height - x - 1, j: y}
 }
 
 export const arrayToMap = (array, type, turn) => {
@@ -84,28 +84,27 @@ export const getHeroAction = (direction) => {
 export const getMazePaths = (mazeArg) => {
   let paths = [];
   
-  paths = mazeArg.ends.map((end) => {
-    const maze = [...mazeArg.maze];
-    maze[end.x][end.y] = 2; 
-    
+  paths = mazeArg.endNodes.map((endNode) => {
+    //board, startNode, endNode, algorithm, heuristic, rowCount, colCount
     const arg = {
-      start: [mazeArg.start.x, mazeArg.start.y],
-      end: [end.x, end.y],
-      maze: maze,
+      ...mazeArg,
+      startNode: mazeArg.startNodes,
+      endNode: endNode,
     }
-    
-    const result = Maze(arg);
-    const path = result[0];
+    console.log('arg',arg)
+    const path = PathFinder(arg);
+    console.log('PathFinder path', path);
+    //const path = result[0];
 
     if(path.length > 1) {
       path.shift();
     }
-
+    /*
     const steps = path.map((step) => {
       return step[0];
-    })
+    })*/
 
-    return steps;
+    return path;
   })
  
   return paths;
@@ -136,7 +135,7 @@ export const getNextDirection = (path, step) => {
   let direction = '';
 
   if(path.length > 0){
-    direction = path[step];
+    direction = path[step].dir;
   }
 
   return direction;

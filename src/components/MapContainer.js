@@ -4,6 +4,7 @@ import { NewGameContext } from '../contexts/NewGameContext';
 import { apiStoryBegin, apiMapResource, apiMapState, apiApproveHeroTurn, apiPlaythroughState, apiResetLevel, apiNextLevel } from '../api/api';
 import { xyTOij, arrayToMap, mapToArray, getImageSize, getHeroKickRange, getHeroNextTurn, getHeroMazePath } from '../utils/util';
 import { GAME_MODE, PLAYER_TOKEN, FIELD_TYPE, MAP_STATUS } from '../utils/constants';
+import { Algorithms, Heuristic } from '../path-finder/constants';
 import Canvas from './Canvas';
 import PopupDialog from './PopupDialog';
 import CustomButton from './CustomButton';
@@ -64,8 +65,8 @@ const MapContainer = () => {
     } = {...props};
 
     const fields = [];
-    const starts = [];
-    const ends = [];
+    const startNodes = [];
+    const endNodes = [];
     const maze = Array.from(Array(height), () => []);
     const hasEnemy = !(Object.keys(enemies).length === 0);
 
@@ -77,6 +78,7 @@ const MapContainer = () => {
       for (let j = 0; j < height; j++) {
         const id = `${j}-${i}`;
         const xy = xyTOij(i, j ,height);
+        //console.log(`${xy.i}-${xy.j}`)
         maze[xy.i][xy.j] = 0;
 
         if(j === 0) {
@@ -96,7 +98,7 @@ const MapContainer = () => {
 
         if(treasures[id] && !collected[id]) {
           field = {...field, ...treasures[id]};
-          ends.push({ x: xy.i, y: xy.j, id: field.id, idd: id })
+          endNodes.push({ x: xy.j, y: xy.i, id: field.id, idd: id })
         } 
 
         if(heroes[id]) {
@@ -109,7 +111,7 @@ const MapContainer = () => {
           }
 
           field = {...field, ...heroes[id]};
-          starts.push({ x: xy.i, y: xy.j, id: field.id, idd: id })
+          startNodes.push({ x: xy.j, y: xy.i, id: field.id, idd: id })
         } 
 
         if(enemies[id]) {
@@ -128,7 +130,8 @@ const MapContainer = () => {
         
         if(obstacles[id]) {
           field = {...field, ...obstacles[id]};
-          maze[xy.i][xy.j] = 1;
+          console.log(`obstacles ${xy.i}-${xy.j}`)
+          maze[xy.i][xy.j] = 2;
         } 
 
         fields.push(<Field key={id} {...field} />);
@@ -151,27 +154,31 @@ const MapContainer = () => {
     console.log('elapsedTickCount', elapsedTickCount)
     if(gameMode === GAME_MODE.STORY) {
       let nextHeroTurn = {};
-      const start = starts[0];
-      const hero = heroes[start.idd];
+      const startNode = startNodes[0];
+      const hero = heroes[startNode.idd];
 
-      if(collected[start.idd] && collected[start.idd].collectedByHeroId === hero.id) {
+      if(collected[startNode.idd] && collected[startNode.idd].collectedByHeroId === hero.id) {
         step = 0;
       }
 
       if(step === 0) {
         const mazeArg = {
-          maze: maze,
-          start: start,
-          ends: ends,
+          board: maze,
+          startNodes: startNode,
+          endNodes: endNodes,
+          algorithm: Algorithms.BFS,
+          heuristic: Heuristic.Euclidean,
+          rowCount: width,
+          colCount: height,
+          allowDiagonalMoves: false,
         };
         console.log('mazeArg', mazeArg)
-        if(width < 15) {
+        
         const mazePath = getHeroMazePath(mazeArg);
         console.log('mazePath', mazePath);
         nextHeroTurn = getHeroNextTurn(hero, mazePath, hasEnemy, step);
 
         setMazePath(mazePath);
-        }
       } else {
         nextHeroTurn = getHeroNextTurn(hero, mazePath, hasEnemy, step);
       }
