@@ -27,10 +27,6 @@ const MapContainer = () => {
   const [mazeStep, setMazeStep] = useState(0);
   const [dialogProps, setDialogProps] = useState({open:false});
 
-  /*const updateHeroTurn = (heroTurn) => {
-    setHeroTurn(heroTurn)
-  }*/
-
   const addField = (x, y, fieldType, fieldSize, currentLevel, fields) => {
     const id = `${x}-${y}`;
 
@@ -210,7 +206,6 @@ const MapContainer = () => {
       currentLevel: currentLevel,
       elapsedTickCount: map.elapsedTickCount,
       gameMode: gameMode,
-      //updateHeroTurn: updateHeroTurn,
     };
   }
 
