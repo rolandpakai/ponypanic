@@ -6,7 +6,7 @@ import { THEMES_SELECT_OPTIONS, DEFAULT_THEME } from '../utils/constants';
 import Select from 'react-select'
 
 const Footer = () => {
-  const { theme, selectTheme } = useContext(ThemeContext);
+  const { selectTheme } = useContext(ThemeContext);
 
   const DEFAULT_THEME_OPTION = THEMES_SELECT_OPTIONS.find(theme => theme.value === DEFAULT_THEME);
   

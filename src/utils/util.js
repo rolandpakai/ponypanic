@@ -85,24 +85,16 @@ export const getMazePaths = (mazeArg) => {
   let paths = [];
   
   paths = mazeArg.endNodes.map((endNode) => {
-    //board, startNode, endNode, algorithm, heuristic, rowCount, colCount
     const arg = {
       ...mazeArg,
       startNode: mazeArg.startNodes,
       endNode: endNode,
     }
-    console.log('arg',arg)
     const path = PathFinder(arg);
-    console.log('PathFinder path', path);
-    //const path = result[0];
 
     if(path.length > 1) {
       path.shift();
     }
-    /*
-    const steps = path.map((step) => {
-      return step[0];
-    })*/
 
     return path;
   })
@@ -150,9 +142,7 @@ export const getHeroNextAction = (path, step) => {
 
 export const getHeroMazePath = (mazeArg) => {
   const paths = getMazePaths(mazeArg);
-  console.log('paths', paths);
   const path = getShortestMazePath(paths);
-  console.log('path', path);
 
   return path;
 }

@@ -5,7 +5,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 
 const PopupDialog = (props) => {
-  //const [open, setOpen] = useState(false);
   const { dialogContentText, buttonOkText, buttonCancelText, open, okHandler, cancelHandler } = {...props};
 
   return (

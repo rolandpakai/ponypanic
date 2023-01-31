@@ -359,7 +359,6 @@ function isValidDiagonal(board, position, move) {
 
 const PathFinder = (args) =>{  
     const {board, startNode, endNode, algorithm, heuristic, rowCount, colCount} = {...args};
-    console.log('startNode', startNode)
     let result = {};
     let path = [];
     

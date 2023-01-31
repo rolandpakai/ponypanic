@@ -79,7 +79,6 @@ const MapContainer = () => {
       for (let j = 0; j < height; j++) {
         const id = `${j}-${i}`;
         const xy = xyTOij(i, j ,height);
-        //console.log(`${xy.i}-${xy.j}`)
         maze[xy.i][xy.j] = 0;
 
         if(j === 0) {
@@ -108,9 +107,6 @@ const MapContainer = () => {
             heroes[id].kickRange = kickRange;
             heroes[id].enemyInKickRange = enemyInKickRange;
             heroes[id].bulletInRange = bulletInRange;
-            console.log('enemyInKickRange', enemyInKickRange);
-            console.log('enemyInKickRange', enemyInKickRange);
-            console.log('bulletInRange', bulletInRange);
           }
 
           field = {...field, ...heroes[id]};
@@ -153,7 +149,6 @@ const MapContainer = () => {
       step = 0;
     }
     
-    console.log('elapsedTickCount', elapsedTickCount)
     if(gameMode === GAME_MODE.STORY) {
       let nextHeroTurn = {};
       const startNode = startNodes[0];
@@ -174,18 +169,14 @@ const MapContainer = () => {
           colCount: height,
           allowDiagonalMoves: false,
         };
-        console.log('mazeArg', mazeArg)
         
         const mazePath = getHeroMazePath(mazeArg);
-        console.log('mazePath', mazePath);
         nextHeroTurn = getHeroNextTurn(hero, mazePath, hasEnemy, step);
 
         setMazePath(mazePath);
       } else {
         nextHeroTurn = getHeroNextTurn(hero, mazePath, hasEnemy, step);
       }
-
-      console.log('nextHeroTurn', nextHeroTurn);
 
       setHeroTurn(nextHeroTurn)
       setMazeStep(nextHeroTurn.step);
