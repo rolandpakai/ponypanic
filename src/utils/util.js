@@ -6,12 +6,6 @@ export const randomInteger = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export const timeoutPromise = (timeout) => {
-  return new Promise(resolve => {
-      setTimeout(resolve, timeout);
-  });
-}
-
 export const xyTOij = (x, y, height) => {
   return { i: height - x - 1, j: y}
 }
@@ -23,7 +17,7 @@ export const arrayToMap = (array, type, turn) => {
     const idd = `${el.position.x}-${el.position.y}`;
     el.type = type;
 
-    if(turn && turn.heroId && turn.heroId === el.id) {
+    if(turn && turn.heroId && turn.heroId === el.id && turn.action) {
       el.action = turn.action;
     }
 
@@ -38,19 +32,11 @@ export const mapToArray = (map) => {
   
   for (const x in map) {
     if (map.hasOwnProperty(x)) {
-      map[x].map((y) => array.push({position: {x, y}}))
+      map[x].map((y) => array.push({position: {x: parseInt(x, 10), y}}))
     }
   }
 
   return array;
-}
-
-export const addEntityToMap = (map, array, type) => {
-  array.forEach((el) => {
-    const idd = `${el.position.x}-${el.position.y}`;
-    el.type = type;
-    map[idd] = el;
-  })
 }
 
 export const getImageSize = (mapSize) => {
@@ -126,7 +112,7 @@ export const getShortestMazePath = (paths) => {
 export const getNextDirection = (path, step) => {
   let direction = '';
 
-  if(path.length > 0){
+  if(path.length > 0 && path[step] && path[step].dir){
     direction = path[step].dir;
   }
 
