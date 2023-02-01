@@ -45,6 +45,8 @@ const Field = ( props ) => {
   switch (type) {
     case FIELD_TYPE.HERO: {
       const { playerId, health, score} = {...data};
+      const heroAction = validateHeroAction(action);
+      imgStyle.src = `./themes/${theme}/heroes/${heroAction}.png`;
       hasPopOver = true;
       popoverContent = (
         <TableBody>
@@ -53,12 +55,12 @@ const Field = ( props ) => {
           <TableRow key={`${idd}-score`}><TableCell align="left">Score</TableCell><TableCell align="right">{score}</TableCell></TableRow>
         </TableBody>
       );
-      const heroAction = validateHeroAction(action);
-      imgStyle.src = `./themes/${theme}/heroes/${heroAction}.png`;
       break;
     } 
-    case FIELD_TYPE.ENEMY: {
+    case FIELD_TYPE.ENEMY:
+    case FIELD_TYPE.ENEMY_BULLET: {
       const { id, moveProbability, shootProbability, onTouchDamage, bulletDamage, health} = {...data};
+      imgStyle.src = `./themes/${theme}/enemies/${type.toLowerCase()}-${mapLevel}.png`;
       hasPopOver = true;
       popoverContent = (
         <TableBody>
@@ -70,11 +72,6 @@ const Field = ( props ) => {
           <TableRow key={`${idd}-onTouchDamage`}><TableCell align="left">Touch Damage</TableCell><TableCell align="right">{onTouchDamage}</TableCell></TableRow>
         </TableBody>
       );
-      imgStyle.src = `./themes/${theme}/enemies/enemy-${mapLevel}.png`;
-      break;
-    }
-    case FIELD_TYPE.ENEMY_BULLET: {
-      imgStyle.src = `./themes/${theme}/enemies/enemy-bullet-${mapLevel}.png`;
       break;
     }
     case FIELD_TYPE.BULLET: {
@@ -86,13 +83,13 @@ const Field = ( props ) => {
     }
     case FIELD_TYPE.TREASURE: {
       const { id, collectedByHeroId, name} = {...data};
+      imgStyle.src = `./themes/${theme}/treasures/treasure-${randomTreasure}.png`;
       hasPopOver = true;
       popoverContent = (
         <TableBody>
           <TableRow key={`${idd}-name`}><TableCell align="center">{name}</TableCell></TableRow>
         </TableBody>
       );
-      imgStyle.src = `./themes/${theme}/treasures/treasure-${randomTreasure}.png`;
       break;
     }
     case FIELD_TYPE.OBSTACLE: {
@@ -154,26 +151,24 @@ const Field = ( props ) => {
           onClose={handlePopoverClose}
           disableRestoreFocus
         >
-          <Box sx={{ p: 1 }}>
-            <TableContainer>
-              <Table 
-                size="small" 
-                aria-label="simple table"
-                sx={{
-                  [`& .${tableCellClasses.root}`]: {
-                    borderBottom: "none"
-                  }
-                }}
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center" colSpan={2}>{type}</TableCell>
-                  </TableRow>
-                </TableHead>
-                  {popoverContent}
-              </Table>
-            </TableContainer>
-          </Box>
+          <TableContainer>
+            <Table 
+              size="small" 
+              aria-label="simple table"
+              sx={{
+                [`& .${tableCellClasses.root}`]: {
+                  borderBottom: "none"
+                }
+              }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center" colSpan={2}>{type}</TableCell>
+                </TableRow>
+              </TableHead>
+                {popoverContent}
+            </Table>
+          </TableContainer>
         </Popover>
       }
     </Fragment>

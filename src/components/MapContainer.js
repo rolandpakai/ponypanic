@@ -107,7 +107,7 @@ const MapContainer = () => {
             heroes[id].bulletInRange = bulletInRange;
           }
 
-          field = {...field, type: heroes[id].type, data: heroes[id]};
+          field = {...field, action: heroes[id].action, type: heroes[id].type, data: heroes[id]};
           startNodes.push({ x: xy.j, y: xy.i, id: field.id, idd: id })
         } 
 

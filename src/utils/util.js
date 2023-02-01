@@ -58,7 +58,7 @@ export const getImageSize = (mapSize) => {
 }
 
 export const validateHeroAction = (heroAction) => {
-  let action = HERO_ACTION.MOVE_RIGHT.toLowerCase();
+  let action = HERO_ACTION.NOTHING.toLowerCase();
 
   if(heroAction && HERO_ACTION[heroAction]) {
     action = HERO_ACTION[heroAction].toLowerCase();
