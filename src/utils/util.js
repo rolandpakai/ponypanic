@@ -169,11 +169,18 @@ export const getHeroKickRange = (hero, enemies, bullets) => {
   const bulletInRange = [];
 
   const kickRange = KICK_POINTS.reduce((acc, move) => {
+    const point0 = { id: hero.id, x: hero.position.x, y: hero.position.y, action: HERO_ACTION.KICK_RIGHT, isEnemy: false, isBullet: false };
     const point1 = { id: hero.id, x: hero.position.x + move.x, y: hero.position.y + move.y, action: move.action, isEnemy: false, isBullet: false };
     const point2 = { id: hero.id, x: hero.position.x + move.x*2, y: hero.position.y + move.y*2, action: move.action, isEnemy: false, isBullet: false };
+    const id0 = `${point0.x}-${point0.y}`;
     const id1 = `${point1.x}-${point1.y}`;
     const id2 = `${point2.x}-${point2.y}`;
 
+    if(enemies[id0] && enemies[id0].health > 0) {
+      point1.isEnemy = true;
+      enemyInKickRange.push(point0);
+    }
+    
     if(enemies[id1] && enemies[id1].health > 0) {
       point1.isEnemy = true;
       enemyInKickRange.push(point1);
