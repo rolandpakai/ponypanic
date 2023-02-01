@@ -30,6 +30,8 @@ const MapContainer = () => {
   const [mazeStep, setMazeStep] = useState(0);
   const [dialogProps, setDialogProps] = useState({open:false});
 
+  const [loading, setLoading] = useState(false);
+
   const addField = (x, y, fieldType, fieldSize, currentLevel, fields) => {
     const id = `${x}-${y}`;
 
@@ -270,6 +272,7 @@ const MapContainer = () => {
   };
 
   const nextTurn = async (heroTurn) => {
+    setLoading(true);
     const { didTickHappen, message, tickLogs } = await apiApproveHeroTurn(storyPlaythroughToken, heroTurn)
 
     if(didTickHappen) {
@@ -298,6 +301,11 @@ const MapContainer = () => {
 
       const canvasFields = getCanvasFields(newCanvas);
       setCanvasFields(canvasFields);
+      
+
+      setTimeout(() => {
+        setLoading(false);
+      }, "500")
 
       if(map.isGameOver) {
         const {currentLevel, currentMapStatus, isCurrentLevelFinished} = await apiPlaythroughState(storyPlaythroughToken);
@@ -361,7 +369,7 @@ const MapContainer = () => {
               direction="row" 
               justifyContent="center" 
             >
-              <Button onClick={nextTurnHandle} >
+              <Button loading={loading} onClick={nextTurnHandle}>
                 {"HERO TURN"}
               </Button>
             </Stack>
