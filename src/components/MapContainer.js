@@ -84,7 +84,7 @@ const MapContainer = () => {
         }
 
         let field = {
-          id: id,
+          idd: id,
           position: {
             x: j,
             y: i,
@@ -95,7 +95,7 @@ const MapContainer = () => {
         };
 
         if(treasures[id] && !collected[id]) {
-          field = {...field, ...treasures[id]};
+          field = {...field, type: treasures[id].type, data: treasures[id]};
           endNodes.push({ x: xy.j, y: xy.i, id: field.id, idd: id })
         } 
 
@@ -107,26 +107,26 @@ const MapContainer = () => {
             heroes[id].bulletInRange = bulletInRange;
           }
 
-          field = {...field, ...heroes[id]};
+          field = {...field, type: heroes[id].type, data: heroes[id]};
           startNodes.push({ x: xy.j, y: xy.i, id: field.id, idd: id })
         } 
 
         if(enemies[id]) {
           if(enemies[id].health > 0) {
-            field = {...field, ...enemies[id]};
+            field = {...field, type: enemies[id].type, data: enemies[id]};
           }
         } 
 
         if(bullets[id]) {
-          field = {...field, ...bullets[id]};
+          field = {...field, type: bullets[id].type, data: bullets[id]};
         } 
 
         if(enemies[id] && bullets[id]) {
-          field = {...field, ...enemies[id], type: FIELD_TYPE.ENEMY_BULLET};
+          field = {...field, type: FIELD_TYPE.ENEMY_BULLET, data: enemies[id]};
         } 
         
         if(obstacles[id]) {
-          field = {...field, ...obstacles[id]};
+          field = {...field, type: obstacles[id].type, data: obstacles[id]};
           maze[xy.i][xy.j] = 2;
         } 
 
@@ -327,7 +327,6 @@ const MapContainer = () => {
 
   return (
     <Fragment>   
-      <main className="cmain">
         <Box>
           <Container 
             maxWidth="md" 
@@ -354,7 +353,6 @@ const MapContainer = () => {
             </Box>
             </Stack>
           </Container>
-
           <Container 
             maxWidth="xs" 
            >
@@ -368,9 +366,7 @@ const MapContainer = () => {
               </Button>
             </Stack>
           </Container>
-
         </Box>
-      </main>
       <PopupDialog {...dialogProps} />
     </Fragment>
   )
