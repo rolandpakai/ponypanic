@@ -6,7 +6,6 @@ const Canvas = ( {id, width, height, fields} ) => {
         id={`id-${id}`} 
         sx={{
           display: 'grid',
-          maxWidth: '800px',
           gridTemplateColumns: `repeat(${width + 2}, auto)`,
         }}
       >
