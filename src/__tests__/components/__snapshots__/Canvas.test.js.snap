@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Canvas Component Canvas renders 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-15bl45h"
+    id="id-undefined"
+  />
+</div>
+`;
