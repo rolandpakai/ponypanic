@@ -45,7 +45,7 @@ const Field = ( props ) => {
   switch (type) {
     case FIELD_TYPE.HERO: {
       const { playerId, health, score} = {...data};
-      const heroAction = validateHeroAction(action);
+      const heroAction = validateHeroAction(action).toLowerCase();
       imgStyle.src = `./themes/${theme}/heroes/${heroAction}.png`;
       hasPopOver = true;
       popoverContent = (

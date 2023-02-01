@@ -1,9 +1,8 @@
-import { HERO_ACTION, IMG_BIG_SIZE, IMG_SMALL_SIZE } from '../utils/constants';
-import { KICK_POINTS} from '../utils/constants';
+import { HERO_ACTION, KICK_POINTS, IMG_BIG_SIZE, IMG_SMALL_SIZE } from '../utils/constants';
 import PathFinder from '../path-finder/PathFinder';
 
 export const randomInteger = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return min && max && Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 export const xyTOij = (x, y, height) => {
@@ -40,14 +39,14 @@ export const mapToArray = (map) => {
 }
 
 export const getImageSize = (mapSize) => {
-  return mapSize > 9 ?  IMG_SMALL_SIZE : IMG_BIG_SIZE;
+  return mapSize ? mapSize > 9 ? IMG_SMALL_SIZE : IMG_BIG_SIZE : IMG_BIG_SIZE;
 }
 
 export const validateHeroAction = (heroAction) => {
-  let action = HERO_ACTION.NOTHING.toLowerCase();
+  let action = HERO_ACTION.NOTHING;
 
   if(heroAction && HERO_ACTION[heroAction]) {
-    action = HERO_ACTION[heroAction].toLowerCase();
+    action = HERO_ACTION[heroAction]
   }
 
   return action;
@@ -106,7 +105,6 @@ export const getShortestMazePath = (paths) => {
   }
 
   return path;
-
 }
 
 export const getNextDirection = (path, step) => {
@@ -199,12 +197,4 @@ export const getHeroKickRange = (hero, enemies, bullets) => {
   }, {});
 
   return { kickRange, enemyInKickRange, bulletInRange };
-}
-
-export const localStorageGetItem = (itemName) => {
-  return localStorage.getItem(itemName)
-}
-
-export const localStorageSetItem = (itemName, itemValue) => {
-  return localStorage.setItem(itemName, itemValue)
 }

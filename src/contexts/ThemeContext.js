@@ -1,6 +1,5 @@
 import { createContext, useState, useLayoutEffect, useEffect } from "react";
 import { DEFAULT_THEME, LOCAL_STORAGE_THEME_NAME } from '../utils/constants';
-import { localStorageGetItem ,localStorageSetItem } from '../utils/util';
 
 export const ThemeContext = createContext({
   theme: DEFAULT_THEME, 
@@ -11,16 +10,16 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(DEFAULT_THEME);
 
   const selectTheme = (value) => {
-    localStorageSetItem(LOCAL_STORAGE_THEME_NAME, value);
+    localStorage.setItem(LOCAL_STORAGE_THEME_NAME, value);
     setTheme(value);
   }
 
   useEffect(() => {
-    const localStorageTheme = localStorageGetItem(LOCAL_STORAGE_THEME_NAME);
+    const localStorageTheme = localStorage.getItem(LOCAL_STORAGE_THEME_NAME);
     if(localStorageTheme && localStorageTheme !== 'undefined') {
       setTheme(localStorageTheme);
     } else {
-      localStorageSetItem(LOCAL_STORAGE_THEME_NAME, DEFAULT_THEME);
+      localStorage.setItem(LOCAL_STORAGE_THEME_NAME, DEFAULT_THEME);
       setTheme(DEFAULT_THEME);
     }
   }, [])
