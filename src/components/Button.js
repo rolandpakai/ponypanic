@@ -21,7 +21,6 @@ const Button = (props) => {
     ...props
   }
 
-
   if(loading) {
     buttonProps.loadingIndicator = <CircularProgress color="inherit" size={25} sx={{color: '#fff'}}/>
 
@@ -33,6 +32,8 @@ const Button = (props) => {
       </LoadingButton>
     )
   } else {
+    delete buttonProps.loading;
+    
     return (
       <MuiButton 
         {...buttonProps}
