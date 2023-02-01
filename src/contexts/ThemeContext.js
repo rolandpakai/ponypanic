@@ -3,7 +3,7 @@ import { DEFAULT_THEME, LOCAL_STORAGE_THEME_NAME } from '../utils/constants';
 import { localStorageGetItem ,localStorageSetItem } from '../utils/util';
 
 export const ThemeContext = createContext({
-  theme: 'dark', 
+  theme: DEFAULT_THEME, 
   selectTheme: () => {},
 });
 
