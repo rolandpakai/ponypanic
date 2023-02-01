@@ -302,7 +302,6 @@ const MapContainer = () => {
       const canvasFields = getCanvasFields(newCanvas);
       setCanvasFields(canvasFields);
       
-
       setTimeout(() => {
         setLoading(false);
       }, "500")
@@ -328,8 +327,12 @@ const MapContainer = () => {
       const {storyPlaythroughToken, playthroughState: {currentLevel, isCurrentLevelFinished, currentMapStatus} } = await apiStoryBegin(PLAYER_TOKEN);
       setState(storyPlaythroughToken, currentLevel);
       setStoryPlaythroughToken(storyPlaythroughToken);
-    }
 
+      setTimeout(() => {
+        setLoading(false);
+      }, "500")
+    }
+    setLoading(true);
     fetchData();
   }, []);
 
