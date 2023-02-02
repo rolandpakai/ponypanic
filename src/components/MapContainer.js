@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from "@mui/material/Stack";
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { NewGameContext } from '../contexts/NewGameContext';
 import { apiStoryBegin, apiMapResource, apiMapState, apiApproveHeroTurn, apiPlaythroughState, apiResetLevel, apiNextLevel } from '../api/api';
@@ -31,6 +32,7 @@ const MapContainer = () => {
   const [dialogProps, setDialogProps] = useState({open:false});
 
   const [loading, setLoading] = useState(false);
+  const [loadingTurn, setLoadingTurn] = useState(false);
 
   const addField = (x, y, fieldType, fieldSize, currentLevel, fields) => {
     const id = `${x}-${y}`;
@@ -272,7 +274,7 @@ const MapContainer = () => {
   };
 
   const nextTurn = async (heroTurn) => {
-    setLoading(true);
+    setLoadingTurn(true);
     const { didTickHappen, message, tickLogs } = await apiApproveHeroTurn(storyPlaythroughToken, heroTurn)
 
     if(didTickHappen) {
@@ -303,8 +305,8 @@ const MapContainer = () => {
       setCanvasFields(canvasFields);
       
       setTimeout(() => {
-        setLoading(false);
-      }, "500")
+        setLoadingTurn(false);
+      }, "300")
 
       if(map.isGameOver) {
         const {currentLevel, currentMapStatus, isCurrentLevelFinished} = await apiPlaythroughState(storyPlaythroughToken);
@@ -330,7 +332,7 @@ const MapContainer = () => {
 
       setTimeout(() => {
         setLoading(false);
-      }, "500")
+      }, "300")
     }
     setLoading(true);
     fetchData();
@@ -338,46 +340,53 @@ const MapContainer = () => {
 
   return (
     <Fragment>   
-        <Box>
-          <Container 
-            maxWidth="md" 
-          >
-          <Stack 
-              maxWidth="xs"
-              direction="row" 
-              justifyContent="center" 
-              sx={{
-                padding: '2rem',
-              }}
+          <Box>
+            <Container 
+              maxWidth="md" 
             >
-            <Box 
-              sx={{
-                border: '5px solid #3a3b3b',
-              }}
-            >
-                <Canvas 
-                  id={mapId}
-                  width={width}
-                  height={height}
-                  fields={canvasFields}
-                />
-            </Box>
-            </Stack>
-          </Container>
-          <Container 
-            maxWidth="xs" 
-           >
             <Stack 
-              maxWidth="xs"
-              direction="row" 
-              justifyContent="center" 
+                maxWidth="xs"
+                direction="row" 
+                justifyContent="center" 
+                sx={{
+                  padding: '2rem',
+                  minHeight: '520px',
+                  alignItems: 'center',
+                }}
+              >
+                {
+                  loading 
+                  ? <CircularProgress color="inherit" size={150} sx={{color: 'var(--progress-color)'}}/>
+                  : 
+                  <Box 
+                    sx={{
+                      border: '5px solid #3a3b3b',
+                    }}
+                  >
+                      <Canvas 
+                        id={mapId}
+                        width={width}
+                        height={height}
+                        fields={canvasFields}
+                      />
+                  </Box>
+              }
+              </Stack>
+            </Container>
+            <Container 
+              maxWidth="xs" 
             >
-              <Button loading={loading} onClick={nextTurnHandle}>
-                {"HERO TURN"}
-              </Button>
-            </Stack>
-          </Container>
-        </Box>
+              <Stack 
+                maxWidth="xs"
+                direction="row" 
+                justifyContent="center" 
+              >
+                <Button loading={loading || loadingTurn} onClick={nextTurnHandle}>
+                  {"HERO TURN"}
+                </Button>
+              </Stack>
+            </Container>
+          </Box>
       <PopupDialog {...dialogProps} />
     </Fragment>
   )
