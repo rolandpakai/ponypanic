@@ -1,5 +1,5 @@
 import {default as MuiButton} from '@mui/material/Button';
-import LoadingButton, { loadingButtonClasses } from '@mui/lab/LoadingButton';
+import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const Button = (props) => {
