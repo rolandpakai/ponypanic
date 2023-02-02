@@ -50,7 +50,7 @@ const Field = ( props ) => {
       hasPopOver = true;
       popoverContent = (
         <TableBody>
-          <TableRow key={`${idd}-playerId`}><TableCell align="left">HeroId</TableCell><TableCell align="right">{playerId}</TableCell></TableRow>
+          <TableRow key={`${idd}-playerId`}><TableCell align="left">Id</TableCell><TableCell align="right">{playerId}</TableCell></TableRow>
           <TableRow key={`${idd}-health`}><TableCell align="left">Health</TableCell><TableCell align="right">{health.toLocaleString("en", {style: "percent"})}</TableCell></TableRow>
           <TableRow key={`${idd}-score`}><TableCell align="left">Score</TableCell><TableCell align="right">{score}</TableCell></TableRow>
         </TableBody>
