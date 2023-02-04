@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
@@ -33,7 +33,7 @@ import { Algorithms, Heuristic } from "../path-finder/constants";
 import Canvas from "./Canvas";
 import PopupDialog from "./PopupDialog";
 import Button from "./Button";
-import Field from "./Field";
+import FieldContainer from "./FieldContainer";
 
 const MapContainer = () => {
   const [gameMode] = useState(GAME_MODE.STORY);
@@ -59,7 +59,7 @@ const MapContainer = () => {
     const id = `${x}-${y}`;
 
     fields.push(
-      <Field
+      <FieldContainer
         key={id}
         id={id}
         level={currentLevel}
@@ -166,7 +166,7 @@ const MapContainer = () => {
         }
 
         fields.push(
-          <Field
+          <FieldContainer
             key={field.idd}
             id={field.id}
             action={field.action}
