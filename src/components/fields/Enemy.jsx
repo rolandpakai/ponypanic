@@ -5,8 +5,8 @@ import TableCell from "@mui/material/TableCell";
 import Field from "./Field";
 
 class Enemy extends Field {
-  constructor(idd, type, action, level, theme, data) {
-    super(idd, action, level, theme, data);
+  constructor(idd, type, level, theme, data) {
+    super(idd, type, level, theme, data);
     const {
       id,
       moveProbability,

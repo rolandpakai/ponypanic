@@ -134,7 +134,6 @@ const MapContainer = () => {
 
           field = {
             ...field,
-            action: heroes[id].action,
             type: heroes[id].type,
             data: heroes[id],
           };
@@ -169,7 +168,6 @@ const MapContainer = () => {
           <FieldContainer
             key={field.idd}
             id={field.id}
-            action={field.action}
             level={field.level}
             position={field.position}
             size={field.size}

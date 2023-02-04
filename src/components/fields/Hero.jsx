@@ -6,9 +6,9 @@ import Field from "./Field";
 import { validateHeroAction } from "../../utils/util";
 
 class Hero extends Field {
-  constructor(idd, type, action, level, theme, data) {
-    super(idd, type, action, level, theme, data);
-    const { playerId, health, score } = { ...data };
+  constructor(idd, type, level, theme, data) {
+    super(idd, type, level, theme, data);
+    const { playerId, action, health, score } = { ...data };
 
     this.popover = true;
 

@@ -21,7 +21,7 @@ import Field from "./fields/Field";
 const FieldContainer = (props) => {
   const [anchorEl, setAnchorEl] = useState();
   const { theme } = useContext(ThemeContext);
-  const { idd, size, action, type, level, data } = { ...props };
+  const { idd, size, type, level, data } = { ...props };
 
   const open = Boolean(anchorEl);
 
@@ -47,28 +47,28 @@ const FieldContainer = (props) => {
 
   switch (type) {
     case FIELD_TYPE.HERO: {
-      field = new Hero(idd, type, action, level, theme, data);
+      field = new Hero(idd, type, level, theme, data);
       break;
     }
     case FIELD_TYPE.ENEMY:
     case FIELD_TYPE.ENEMY_BULLET: {
-      field = new Enemy(idd, type, action, level, theme, data);
+      field = new Enemy(idd, type, level, theme, data);
       break;
     }
     case FIELD_TYPE.BULLET: {
-      field = new Bullet(idd, type, action, level, theme, data);
+      field = new Bullet(idd, type, level, theme, data);
       break;
     }
     case FIELD_TYPE.TREASURE: {
-      field = new Treasure(idd, type, action, level, theme, data);
+      field = new Treasure(idd, type, level, theme, data);
       break;
     }
     case FIELD_TYPE.OBSTACLE: {
-      field = new Obstacle(idd, type, action, level, theme, data);
+      field = new Obstacle(idd, type, level, theme, data);
       break;
     }
     default:
-      field = new Field(idd, type, action, level, theme, data);
+      field = new Field(idd, type, level, theme, data);
     // imgStyle.backgroundImage = "";
   }
 

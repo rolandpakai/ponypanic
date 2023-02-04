@@ -1,7 +1,6 @@
 class Field {
-  constructor(idd, type, action, level, theme, data) {
+  constructor(idd, type, level, theme, data) {
     this.idd = idd;
-    this.action = action;
     this.level = level;
     this.type = type;
     this.theme = theme;
