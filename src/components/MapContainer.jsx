@@ -194,7 +194,7 @@ const MapContainer = () => {
           addField(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
         }
 
-        let field = {
+        let fieldContainer = {
           idd: id,
           position: {
             x: j,
@@ -206,8 +206,12 @@ const MapContainer = () => {
         };
 
         if (treasures[id] && !collected[id]) {
-          field = { ...field, type: treasures[id].type, data: treasures[id] };
-          endNodes.push({ x: xy.j, y: xy.i, id: field.id, idd: id });
+          fieldContainer = {
+            ...fieldContainer,
+            type: treasures[id].type,
+            data: treasures[id],
+          };
+          endNodes.push({ x: xy.j, y: xy.i, id: fieldContainer.id, idd: id });
         }
 
         if (heroes[id]) {
@@ -220,45 +224,57 @@ const MapContainer = () => {
             heroes[id].bulletInRange = bulletInRange;
           }
 
-          field = {
-            ...field,
+          fieldContainer = {
+            ...fieldContainer,
             type: heroes[id].type,
             data: heroes[id],
           };
 
-          startNodes.push({ x: xy.j, y: xy.i, id: field.id, idd: id });
+          startNodes.push({ x: xy.j, y: xy.i, id: fieldContainer.id, idd: id });
         }
 
         if (enemies[id] && enemies[id].health > 0) {
-          field = { ...field, type: enemies[id].type, data: enemies[id] };
+          fieldContainer = {
+            ...fieldContainer,
+            type: enemies[id].type,
+            data: enemies[id],
+          };
         }
 
         if (bullets[id]) {
-          field = { ...field, type: bullets[id].type, data: bullets[id] };
+          fieldContainer = {
+            ...fieldContainer,
+            type: bullets[id].type,
+            data: bullets[id],
+          };
         }
 
         if (enemies[id] && bullets[id]) {
-          field = {
-            ...field,
+          fieldContainer = {
+            ...fieldContainer,
             type: FIELD_TYPE.ENEMY_BULLET,
             data: enemies[id],
           };
         }
 
         if (obstacles[id]) {
-          field = { ...field, type: obstacles[id].type, data: obstacles[id] };
+          fieldContainer = {
+            ...fieldContainer,
+            type: obstacles[id].type,
+            data: obstacles[id],
+          };
           maze[xy.i][xy.j] = 2;
         }
 
         fields.push(
           <FieldContainer
-            key={field.idd}
-            id={field.id}
-            level={field.level}
-            position={field.position}
-            size={field.size}
-            type={field.type}
-            data={field.data}
+            key={fieldContainer.idd}
+            id={fieldContainer.id}
+            level={fieldContainer.level}
+            position={fieldContainer.position}
+            size={fieldContainer.size}
+            type={fieldContainer.type}
+            data={fieldContainer.data}
           />
         );
 
