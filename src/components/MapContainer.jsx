@@ -153,6 +153,10 @@ const MapContainer = () => {
     setHeroNextTurn(hero, startNode, endNodes, maze, width, height, stepNr);
   };
 
+  const getStep = (elapsedTickCount) => {
+    return elapsedTickCount === 0 ? elapsedTickCount : mazeStep;
+  };
+
   const getCanvasFields = (props) => {
     const {
       width,
@@ -300,11 +304,7 @@ const MapContainer = () => {
       fields
     );
 
-    let step = mazeStep;
-
-    if (elapsedTickCount === 0) {
-      step = 0;
-    }
+    const step = getStep(elapsedTickCount);
 
     if (gameMode === GAME_MODE.STORY) {
       storyGameMode(
