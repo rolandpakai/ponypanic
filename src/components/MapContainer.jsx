@@ -64,21 +64,6 @@ const MapContainer = () => {
   const [loading, setLoading] = useState(false);
   const [loadingTurn, setLoadingTurn] = useState(false);
 
-  const addCell = (x, y, fieldType, fieldSize, level, fields) => {
-    const id = `${x}-${y}`;
-
-    fields.push(
-      <FieldContainer
-        key={id}
-        id={id}
-        level={level}
-        position={(x, y)}
-        size={fieldSize}
-        type={fieldType}
-      />
-    );
-  };
-
   const addField = (fieldContainer, fields) => {
     fields.push(
       <FieldContainer
@@ -88,6 +73,7 @@ const MapContainer = () => {
         position={fieldContainer.position}
         size={fieldContainer.size}
         type={fieldContainer.type}
+        data={fieldContainer.data}
       />
     );
   };
@@ -225,7 +211,20 @@ const MapContainer = () => {
         maze[xy.i][xy.j] = 0;
 
         if (j === 0) {
-          addCell(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, fieldLevel, fields);
+          const idd = `-1-${i}`;
+          const leftFieldContainer = {
+            idd,
+            position: {
+              x: -1,
+              y: i,
+            },
+            size: fieldSize,
+            level: fieldLevel,
+            type: FIELD_TYPE.OBSTACLE,
+            field: new Field(idd, FIELD_TYPE.OBSTACLE, fieldLevel, {}),
+          };
+
+          addField(leftFieldContainer, fields);
         }
 
         let fieldContainer = {
@@ -301,20 +300,23 @@ const MapContainer = () => {
           maze[xy.i][xy.j] = 2;
         }
 
-        fields.push(
-          <FieldContainer
-            key={fieldContainer.idd}
-            id={fieldContainer.id}
-            level={fieldContainer.level}
-            position={fieldContainer.position}
-            size={fieldContainer.size}
-            type={fieldContainer.type}
-            data={fieldContainer.data}
-          />
-        );
+        addField(fieldContainer, fields);
 
         if (j === width - 1) {
-          addCell(width, i, FIELD_TYPE.OBSTACLE, fieldSize, fieldLevel, fields);
+          const idd = `${width}-${i}`;
+          const rightFieldContainer = {
+            idd,
+            position: {
+              x: width,
+              y: i,
+            },
+            size: fieldSize,
+            level: fieldLevel,
+            type: FIELD_TYPE.OBSTACLE,
+            field: new Field(idd, FIELD_TYPE.OBSTACLE, fieldLevel, {}),
+          };
+
+          addField(rightFieldContainer, fields);
         }
       }
     }
