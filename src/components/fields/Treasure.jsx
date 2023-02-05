@@ -5,11 +5,11 @@ import TableCell from "@mui/material/TableCell";
 import Field from "./Field";
 
 class Treasure extends Field {
-  constructor(idd, type, level, theme, data) {
-    super(idd, type, level, theme, data);
+  constructor(idd, type, level, data) {
+    super(idd, type, level, data);
     const { name } = { ...data };
 
-    this.imgSrc = `./themes/${theme}/treasures/treasure-${level}.png`;
+    this.imgSrc = `treasures/treasure-${level}.png`;
     this.popover = true;
 
     this.popoverContent = (

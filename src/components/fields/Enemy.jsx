@@ -5,8 +5,8 @@ import TableCell from "@mui/material/TableCell";
 import Field from "./Field";
 
 class Enemy extends Field {
-  constructor(idd, type, level, theme, data) {
-    super(idd, type, level, theme, data);
+  constructor(idd, type, level, data) {
+    super(idd, type, level, data);
     const {
       id,
       moveProbability,
@@ -18,7 +18,7 @@ class Enemy extends Field {
 
     this.popover = true;
 
-    this.imgSrc = `./themes/${theme}/enemies/${type.toLowerCase()}-${level}.png`;
+    this.imgSrc = `enemies/${type.toLowerCase()}-${level}.png`;
 
     this.popoverContent = (
       <TableBody>

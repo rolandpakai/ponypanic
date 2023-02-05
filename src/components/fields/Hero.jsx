@@ -6,14 +6,14 @@ import Field from "./Field";
 import { validateHeroAction } from "../../utils/util";
 
 class Hero extends Field {
-  constructor(idd, type, level, theme, data) {
-    super(idd, type, level, theme, data);
+  constructor(idd, type, level, data) {
+    super(idd, type, level, data);
     const { playerId, action, health, score } = { ...data };
 
     this.popover = true;
 
     const heroAction = validateHeroAction(action).toLowerCase();
-    this.imgSrc = `./themes/${theme}/heroes/${heroAction}.png`;
+    this.imgSrc = `heroes/${heroAction}.png`;
 
     this.popoverContent = (
       <TableBody>

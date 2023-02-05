@@ -25,7 +25,7 @@ const FieldContainer = (props) => {
 
   const open = Boolean(anchorEl);
 
-  const mapLevel = level > MAP_COUNT ? MAP_COUNT : level;
+  const fieldLevel = level > MAP_COUNT ? MAP_COUNT : level;
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -47,28 +47,28 @@ const FieldContainer = (props) => {
 
   switch (type) {
     case FIELD_TYPE.HERO: {
-      field = new Hero(idd, type, mapLevel, theme, data);
+      field = new Hero(idd, type, fieldLevel, data);
       break;
     }
     case FIELD_TYPE.ENEMY:
     case FIELD_TYPE.ENEMY_BULLET: {
-      field = new Enemy(idd, type, mapLevel, theme, data);
+      field = new Enemy(idd, type, fieldLevel, data);
       break;
     }
     case FIELD_TYPE.BULLET: {
-      field = new Bullet(idd, type, mapLevel, theme, data);
+      field = new Bullet(idd, type, fieldLevel, data);
       break;
     }
     case FIELD_TYPE.TREASURE: {
-      field = new Treasure(idd, type, mapLevel, theme, data);
+      field = new Treasure(idd, type, fieldLevel, data);
       break;
     }
     case FIELD_TYPE.OBSTACLE: {
-      field = new Obstacle(idd, type, mapLevel, theme, data);
+      field = new Obstacle(idd, type, fieldLevel, data);
       break;
     }
     default:
-      field = new Field(idd, type, mapLevel, theme, data);
+      field = new Field(idd, type, fieldLevel, data);
     // imgStyle.backgroundImage = "";
   }
 
@@ -87,11 +87,15 @@ const FieldContainer = (props) => {
           display: "flex",
           backgroundSize: size,
           backgroundRepeat: "no-repeat",
-          backgroundImage: `url('./themes/${theme}/maps/map-${mapLevel}/floor.png')`,
+          backgroundImage: `url('./themes/${theme}/maps/map-${fieldLevel}/floor.png')`,
         }}
       >
         {type !== FIELD_TYPE.FLOOR && (
-          <img alt={type} src={field.getImgSrc()} style={imgStyle} />
+          <img
+            alt={type}
+            src={`./themes/${theme}/${field.getImgSrc()}`}
+            style={imgStyle}
+          />
         )}
       </Box>
       {field.hasPopover() && (
