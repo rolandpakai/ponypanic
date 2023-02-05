@@ -128,6 +128,31 @@ const MapContainer = () => {
     setMazeStep(nextHeroTurn.step);
   };
 
+  const storyGameMode = (
+    startNodes,
+    endNodes,
+    heroes,
+    collected,
+    maze,
+    width,
+    height,
+    step
+  ) => {
+    const startNode = startNodes[0];
+    const hero = heroes[startNode.idd];
+
+    let stepNr = step;
+
+    if (
+      collected[startNode.idd] &&
+      collected[startNode.idd].collectedByHeroId === hero.id
+    ) {
+      stepNr = 0;
+    }
+
+    setHeroNextTurn(hero, startNode, endNodes, maze, width, height, stepNr);
+  };
+
   const getCanvasFields = (props) => {
     const {
       width,
@@ -266,17 +291,16 @@ const MapContainer = () => {
     }
 
     if (gameMode === GAME_MODE.STORY) {
-      const startNode = startNodes[0];
-      const hero = heroes[startNode.idd];
-
-      if (
-        collected[startNode.idd] &&
-        collected[startNode.idd].collectedByHeroId === hero.id
-      ) {
-        step = 0;
-      }
-
-      setHeroNextTurn(hero, startNode, endNodes, maze, width, height, step);
+      storyGameMode(
+        startNodes,
+        endNodes,
+        heroes,
+        collected,
+        maze,
+        width,
+        height,
+        step
+      );
     }
 
     return fields;
