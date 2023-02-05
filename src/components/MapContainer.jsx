@@ -78,6 +78,24 @@ const MapContainer = () => {
     );
   };
 
+  const addBorderField = (x, y, fieldType, fieldSize, level, fields) => {
+    const idd = `${x}-${y}`;
+
+    const fieldContainer = {
+      idd,
+      position: {
+        x,
+        y,
+      },
+      size: fieldSize,
+      level,
+      type: fieldType,
+      field: new Field(idd, fieldType, level, {}),
+    };
+
+    addField(fieldContainer, fields);
+  };
+
   const addBorderFields = (
     height,
     borderLocation,
@@ -89,21 +107,7 @@ const MapContainer = () => {
     const borderRow = borderLocation === BORDER.TOP ? height : -1;
 
     for (let j = -1; j <= height; j += 1) {
-      const idd = `${j}-${borderRow}`;
-
-      const fieldContainer = {
-        idd,
-        position: {
-          x: j,
-          y: borderRow,
-        },
-        size: fieldSize,
-        level,
-        type: fieldType,
-        field: new Field(idd, fieldType, level, {}),
-      };
-
-      addField(fieldContainer, fields);
+      addBorderField(j, borderRow, fieldType, fieldSize, level, fields);
     }
   };
 
@@ -199,7 +203,7 @@ const MapContainer = () => {
       BORDER.TOP,
       FIELD_TYPE.OBSTACLE,
       fieldSize,
-      currentLevel,
+      fieldLevel,
       fields
     );
 
@@ -211,20 +215,14 @@ const MapContainer = () => {
         maze[xy.i][xy.j] = 0;
 
         if (j === 0) {
-          const idd = `-1-${i}`;
-          const leftFieldContainer = {
-            idd,
-            position: {
-              x: -1,
-              y: i,
-            },
-            size: fieldSize,
-            level: fieldLevel,
-            type: FIELD_TYPE.OBSTACLE,
-            field: new Field(idd, FIELD_TYPE.OBSTACLE, fieldLevel, {}),
-          };
-
-          addField(leftFieldContainer, fields);
+          addBorderField(
+            -1,
+            i,
+            FIELD_TYPE.OBSTACLE,
+            fieldSize,
+            fieldLevel,
+            fields
+          );
         }
 
         let fieldContainer = {
@@ -303,20 +301,14 @@ const MapContainer = () => {
         addField(fieldContainer, fields);
 
         if (j === width - 1) {
-          const idd = `${width}-${i}`;
-          const rightFieldContainer = {
-            idd,
-            position: {
-              x: width,
-              y: i,
-            },
-            size: fieldSize,
-            level: fieldLevel,
-            type: FIELD_TYPE.OBSTACLE,
-            field: new Field(idd, FIELD_TYPE.OBSTACLE, fieldLevel, {}),
-          };
-
-          addField(rightFieldContainer, fields);
+          addBorderField(
+            width,
+            i,
+            FIELD_TYPE.OBSTACLE,
+            fieldSize,
+            fieldLevel,
+            fields
+          );
         }
       }
     }
