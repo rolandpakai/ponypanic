@@ -152,10 +152,10 @@ export const getHeroMazePath = (mazeArg) => {
   return path;
 };
 
-export const getHeroNextTurn = (hero, mazePath, hasEnemy, step) => {
+export const getHeroNextTurn = (hero, mazePath, step) => {
   let nextHeroTurn = {};
 
-  if (hasEnemy && hero.bulletInRange && hero.bulletInRange.length > 0) {
+  if (hero.bulletInRange && hero.bulletInRange.length > 0) {
     const point = hero.bulletInRange[0];
 
     nextHeroTurn = {
@@ -163,11 +163,7 @@ export const getHeroNextTurn = (hero, mazePath, hasEnemy, step) => {
       action: point.action,
       step,
     };
-  } else if (
-    hasEnemy &&
-    hero.enemyInKickRange &&
-    hero.enemyInKickRange.length > 0
-  ) {
+  } else if (hero.enemyInKickRange && hero.enemyInKickRange.length > 0) {
     const point = hero.enemyInKickRange[0];
 
     nextHeroTurn = {
