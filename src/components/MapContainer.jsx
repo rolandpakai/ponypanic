@@ -41,8 +41,9 @@ import Enemy from "./fields/Enemy";
 import Hero from "./fields/Hero";
 import Obstacle from "./fields/Obstacle";
 import Treasure from "./fields/Treasure";
-import Field from "./fields/Field";
 */
+import Field from "./fields/Field";
+
 const MapContainer = () => {
   const [gameMode] = useState(GAME_MODE.STORY);
   const { setNewGame } = useContext(NewGameContext);
@@ -63,7 +64,7 @@ const MapContainer = () => {
   const [loading, setLoading] = useState(false);
   const [loadingTurn, setLoadingTurn] = useState(false);
 
-  const addField = (x, y, fieldType, fieldSize, level, fields) => {
+  const addCell = (x, y, fieldType, fieldSize, level, fields) => {
     const id = `${x}-${y}`;
 
     fields.push(
@@ -78,6 +79,19 @@ const MapContainer = () => {
     );
   };
 
+  const addField = (fieldContainer, fields) => {
+    fields.push(
+      <FieldContainer
+        key={fieldContainer.idd}
+        id={fieldContainer.idd}
+        level={fieldContainer.level}
+        position={fieldContainer.position}
+        size={fieldContainer.size}
+        type={fieldContainer.type}
+      />
+    );
+  };
+
   const addBorderFields = (
     height,
     borderLocation,
@@ -86,10 +100,24 @@ const MapContainer = () => {
     level,
     fields
   ) => {
-    const border = borderLocation === BORDER.TOP ? height : -1;
+    const borderRow = borderLocation === BORDER.TOP ? height : -1;
 
     for (let j = -1; j <= height; j += 1) {
-      addField(j, border, fieldType, fieldSize, level, fields);
+      const idd = `${j}-${borderRow}`;
+
+      const fieldContainer = {
+        idd,
+        position: {
+          x: j,
+          y: borderRow,
+        },
+        size: fieldSize,
+        level,
+        type: fieldType,
+        field: new Field(idd, fieldType, level, {}),
+      };
+
+      addField(fieldContainer, fields);
     }
   };
 
@@ -197,7 +225,7 @@ const MapContainer = () => {
         maze[xy.i][xy.j] = 0;
 
         if (j === 0) {
-          addField(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, fieldLevel, fields);
+          addCell(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, fieldLevel, fields);
         }
 
         let fieldContainer = {
@@ -209,7 +237,7 @@ const MapContainer = () => {
           size: fieldSize,
           level: fieldLevel,
           type: FIELD_TYPE.FLOOR,
-          // field: new Field(id, type, fieldLevel, theme, data);
+          field: new Field(id, FIELD_TYPE.FLOOR, fieldLevel, {}),
         };
 
         if (treasures[id] && !collected[id]) {
@@ -286,14 +314,7 @@ const MapContainer = () => {
         );
 
         if (j === width - 1) {
-          addField(
-            width,
-            i,
-            FIELD_TYPE.OBSTACLE,
-            fieldSize,
-            fieldLevel,
-            fields
-          );
+          addCell(width, i, FIELD_TYPE.OBSTACLE, fieldSize, fieldLevel, fields);
         }
       }
     }
