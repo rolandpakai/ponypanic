@@ -9,7 +9,7 @@ class Treasure extends Field {
     super(idd, type, level, theme, data);
     const { name } = { ...data };
 
-    this.imgStyleSrc = `./themes/${theme}/treasures/treasure-${level}.png`;
+    this.imgSrc = `./themes/${theme}/treasures/treasure-${level}.png`;
     this.popover = true;
 
     this.popoverContent = (

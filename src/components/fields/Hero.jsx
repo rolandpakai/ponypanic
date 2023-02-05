@@ -13,7 +13,7 @@ class Hero extends Field {
     this.popover = true;
 
     const heroAction = validateHeroAction(action).toLowerCase();
-    this.imgStyleSrc = `./themes/${theme}/heroes/${heroAction}.png`;
+    this.imgSrc = `./themes/${theme}/heroes/${heroAction}.png`;
 
     this.popoverContent = (
       <TableBody>

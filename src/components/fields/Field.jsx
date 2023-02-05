@@ -9,8 +9,8 @@ class Field {
     this.popover = false;
   }
 
-  getImgStyleSrc() {
-    return this.imgStyleSrc;
+  getImgSrc() {
+    return this.imgSrc;
   }
 
   getPopoverContent() {

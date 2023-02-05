@@ -18,7 +18,7 @@ class Enemy extends Field {
 
     this.popover = true;
 
-    this.imgStyleSrc = `./themes/${theme}/enemies/${type.toLowerCase()}-${level}.png`;
+    this.imgSrc = `./themes/${theme}/enemies/${type.toLowerCase()}-${level}.png`;
 
     this.popoverContent = (
       <TableBody>
