@@ -204,10 +204,8 @@ const MapContainer = () => {
           startNodes.push({ x: xy.j, y: xy.i, id: field.id, idd: id });
         }
 
-        if (enemies[id]) {
-          if (enemies[id].health > 0) {
-            field = { ...field, type: enemies[id].type, data: enemies[id] };
-          }
+        if (enemies[id] && enemies[id].health > 0) {
+          field = { ...field, type: enemies[id].type, data: enemies[id] };
         }
 
         if (bullets[id]) {
@@ -404,10 +402,37 @@ const MapContainer = () => {
     return updates;
   };
 
-  const showDialog = async (mapStatus) => {
-    await apiPlaythroughState(storyToken);
-
+  const showDialog = (mapStatus) => {
     setDialogProps(dialogPropsStatus[mapStatus]);
+  };
+
+  const gameOver = async (mapStatus) => {
+    await apiPlaythroughState(storyToken);
+    showDialog(mapStatus);
+  };
+
+  const didTickHappened = async (turn) => {
+    const { map, heroes } = await apiMapState(storyToken);
+    const updates = getUpdatedData(map, heroes, turn);
+
+    const newCanvas = {
+      ...canvas,
+      ...updates,
+    };
+
+    setCanvas(newCanvas);
+
+    const newCanvasFields = getCanvasFields(newCanvas);
+
+    setCanvasFields(newCanvasFields);
+
+    setTimeout(() => {
+      setLoadingTurn(false);
+    }, "300");
+
+    if (map.isGameOver) {
+      gameOver(map.status);
+    }
   };
 
   const nextTurn = async (turn) => {
@@ -416,27 +441,7 @@ const MapContainer = () => {
     const { didTickHappen } = await apiApproveHeroTurn(storyToken, turn);
 
     if (didTickHappen) {
-      const { map, heroes } = await apiMapState(storyToken);
-      const updates = getUpdatedData(map, heroes, turn);
-
-      const newCanvas = {
-        ...canvas,
-        ...updates,
-      };
-
-      setCanvas(newCanvas);
-
-      const newCanvasFields = getCanvasFields(newCanvas);
-
-      setCanvasFields(newCanvasFields);
-
-      setTimeout(() => {
-        setLoadingTurn(false);
-      }, "300");
-
-      if (map.isGameOver) {
-        showDialog(map.status);
-      }
+      didTickHappened(turn);
     }
   };
 
