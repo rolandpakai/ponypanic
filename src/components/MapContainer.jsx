@@ -27,6 +27,7 @@ import {
   BORDER,
   FIELD_TYPE,
   GAME_MODE,
+  MAP_COUNT,
   PLAYER_TOKEN,
 } from "../utils/constants";
 import { Algorithms, Heuristic } from "../path-finder/constants";
@@ -62,14 +63,14 @@ const MapContainer = () => {
   const [loading, setLoading] = useState(false);
   const [loadingTurn, setLoadingTurn] = useState(false);
 
-  const addField = (x, y, fieldType, fieldSize, currentLevel, fields) => {
+  const addField = (x, y, fieldType, fieldSize, level, fields) => {
     const id = `${x}-${y}`;
 
     fields.push(
       <FieldContainer
         key={id}
         id={id}
-        level={currentLevel}
+        level={level}
         position={(x, y)}
         size={fieldSize}
         type={fieldType}
@@ -82,13 +83,13 @@ const MapContainer = () => {
     borderLocation,
     fieldType,
     fieldSize,
-    currentLevel,
+    level,
     fields
   ) => {
     const border = borderLocation === BORDER.TOP ? height : -1;
 
     for (let j = -1; j <= height; j += 1) {
-      addField(j, border, fieldType, fieldSize, currentLevel, fields);
+      addField(j, border, fieldType, fieldSize, level, fields);
     }
   };
 
@@ -177,6 +178,7 @@ const MapContainer = () => {
     const endNodes = [];
     const maze = Array.from(Array(height), () => []);
     const hasEnemy = !(Object.keys(enemies).length === 0);
+    const fieldLevel = currentLevel > MAP_COUNT ? MAP_COUNT : currentLevel;
 
     addBorderFields(
       height,
@@ -195,7 +197,7 @@ const MapContainer = () => {
         maze[xy.i][xy.j] = 0;
 
         if (j === 0) {
-          addField(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
+          addField(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, fieldLevel, fields);
         }
 
         let fieldContainer = {
@@ -205,8 +207,9 @@ const MapContainer = () => {
             y: i,
           },
           size: fieldSize,
-          level: currentLevel,
+          level: fieldLevel,
           type: FIELD_TYPE.FLOOR,
+          // field: new Field(id, type, fieldLevel, theme, data);
         };
 
         if (treasures[id] && !collected[id]) {
@@ -288,7 +291,7 @@ const MapContainer = () => {
             i,
             FIELD_TYPE.OBSTACLE,
             fieldSize,
-            currentLevel,
+            fieldLevel,
             fields
           );
         }
@@ -300,7 +303,7 @@ const MapContainer = () => {
       BORDER.BOTTOM,
       FIELD_TYPE.OBSTACLE,
       fieldSize,
-      currentLevel,
+      fieldLevel,
       fields
     );
 
