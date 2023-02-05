@@ -53,7 +53,9 @@ export const FIELD_TYPE = {
 
 export const BORDER = {
   TOP: "TOP",
-  BOTTOM: "BOTTOM0",
+  BOTTOM: "BOTTOM",
+  LEFT: "LEFT",
+  RIGHT: "RIGHT",
 };
 
 export const KICK_POINTS = [
