@@ -24,6 +24,7 @@ import {
   xyTOij,
 } from "../utils/util";
 import {
+  BORDER,
   FIELD_TYPE,
   GAME_MODE,
   MAP_STATUS,
@@ -70,6 +71,21 @@ const MapContainer = () => {
     );
   };
 
+  const addBorderFields = (
+    height,
+    borderLocation,
+    fieldType,
+    fieldSize,
+    currentLevel,
+    fields
+  ) => {
+    const border = borderLocation === BORDER.TOP ? height : -1;
+
+    for (let j = -1; j <= height; j += 1) {
+      addField(j, border, fieldType, fieldSize, currentLevel, fields);
+    }
+  };
+
   const getCanvasFields = (props) => {
     const {
       width,
@@ -91,9 +107,14 @@ const MapContainer = () => {
     const maze = Array.from(Array(height), () => []);
     const hasEnemy = !(Object.keys(enemies).length === 0);
 
-    for (let j = -1; j <= height; j += 1) {
-      addField(j, height, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
-    }
+    addBorderFields(
+      height,
+      BORDER.TOP,
+      FIELD_TYPE.OBSTACLE,
+      fieldSize,
+      currentLevel,
+      fields
+    );
 
     for (let i = width - 1; i >= 0; i -= 1) {
       for (let j = 0; j < height; j += 1) {
@@ -189,9 +210,14 @@ const MapContainer = () => {
       }
     }
 
-    for (let j = -1; j <= height; j += 1) {
-      addField(j, -1, FIELD_TYPE.OBSTACLE, fieldSize, currentLevel, fields);
-    }
+    addBorderFields(
+      height,
+      BORDER.BOTTOM,
+      FIELD_TYPE.OBSTACLE,
+      fieldSize,
+      currentLevel,
+      fields
+    );
 
     let step = mazeStep;
 

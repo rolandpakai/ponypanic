@@ -51,6 +51,11 @@ export const FIELD_TYPE = {
   COLLECTED_TREASURE: "COLLECTED_TREASURE",
 };
 
+export const BORDER = {
+  TOP: "TOP",
+  BOTTOM: "BOTTOM0",
+};
+
 export const KICK_POINTS = [
   { x: 0, y: 1, action: HERO_ACTION.KICK_DOWN },
   { x: 0, y: -1, action: HERO_ACTION.KICK_UP },
