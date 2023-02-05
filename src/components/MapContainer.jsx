@@ -35,13 +35,12 @@ import Canvas from "./Canvas";
 import PopupDialog from "./PopupDialog";
 import Button from "./Button";
 import FieldContainer from "./FieldContainer";
-/*
+
 import Bullet from "./fields/Bullet";
 import Enemy from "./fields/Enemy";
 import Hero from "./fields/Hero";
 import Obstacle from "./fields/Obstacle";
 import Treasure from "./fields/Treasure";
-*/
 import Field from "./fields/Field";
 
 const MapContainer = () => {
@@ -68,12 +67,12 @@ const MapContainer = () => {
     fields.push(
       <FieldContainer
         key={fieldContainer.idd}
-        id={fieldContainer.idd}
+        idd={fieldContainer.idd}
         level={fieldContainer.level}
         position={fieldContainer.position}
         size={fieldContainer.size}
         type={fieldContainer.type}
-        data={fieldContainer.data}
+        field={fieldContainer.field}
       />
     );
   };
@@ -90,7 +89,7 @@ const MapContainer = () => {
       size: fieldSize,
       level,
       type: fieldType,
-      field: new Field(idd, fieldType, level, {}),
+      field: new Obstacle(idd, fieldType, level, {}),
     };
 
     addField(fieldContainer, fields);
@@ -209,7 +208,7 @@ const MapContainer = () => {
 
     for (let i = width - 1; i >= 0; i -= 1) {
       for (let j = 0; j < height; j += 1) {
-        const id = `${j}-${i}`;
+        const idd = `${j}-${i}`;
         const xy = xyTOij(i, j, height);
 
         maze[xy.i][xy.j] = 0;
@@ -226,7 +225,7 @@ const MapContainer = () => {
         }
 
         let fieldContainer = {
-          idd: id,
+          idd,
           position: {
             x: j,
             y: i,
@@ -234,66 +233,81 @@ const MapContainer = () => {
           size: fieldSize,
           level: fieldLevel,
           type: FIELD_TYPE.FLOOR,
-          field: new Field(id, FIELD_TYPE.FLOOR, fieldLevel, {}),
+          field: new Field(idd, FIELD_TYPE.FLOOR, fieldLevel, {}),
         };
 
-        if (treasures[id] && !collected[id]) {
+        if (treasures[idd] && !collected[idd]) {
           fieldContainer = {
             ...fieldContainer,
-            type: treasures[id].type,
-            data: treasures[id],
+            type: treasures[idd].type,
+            field: new Treasure(
+              idd,
+              treasures[idd].type,
+              fieldLevel,
+              treasures[idd]
+            ),
           };
-          endNodes.push({ x: xy.j, y: xy.i, id: fieldContainer.id, idd: id });
+          endNodes.push({ x: xy.j, y: xy.i, id: fieldContainer.id, idd });
         }
 
-        if (heroes[id]) {
+        if (heroes[idd]) {
           if (hasEnemy) {
             const { kickRange, enemyInKickRange, bulletInRange } =
-              getHeroKickRange(heroes[id], enemies, bullets);
+              getHeroKickRange(heroes[idd], enemies, bullets);
 
-            heroes[id].kickRange = kickRange;
-            heroes[id].enemyInKickRange = enemyInKickRange;
-            heroes[id].bulletInRange = bulletInRange;
+            heroes[idd].kickRange = kickRange;
+            heroes[idd].enemyInKickRange = enemyInKickRange;
+            heroes[idd].bulletInRange = bulletInRange;
           }
 
           fieldContainer = {
             ...fieldContainer,
-            type: heroes[id].type,
-            data: heroes[id],
+            type: heroes[idd].type,
+            field: new Hero(idd, heroes[idd].type, fieldLevel, heroes[idd]),
           };
 
-          startNodes.push({ x: xy.j, y: xy.i, id: fieldContainer.id, idd: id });
+          startNodes.push({ x: xy.j, y: xy.i, id: fieldContainer.id, idd });
         }
 
-        if (enemies[id] && enemies[id].health > 0) {
+        if (enemies[idd] && enemies[idd].health > 0) {
           fieldContainer = {
             ...fieldContainer,
-            type: enemies[id].type,
-            data: enemies[id],
+            type: enemies[idd].type,
+            field: new Enemy(idd, enemies[idd].type, fieldLevel, enemies[idd]),
           };
         }
 
-        if (bullets[id]) {
+        if (bullets[idd]) {
           fieldContainer = {
             ...fieldContainer,
-            type: bullets[id].type,
-            data: bullets[id],
+            type: bullets[idd].type,
+            field: new Bullet(idd, bullets[idd].type, fieldLevel, bullets[idd]),
           };
         }
 
-        if (enemies[id] && bullets[id]) {
+        if (enemies[idd] && bullets[idd]) {
           fieldContainer = {
             ...fieldContainer,
             type: FIELD_TYPE.ENEMY_BULLET,
-            data: enemies[id],
+            field: new Enemy(
+              idd,
+              FIELD_TYPE.ENEMY_BULLET,
+              fieldLevel,
+              enemies[idd]
+            ),
           };
         }
 
-        if (obstacles[id]) {
+        if (obstacles[idd]) {
           fieldContainer = {
             ...fieldContainer,
-            type: obstacles[id].type,
-            data: obstacles[id],
+            type: obstacles[idd].type,
+            field: new Obstacle(
+              idd,
+              obstacles[idd].type,
+              fieldLevel,
+              obstacles[idd]
+            ),
           };
           maze[xy.i][xy.j] = 2;
         }

@@ -11,17 +11,10 @@ import TableRow from "@mui/material/TableRow";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { FIELD_TYPE, MAP_COUNT } from "../utils/constants";
 
-import Bullet from "./fields/Bullet";
-import Enemy from "./fields/Enemy";
-import Hero from "./fields/Hero";
-import Obstacle from "./fields/Obstacle";
-import Treasure from "./fields/Treasure";
-import Field from "./fields/Field";
-
 const FieldContainer = (props) => {
   const [anchorEl, setAnchorEl] = useState();
   const { theme } = useContext(ThemeContext);
-  const { idd, size, type, level, data } = { ...props };
+  const { idd, size, type, level, field } = { ...props };
 
   const open = Boolean(anchorEl);
 
@@ -43,38 +36,10 @@ const FieldContainer = (props) => {
     src: "",
   };
 
-  let field;
-
-  switch (type) {
-    case FIELD_TYPE.HERO: {
-      field = new Hero(idd, type, fieldLevel, data);
-      break;
-    }
-    case FIELD_TYPE.ENEMY:
-    case FIELD_TYPE.ENEMY_BULLET: {
-      field = new Enemy(idd, type, fieldLevel, data);
-      break;
-    }
-    case FIELD_TYPE.BULLET: {
-      field = new Bullet(idd, type, fieldLevel, data);
-      break;
-    }
-    case FIELD_TYPE.TREASURE: {
-      field = new Treasure(idd, type, fieldLevel, data);
-      break;
-    }
-    case FIELD_TYPE.OBSTACLE: {
-      field = new Obstacle(idd, type, fieldLevel, data);
-      break;
-    }
-    default:
-      field = new Field(idd, type, fieldLevel, data);
-    // imgStyle.backgroundImage = "";
-  }
-
   return (
     <>
       <Box
+        id={`field-${idd}`}
         aria-owns={
           field.hasPopover() && open ? "mouse-over-popover" : undefined
         }
