@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FieldContainer Component FieldContainer renders 1`] = `
+<div>
+  <div
+    aria-haspopup="true"
+    class="MuiBox-root css-1sdm1q0"
+    id="field-idd"
+  />
+</div>
+`;
