@@ -27,7 +27,6 @@ import {
   BORDER,
   FIELD_TYPE,
   GAME_MODE,
-  MAP_STATUS,
   PLAYER_TOKEN,
 } from "../utils/constants";
 import { Algorithms, Heuristic } from "../path-finder/constants";
@@ -35,7 +34,14 @@ import Canvas from "./Canvas";
 import PopupDialog from "./PopupDialog";
 import Button from "./Button";
 import FieldContainer from "./FieldContainer";
-
+/*
+import Bullet from "./fields/Bullet";
+import Enemy from "./fields/Enemy";
+import Hero from "./fields/Hero";
+import Obstacle from "./fields/Obstacle";
+import Treasure from "./fields/Treasure";
+import Field from "./fields/Field";
+*/
 const MapContainer = () => {
   const [gameMode] = useState(GAME_MODE.STORY);
   const { setNewGame } = useContext(NewGameContext);
@@ -84,6 +90,42 @@ const MapContainer = () => {
     for (let j = -1; j <= height; j += 1) {
       addField(j, border, fieldType, fieldSize, currentLevel, fields);
     }
+  };
+
+  const setHeroNextTurn = (
+    hero,
+    startNode,
+    endNodes,
+    maze,
+    width,
+    height,
+    step
+  ) => {
+    let nextHeroTurn = {};
+
+    if (step === 0) {
+      const mazeArg = {
+        board: maze,
+        startNodes: startNode,
+        endNodes,
+        algorithm: Algorithms.BFS,
+        heuristic: Heuristic.Euclidean,
+        rowCount: width,
+        colCount: height,
+        allowDiagonalMoves: false,
+      };
+
+      const newMazePath = getHeroMazePath(mazeArg);
+
+      nextHeroTurn = getHeroNextTurn(hero, newMazePath, step);
+
+      setMazePath(newMazePath);
+    } else {
+      nextHeroTurn = getHeroNextTurn(hero, mazePath, step);
+    }
+
+    setHeroTurn(nextHeroTurn);
+    setMazeStep(nextHeroTurn.step);
   };
 
   const getCanvasFields = (props) => {
@@ -226,8 +268,6 @@ const MapContainer = () => {
     }
 
     if (gameMode === GAME_MODE.STORY) {
-      let nextHeroTurn = {};
-
       const startNode = startNodes[0];
       const hero = heroes[startNode.idd];
 
@@ -238,29 +278,7 @@ const MapContainer = () => {
         step = 0;
       }
 
-      if (step === 0) {
-        const mazeArg = {
-          board: maze,
-          startNodes: startNode,
-          endNodes,
-          algorithm: Algorithms.BFS,
-          heuristic: Heuristic.Euclidean,
-          rowCount: width,
-          colCount: height,
-          allowDiagonalMoves: false,
-        };
-
-        const newMazePath = getHeroMazePath(mazeArg);
-
-        nextHeroTurn = getHeroNextTurn(hero, newMazePath, hasEnemy, step);
-
-        setMazePath(newMazePath);
-      } else {
-        nextHeroTurn = getHeroNextTurn(hero, mazePath, hasEnemy, step);
-      }
-
-      setHeroTurn(nextHeroTurn);
-      setMazeStep(nextHeroTurn.step);
+      setHeroNextTurn(hero, startNode, endNodes, maze, width, height, step);
     }
 
     return fields;
@@ -360,6 +378,38 @@ const MapContainer = () => {
     },
   };
 
+  const getUpdatedData = (map, heroes, turn) => {
+    const updates = {
+      heroes: arrayToMap(heroes, FIELD_TYPE.HERO, turn),
+      enemies: arrayToMap(map.enemies, FIELD_TYPE.ENEMY),
+      bullets: arrayToMap(map.bullets, FIELD_TYPE.BULLET),
+      elapsedTickCount: map.elapsedTickCount,
+    };
+
+    const treasures = arrayToMap(map.treasures, FIELD_TYPE.TREASURE);
+
+    const collectedList = Object.values(treasures).filter(
+      (treasure) => treasure.collectedByHeroId != null
+    );
+
+    if (collectedList.length > 0) {
+      const collected = arrayToMap(
+        collectedList,
+        FIELD_TYPE.COLLECTED_TREASURE
+      );
+
+      updates.collected = collected;
+    }
+
+    return updates;
+  };
+
+  const showDialog = async (mapStatus) => {
+    await apiPlaythroughState(storyToken);
+
+    setDialogProps(dialogPropsStatus[mapStatus]);
+  };
+
   const nextTurn = async (turn) => {
     setLoadingTurn(true);
 
@@ -367,28 +417,7 @@ const MapContainer = () => {
 
     if (didTickHappen) {
       const { map, heroes } = await apiMapState(storyToken);
-
-      const updates = {
-        heroes: arrayToMap(heroes, FIELD_TYPE.HERO, turn),
-        enemies: arrayToMap(map.enemies, FIELD_TYPE.ENEMY),
-        bullets: arrayToMap(map.bullets, FIELD_TYPE.BULLET),
-        elapsedTickCount: map.elapsedTickCount,
-      };
-
-      const treasures = arrayToMap(map.treasures, FIELD_TYPE.TREASURE);
-
-      const collectedList = Object.values(treasures).filter(
-        (treasure) => treasure.collectedByHeroId != null
-      );
-
-      if (collectedList.length > 0) {
-        const collected = arrayToMap(
-          collectedList,
-          FIELD_TYPE.COLLECTED_TREASURE
-        );
-
-        updates.collected = collected;
-      }
+      const updates = getUpdatedData(map, heroes, turn);
 
       const newCanvas = {
         ...canvas,
@@ -406,13 +435,7 @@ const MapContainer = () => {
       }, "300");
 
       if (map.isGameOver) {
-        await apiPlaythroughState(storyToken);
-
-        if (map.status === MAP_STATUS.WON) {
-          setDialogProps(dialogPropsStatus[MAP_STATUS.WON]);
-        } else if (map.status === MAP_STATUS.LOST) {
-          setDialogProps(dialogPropsStatus[MAP_STATUS.LOST]);
-        }
+        showDialog(map.status);
       }
     }
   };
