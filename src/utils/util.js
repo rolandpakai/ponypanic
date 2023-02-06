@@ -199,7 +199,7 @@ export const addPointToBulletRange = (point, bullets, bulletInRange) => {
   }
 };
 
-export const getHeroKickRange = (hero, enemies, bullets) => {
+export const getHeroRanges = (hero, enemies, bullets) => {
   const enemyInKickRange = [];
   const bulletInRange = [];
 

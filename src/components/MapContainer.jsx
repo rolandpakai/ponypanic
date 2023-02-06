@@ -16,7 +16,7 @@ import {
 } from "../api/api";
 import {
   arrayToMap,
-  getHeroKickRange,
+  getHeroRanges,
   getHeroMazePath,
   getHeroNextTurn,
   getImageSize,
@@ -253,7 +253,7 @@ const MapContainer = () => {
         if (heroes[idd]) {
           if (hasEnemy) {
             const { kickRange, enemyInKickRange, bulletInRange } =
-              getHeroKickRange(heroes[idd], enemies, bullets);
+              getHeroRanges(heroes[idd], enemies, bullets);
 
             heroes[idd].kickRange = kickRange;
             heroes[idd].enemyInKickRange = enemyInKickRange;
