@@ -184,6 +184,21 @@ export const getHeroNextTurn = (hero, mazePath, step) => {
   return nextHeroTurn;
 };
 
+export const addPointToKickRange = (point, enemies, enemyInKickRange) => {
+  if (enemies[point.idd] && enemies[point.idd].health > 0) {
+    point.isEnemy = true;
+    enemyInKickRange.push(point);
+  }
+};
+
+export const addPointToBulletRange = (point, bullets, bulletInRange) => {
+  if (bullets[point.idd]) {
+    point.isBullet = true;
+    point.action = HERO_ACTION.USE_SHIELD;
+    bulletInRange.push(point);
+  }
+};
+
 export const getHeroKickRange = (hero, enemies, bullets) => {
   const enemyInKickRange = [];
   const bulletInRange = [];
@@ -199,50 +214,31 @@ export const getHeroKickRange = (hero, enemies, bullets) => {
     };
 
     const point1 = {
-      id: hero.id,
-      x: hero.position.x + move.x,
-      y: hero.position.y + move.y,
+      ...point0,
       action: move.action,
-      isEnemy: false,
-      isBullet: false,
+      x: point0.x + move.x,
+      y: point0.y + move.y,
     };
 
     const point2 = {
-      id: hero.id,
-      x: hero.position.x + move.x * 2,
-      y: hero.position.y + move.y * 2,
+      ...point0,
       action: move.action,
-      isEnemy: false,
-      isBullet: false,
+      x: point0.x + move.x * 2,
+      y: point0.y + move.y * 2,
     };
 
-    const id0 = `${point0.x}-${point0.y}`;
-    const id1 = `${point1.x}-${point1.y}`;
-    const id2 = `${point2.x}-${point2.y}`;
+    point0.idd = `${point0.x}-${point0.y}`;
+    point1.idd = `${point1.x}-${point1.y}`;
+    point2.idd = `${point2.x}-${point2.y}`;
 
-    if (enemies[id0] && enemies[id0].health > 0) {
-      point1.isEnemy = true;
-      enemyInKickRange.push(point0);
-    }
+    addPointToKickRange(point0, enemies, enemyInKickRange);
+    addPointToKickRange(point1, enemies, enemyInKickRange);
+    addPointToKickRange(point2, enemies, enemyInKickRange);
+    addPointToBulletRange(point1, bullets, bulletInRange);
 
-    if (enemies[id1] && enemies[id1].health > 0) {
-      point1.isEnemy = true;
-      enemyInKickRange.push(point1);
-    }
-
-    if (enemies[id2] && enemies[id2].health > 0) {
-      point2.isEnemy = true;
-      enemyInKickRange.push(point2);
-    }
-
-    if (bullets[id1]) {
-      point1.isBullet = true;
-      point1.action = HERO_ACTION.USE_SHIELD;
-      bulletInRange.push(point1);
-    }
-
-    acc[id1] = point1;
-    acc[id2] = point2;
+    acc[point0.idd] = point0;
+    acc[point1.idd] = point1;
+    acc[point2.idd] = point2;
 
     return acc;
   }, {});
