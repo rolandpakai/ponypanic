@@ -20,7 +20,7 @@ import { GameModeContext } from "../contexts/GameModeContext";
 
 const Canvas = (props) => {
   const { gameMode } = useContext(GameModeContext);
-  const [canvasFields, setCanvasFields] = useState([]);
+  const [fields, setFields] = useState([]);
   const [mazePath, setMazePath] = useState([]);
 
   const { canvas, updateHeroTurn } = { ...props };
@@ -119,7 +119,7 @@ const Canvas = (props) => {
     updateHeroTurn(nextHeroTurn);
   };
 
-  const getCanvasFields = () => {
+  const getFields = () => {
     const {
       width,
       height,
@@ -134,7 +134,7 @@ const Canvas = (props) => {
       elapsedTickCount,
     } = canvas;
 
-    let fields = [];
+    let newFields = [];
     const startNodes = [];
     const endNodes = [];
     const maze = Array.from(Array(height), () => []);
@@ -149,7 +149,7 @@ const Canvas = (props) => {
       fieldLevel
     );
 
-    fields = fields.concat(borderFields);
+    newFields = newFields.concat(borderFields);
 
     for (let i = width - 1; i >= 0; i -= 1) {
       for (let j = 0; j < height; j += 1) {
@@ -159,7 +159,7 @@ const Canvas = (props) => {
         maze[xy.y][xy.x] = 0;
 
         if (j === 0) {
-          fields.push(
+          newFields.push(
             getBorderField(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, fieldLevel)
           );
         }
@@ -252,10 +252,10 @@ const Canvas = (props) => {
           maze[xy.y][xy.x] = 2;
         }
 
-        fields.push(getFieldContainer(fieldContainer));
+        newFields.push(getFieldContainer(fieldContainer));
 
         if (j === width - 1) {
-          fields.push(
+          newFields.push(
             getBorderField(width, i, FIELD_TYPE.OBSTACLE, fieldSize, fieldLevel)
           );
         }
@@ -267,11 +267,10 @@ const Canvas = (props) => {
       BORDER.BOTTOM,
       FIELD_TYPE.OBSTACLE,
       fieldSize,
-      fieldLevel,
-      fields
+      fieldLevel
     );
 
-    fields = fields.concat(borderFields);
+    newFields = newFields.concat(borderFields);
 
     if (gameMode === GAME_MODE.STORY) {
       storyGameMode(
@@ -286,12 +285,12 @@ const Canvas = (props) => {
       );
     }
 
-    return fields;
+    return newFields;
   };
 
   useEffect(() => {
     if (!(Object.keys(canvas).length === 0)) {
-      setCanvasFields(getCanvasFields(canvas));
+      setFields(getFields(canvas));
     }
   }, [canvas]);
 
@@ -303,7 +302,7 @@ const Canvas = (props) => {
         gridTemplateColumns: `repeat(${canvas.width + 2}, auto)`,
       }}
     >
-      {canvasFields}
+      {fields}
     </Box>
   );
 };
