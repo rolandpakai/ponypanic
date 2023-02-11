@@ -30,7 +30,7 @@ const Footer = () => {
     >
       <Box
         sx={{
-          padding: "0 5px 5px 5px",
+          p: "5px",
         }}
       >
         <Stack direction="row" spacing={1}>
@@ -52,7 +52,7 @@ const Footer = () => {
       </Box>
       <Box
         sx={{
-          padding: "0 5px 5px 5px",
+          p: "5px",
         }}
       >
         <Select onChange={handleChange} value={theme}>
