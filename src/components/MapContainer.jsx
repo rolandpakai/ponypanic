@@ -4,7 +4,6 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { NewGameContext } from "../contexts/NewGameContext";
 import {
   apiApproveHeroTurn,
   apiMapResource,
@@ -19,10 +18,10 @@ import { FIELD_TYPE, PLAYER_TOKEN } from "../utils/constants";
 import Canvas from "./Canvas";
 import PopupDialog from "./PopupDialog";
 import Button from "./Button";
+import { NewGameContext } from "../contexts/NewGameContext";
 
 const MapContainer = () => {
   const { setNewGame } = useContext(NewGameContext);
-
   const [canvas, setCanvas] = useState({});
   const [storyToken, setStoryToken] = useState("");
   const [heroTurn, setHeroTurn] = useState({});

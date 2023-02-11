@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 
 import {
@@ -16,9 +16,10 @@ import Hero from "./fields/Hero";
 import Obstacle from "./fields/Obstacle";
 import Treasure from "./fields/Treasure";
 import Field from "./fields/Field";
+import { GameModeContext } from "../contexts/GameModeContext";
 
 const Canvas = (props) => {
-  const [gameMode] = useState(GAME_MODE.STORY);
+  const { gameMode } = useContext(GameModeContext);
   const [canvasFields, setCanvasFields] = useState([]);
   const [mazePath, setMazePath] = useState([]);
 
