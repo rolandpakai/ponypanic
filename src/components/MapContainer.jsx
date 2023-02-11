@@ -67,13 +67,12 @@ const MapContainer = () => {
     };
   };
 
-  const setState = async (token, currentLevel) => {
+  const setCanvasData = async (token, currentLevel) => {
     const mapResource = await apiMapResource(token);
     const mapState = await apiMapState(token);
     const newCanvas = getCanvasData(mapResource, mapState, currentLevel);
 
     setCanvas(newCanvas);
-    setDialogProps({ ...dialogProps, open: false });
   };
 
   const resetLevel = async () => {
@@ -81,7 +80,8 @@ const MapContainer = () => {
       playthroughState: { currentLevel },
     } = await apiResetLevel(storyToken);
 
-    setState(storyToken, currentLevel);
+    setCanvasData(storyToken, currentLevel);
+    setDialogProps({ ...dialogProps, open: false });
   };
 
   const nextLevel = async () => {
@@ -89,7 +89,8 @@ const MapContainer = () => {
       playthroughState: { currentLevel },
     } = await apiNextLevel(storyToken);
 
-    setState(storyToken, currentLevel);
+    setCanvasData(storyToken, currentLevel);
+    setDialogProps({ ...dialogProps, open: false });
   };
 
   const endHandler = () => {
@@ -199,7 +200,8 @@ const MapContainer = () => {
         playthroughState: { currentLevel },
       } = await apiStoryBegin(PLAYER_TOKEN);
 
-      setState(storyPlaythroughToken, currentLevel);
+      setCanvasData(storyPlaythroughToken, currentLevel);
+      setDialogProps({ ...dialogProps, open: false });
       setStoryToken(storyPlaythroughToken);
 
       setTimeout(() => {
