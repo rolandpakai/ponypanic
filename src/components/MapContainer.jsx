@@ -110,18 +110,36 @@ const MapContainer = () => {
     }
   };
 
-  const setHeroNextTurn = (
-    hero,
-    startNode,
+  const isNewMazePath = (hero, collected, elapsedTickCount) => {
+    return (
+      elapsedTickCount === 0 ||
+      (collected[hero.idd] && collected[hero.idd].collectedByHeroId === hero.id)
+    );
+  };
+
+  const storyGameMode = (
+    startNodes,
     endNodes,
+    heroes,
+    collected,
     maze,
     width,
     height,
-    step
+    step,
+    elapsedTickCount
   ) => {
-    let nextHeroTurn = {};
+    const startNode = startNodes[0];
+    const hero = heroes[startNode.idd];
 
-    if (step === 0) {
+    let stepNr = step;
+
+    let newMazePath = [...mazePath];
+
+    if (isNewMazePath(hero, collected, elapsedTickCount)) {
+      stepNr = 0;
+    }
+
+    if (stepNr === 0) {
       const mazeArg = {
         board: maze,
         startNodes: startNode,
@@ -133,42 +151,14 @@ const MapContainer = () => {
         allowDiagonalMoves: false,
       };
 
-      const newMazePath = getHeroMazePath(mazeArg);
-
-      nextHeroTurn = getHeroNextTurn(hero, newMazePath, step);
-
-      setMazePath(newMazePath);
-    } else {
-      nextHeroTurn = getHeroNextTurn(hero, mazePath, step);
+      newMazePath = getHeroMazePath(mazeArg);
     }
 
+    const nextHeroTurn = getHeroNextTurn(hero, newMazePath, stepNr);
+
+    setMazePath(newMazePath);
     setHeroTurn(nextHeroTurn);
     setMazeStep(nextHeroTurn.step);
-  };
-
-  const storyGameMode = (
-    startNodes,
-    endNodes,
-    heroes,
-    collected,
-    maze,
-    width,
-    height,
-    step
-  ) => {
-    const startNode = startNodes[0];
-    const hero = heroes[startNode.idd];
-
-    let stepNr = step;
-
-    if (
-      collected[startNode.idd] &&
-      collected[startNode.idd].collectedByHeroId === hero.id
-    ) {
-      stepNr = 0;
-    }
-
-    setHeroNextTurn(hero, startNode, endNodes, maze, width, height, stepNr);
   };
 
   const getStep = (elapsedTickCount) => {
@@ -347,7 +337,8 @@ const MapContainer = () => {
         maze,
         width,
         height,
-        step
+        step,
+        elapsedTickCount
       );
     }
 
