@@ -5,15 +5,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 const Button = (props) => {
   const { loading, onClick, children } = { ...props };
 
-  const sx = {
-    borderRadius: 8,
-    backgroundImage: "url(./images/button.svg)",
-    backgroundSize: "cover",
-    justifyContent: "center",
-    alignItems: "center",
-    fontSize: "1.25rem",
-  };
-
   const loadingIndicator = (
     <CircularProgress color="inherit" size={25} sx={{ color: "#fff" }} />
   );
@@ -26,7 +17,14 @@ const Button = (props) => {
       size="large"
       variant="contained"
       fullWidth
-      sx={sx}
+      sx={{
+        borderRadius: 8,
+        backgroundImage: "url(./images/button.svg)",
+        backgroundSize: "cover",
+        justifyContent: "center",
+        alignItems: "center",
+        fontSize: "1.25rem",
+      }}
       loadingIndicator={loadingIndicator}
     >
       {children}
