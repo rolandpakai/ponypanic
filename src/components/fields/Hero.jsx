@@ -8,7 +8,7 @@ import { validateHeroAction } from "../../utils/util";
 class Hero extends Field {
   constructor(idd, type, level, data) {
     super(idd, type, level, data);
-    const { playerId, action, health, score } = { ...data };
+    const { playerId, action, health, score } = data;
 
     this.popover = true;
 

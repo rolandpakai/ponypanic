@@ -7,7 +7,7 @@ import Field from "./Field";
 class Treasure extends Field {
   constructor(idd, type, level, data) {
     super(idd, type, level, data);
-    const { name } = { ...data };
+    const { name } = data;
 
     this.imgSrc = `treasures/treasure-${level}.png`;
     this.popover = true;

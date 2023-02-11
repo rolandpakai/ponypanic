@@ -14,7 +14,7 @@ class Enemy extends Field {
       onTouchDamage,
       bulletDamage,
       health,
-    } = { ...data };
+    } = data;
 
     this.popover = true;
 
