@@ -17,6 +17,7 @@ export const arrayToMap = (array, type, turn) => {
   array.forEach((el) => {
     const idd = `${el.position.x}-${el.position.y}`;
 
+    el.idd = idd;
     el.type = type;
 
     if (turn && turn.heroId && turn.heroId === el.id && turn.action) {
