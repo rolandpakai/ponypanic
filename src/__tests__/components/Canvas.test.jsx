@@ -4,7 +4,9 @@ import Canvas from "../../components/Canvas";
 
 describe("Canvas Component", () => {
   test("Canvas renders", () => {
-    const container = renderer.create(<Canvas />).toJSON();
+    const container = renderer
+      .create(<Canvas canvas={{ mapId: 1 }} />)
+      .toJSON();
 
     expect(container).toMatchSnapshot();
   });

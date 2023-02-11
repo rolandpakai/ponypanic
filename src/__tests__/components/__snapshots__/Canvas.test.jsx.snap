@@ -3,6 +3,6 @@
 exports[`Canvas Component Canvas renders 1`] = `
 <div
   className="MuiBox-root css-gaqaxa"
-  id="id-undefined"
+  id="id-1"
 />
 `;
