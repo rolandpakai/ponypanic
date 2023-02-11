@@ -9,9 +9,7 @@ import {
 } from "../utils/util";
 import { BORDER, FIELD_TYPE, GAME_MODE, MAP_COUNT } from "../utils/constants";
 import { Algorithms, Heuristic } from "../path-finder/constants";
-
 import FieldContainer from "./FieldContainer";
-
 import Bullet from "./fields/Bullet";
 import Enemy from "./fields/Enemy";
 import Hero from "./fields/Hero";
@@ -26,8 +24,8 @@ const Canvas = (props) => {
 
   const { canvas, updateHeroTurn } = { ...props };
 
-  const addField = (fieldContainer, fields) => {
-    fields.push(
+  const getFieldContainer = (fieldContainer) => {
+    return (
       <FieldContainer
         key={fieldContainer.idd}
         idd={fieldContainer.idd}
@@ -40,7 +38,7 @@ const Canvas = (props) => {
     );
   };
 
-  const addBorderField = (x, y, fieldType, fieldSize, level, fields) => {
+  const getBorderField = (x, y, fieldType, fieldSize, level) => {
     const idd = `${x}-${y}`;
 
     const fieldContainer = {
@@ -55,22 +53,26 @@ const Canvas = (props) => {
       field: new Obstacle(idd, fieldType, level, {}),
     };
 
-    addField(fieldContainer, fields);
+    return getFieldContainer(fieldContainer);
   };
 
-  const addBorderFields = (
+  const getBorderFields = (
     height,
     borderLocation,
     fieldType,
     fieldSize,
-    level,
-    fields
+    level
   ) => {
+    const borderFields = [];
     const borderRow = borderLocation === BORDER.TOP ? height : -1;
 
     for (let j = -1; j <= height; j += 1) {
-      addBorderField(j, borderRow, fieldType, fieldSize, level, fields);
+      borderFields.push(
+        getBorderField(j, borderRow, fieldType, fieldSize, level)
+      );
     }
+
+    return borderFields;
   };
 
   const isNewMazePath = (hero, collected, elapsedTickCount) => {
@@ -131,21 +133,22 @@ const Canvas = (props) => {
       elapsedTickCount,
     } = canvas;
 
-    const fields = [];
+    let fields = [];
     const startNodes = [];
     const endNodes = [];
     const maze = Array.from(Array(height), () => []);
     const hasEnemy = !(Object.keys(enemies).length === 0);
     const fieldLevel = currentLevel > MAP_COUNT ? MAP_COUNT : currentLevel;
 
-    addBorderFields(
+    let borderFields = getBorderFields(
       height,
       BORDER.TOP,
       FIELD_TYPE.OBSTACLE,
       fieldSize,
-      fieldLevel,
-      fields
+      fieldLevel
     );
+
+    fields = fields.concat(borderFields);
 
     for (let i = width - 1; i >= 0; i -= 1) {
       for (let j = 0; j < height; j += 1) {
@@ -155,13 +158,8 @@ const Canvas = (props) => {
         maze[xy.y][xy.x] = 0;
 
         if (j === 0) {
-          addBorderField(
-            -1,
-            i,
-            FIELD_TYPE.OBSTACLE,
-            fieldSize,
-            fieldLevel,
-            fields
+          fields.push(
+            getBorderField(-1, i, FIELD_TYPE.OBSTACLE, fieldSize, fieldLevel)
           );
         }
 
@@ -253,22 +251,17 @@ const Canvas = (props) => {
           maze[xy.y][xy.x] = 2;
         }
 
-        addField(fieldContainer, fields);
+        fields.push(getFieldContainer(fieldContainer));
 
         if (j === width - 1) {
-          addBorderField(
-            width,
-            i,
-            FIELD_TYPE.OBSTACLE,
-            fieldSize,
-            fieldLevel,
-            fields
+          fields.push(
+            getBorderField(width, i, FIELD_TYPE.OBSTACLE, fieldSize, fieldLevel)
           );
         }
       }
     }
 
-    addBorderFields(
+    borderFields = getBorderFields(
       height,
       BORDER.BOTTOM,
       FIELD_TYPE.OBSTACLE,
@@ -276,6 +269,8 @@ const Canvas = (props) => {
       fieldLevel,
       fields
     );
+
+    fields = fields.concat(borderFields);
 
     if (gameMode === GAME_MODE.STORY) {
       storyGameMode(
@@ -294,8 +289,9 @@ const Canvas = (props) => {
   };
 
   useEffect(() => {
-    if (!(Object.keys(canvas).length === 0))
+    if (!(Object.keys(canvas).length === 0)) {
       setCanvasFields(getCanvasFields(canvas));
+    }
   }, [canvas]);
 
   return (
