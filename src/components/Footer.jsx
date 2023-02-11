@@ -5,6 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import Stack from "@mui/material/Stack";
 
 import { ThemeContext } from "../contexts/ThemeContext";
 import { THEMES_SELECT_OPTIONS } from "../utils/constants";
@@ -17,37 +18,40 @@ const Footer = () => {
   };
 
   return (
-    <Box className="footer">
+    <Box
+      sx={{
+        width: "100%",
+        bottom: "0",
+        position: "fixed",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
       <Box
         sx={{
-          float: "left",
           padding: "0 5px 5px 5px",
         }}
       >
-        <ul>
-          <li>
-            <Link
-              color="inherit"
-              href="https://www.linkedin.com/in/roland-p%C3%A1kai-6a2041249/"
-              target="_blank"
-            >
-              <LinkedInIcon fontSize="medium" />
-            </Link>
-          </li>
-          <li>
-            <Link
-              color="inherit"
-              href="https://github.com/rolandpakai/ponypanic"
-              target="_blank"
-            >
-              <GitHubIcon fontSize="medium" />
-            </Link>
-          </li>
-        </ul>
+        <Stack direction="row" spacing={1}>
+          <Link
+            color="inherit"
+            href="https://www.linkedin.com/in/roland-p%C3%A1kai-6a2041249/"
+            target="_blank"
+          >
+            <LinkedInIcon fontSize="large" />
+          </Link>
+          <Link
+            color="inherit"
+            href="https://github.com/rolandpakai/ponypanic"
+            target="_blank"
+          >
+            <GitHubIcon fontSize="large" />
+          </Link>
+        </Stack>
       </Box>
       <Box
         sx={{
-          float: "right",
           padding: "0 5px 5px 5px",
         }}
       >
