@@ -137,10 +137,6 @@ export const getHeroMazePath = (mazeArg) => {
 };
 
 export const getHeroNextTurn = (hero, mazePath) => {
-  const nextHeroTurn = {
-    heroId: hero.id,
-  };
-
   let action = HERO_ACTION.NOTHING;
 
   if (hero.bulletInRange && hero.bulletInRange.length > 0) {
@@ -154,8 +150,11 @@ export const getHeroNextTurn = (hero, mazePath) => {
     }
   }
 
-  nextHeroTurn.action = action;
-  nextHeroTurn.mazePath = mazePath;
+  const nextHeroTurn = {
+    heroId: hero.id,
+    action,
+    mazePath,
+  };
 
   return nextHeroTurn;
 };
