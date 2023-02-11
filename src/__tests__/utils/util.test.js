@@ -26,17 +26,17 @@ describe("Util Functions", () => {
     });
   });
 
-  describe("xyTOij", () => {
+  describe("ijTOxy", () => {
     test("xyTOij (0, 0, 0)", () => {
-      const expected = { i: -1, j: 0 };
-      const actual = util.xyTOij(0, 0, 0);
+      const expected = { x: 0, y: -1 };
+      const actual = util.ijTOxy(0, 0, 0);
 
       expect(actual).toMatchObject(expected);
     });
 
     test("xyTOij (10, 10, 10)", () => {
-      const expected = { i: -1, j: 10 };
-      const actual = util.xyTOij(10, 10, 10);
+      const expected = { x: 10, y: -1 };
+      const actual = util.ijTOxy(10, 10, 10);
 
       expect(actual).toMatchObject(expected);
     });

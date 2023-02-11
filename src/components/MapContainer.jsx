@@ -21,7 +21,7 @@ import {
   getHeroNextTurn,
   getImageSize,
   mapToArray,
-  xyTOij,
+  ijTOxy,
 } from "../utils/util";
 import {
   BORDER,
@@ -199,9 +199,9 @@ const MapContainer = () => {
     for (let i = width - 1; i >= 0; i -= 1) {
       for (let j = 0; j < height; j += 1) {
         const idd = `${j}-${i}`;
-        const xy = xyTOij(i, j, height);
+        const xy = ijTOxy(i, j, height);
 
-        maze[xy.i][xy.j] = 0;
+        maze[xy.y][xy.x] = 0;
 
         if (j === 0) {
           addBorderField(
@@ -237,7 +237,7 @@ const MapContainer = () => {
               treasures[idd]
             ),
           };
-          endNodes.push({ x: xy.j, y: xy.i, id: fieldContainer.id, idd });
+          endNodes.push({ x: xy.x, y: xy.y, id: fieldContainer.id, idd });
         }
 
         if (heroes[idd]) {
@@ -256,7 +256,7 @@ const MapContainer = () => {
             field: new Hero(idd, heroes[idd].type, fieldLevel, heroes[idd]),
           };
 
-          startNodes.push({ x: xy.j, y: xy.i, id: fieldContainer.id, idd });
+          startNodes.push({ x: xy.x, y: xy.y, id: fieldContainer.id, idd });
         }
 
         if (enemies[idd] && enemies[idd].health > 0) {
@@ -299,7 +299,7 @@ const MapContainer = () => {
               obstacles[idd]
             ),
           };
-          maze[xy.i][xy.j] = 2;
+          maze[xy.y][xy.x] = 2;
         }
 
         addField(fieldContainer, fields);

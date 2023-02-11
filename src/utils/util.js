@@ -9,7 +9,7 @@ import PathFinder from "../path-finder/PathFinder";
 export const randomInteger = (min, max) =>
   min && max && Math.floor(Math.random() * (max - min + 1)) + min;
 
-export const xyTOij = (x, y, height) => ({ i: height - x - 1, j: y });
+export const ijTOxy = (i, j, height) => ({ x: j, y: height - i - 1 });
 
 export const arrayToMap = (array, type, turn) => {
   const map = {};
