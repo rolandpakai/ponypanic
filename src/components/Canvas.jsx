@@ -76,49 +76,6 @@ const Canvas = (props) => {
     return borderFields;
   };
 
-  const isNewMazePath = (hero, collected, elapsedTickCount) => {
-    return (
-      elapsedTickCount === 0 ||
-      (collected[hero.idd] && collected[hero.idd].collectedByHeroId === hero.id)
-    );
-  };
-
-  const storyGameMode = (
-    startNodes,
-    endNodes,
-    heroes,
-    collected,
-    maze,
-    width,
-    height,
-    elapsedTickCount
-  ) => {
-    const startNode = startNodes[0];
-    const hero = heroes[startNode.idd];
-
-    let newMazePath = [...mazePath];
-
-    if (isNewMazePath(hero, collected, elapsedTickCount)) {
-      const mazeArg = {
-        board: maze,
-        startNodes: startNode,
-        endNodes,
-        algorithm: Algorithms.BFS,
-        heuristic: Heuristic.Euclidean,
-        rowCount: width,
-        colCount: height,
-        allowDiagonalMoves: false,
-      };
-
-      newMazePath = getHeroMazePath(mazeArg);
-    }
-
-    const nextHeroTurn = getHeroNextTurn(hero, newMazePath);
-
-    setMazePath(nextHeroTurn.mazePath);
-    updateHeroTurn(nextHeroTurn);
-  };
-
   const getFields = () => {
     const {
       width,
@@ -272,25 +229,77 @@ const Canvas = (props) => {
 
     newFields = newFields.concat(borderFields);
 
-    if (gameMode === GAME_MODE.STORY) {
-      storyGameMode(
-        startNodes,
+    const gameParam = {
+      startNodes,
+      endNodes,
+      heroes,
+      collected,
+      maze,
+      width,
+      height,
+      elapsedTickCount,
+    };
+
+    return { newFields, gameParam };
+  };
+
+  const isNewMazePath = (hero, collected, elapsedTickCount) => {
+    return (
+      elapsedTickCount === 0 ||
+      (collected[hero.idd] && collected[hero.idd].collectedByHeroId === hero.id)
+    );
+  };
+
+  const storyGameMode = (gameParam) => {
+    const {
+      startNodes,
+      endNodes,
+      heroes,
+      collected,
+      maze,
+      width,
+      height,
+      elapsedTickCount,
+    } = gameParam;
+
+    const startNode = startNodes[0];
+    const hero = heroes[startNode.idd];
+
+    let newMazePath = [...mazePath];
+
+    if (isNewMazePath(hero, collected, elapsedTickCount)) {
+      const mazeArg = {
+        board: maze,
+        startNodes: startNode,
         endNodes,
-        heroes,
-        collected,
-        maze,
-        width,
-        height,
-        elapsedTickCount
-      );
+        algorithm: Algorithms.BFS,
+        heuristic: Heuristic.Euclidean,
+        rowCount: width,
+        colCount: height,
+        allowDiagonalMoves: false,
+      };
+
+      newMazePath = getHeroMazePath(mazeArg);
     }
 
-    return newFields;
+    const nextHeroTurn = getHeroNextTurn(hero, newMazePath);
+
+    setMazePath(nextHeroTurn.mazePath);
+    updateHeroTurn(nextHeroTurn);
+  };
+
+  const playGame = (gameParam) => {
+    if (gameMode === GAME_MODE.STORY) {
+      storyGameMode(gameParam);
+    }
   };
 
   useEffect(() => {
     if (!(Object.keys(canvas).length === 0)) {
-      setFields(getFields(canvas));
+      const { newFields, gameParam } = getFields(canvas);
+
+      playGame(gameParam);
+      setFields(newFields);
     }
   }, [canvas]);
 
