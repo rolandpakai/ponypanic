@@ -57,7 +57,6 @@ const MapContainer = () => {
   const [canvasMapId, setCanvasMapId] = useState(0);
 
   const [mazePath, setMazePath] = useState([]);
-  const [mazeStep, setMazeStep] = useState(0);
   const [dialogProps, setDialogProps] = useState({ open: false });
 
   const [loading, setLoading] = useState(false);
@@ -125,21 +124,14 @@ const MapContainer = () => {
     maze,
     width,
     height,
-    step,
     elapsedTickCount
   ) => {
     const startNode = startNodes[0];
     const hero = heroes[startNode.idd];
 
-    let stepNr = step;
-
     let newMazePath = [...mazePath];
 
     if (isNewMazePath(hero, collected, elapsedTickCount)) {
-      stepNr = 0;
-    }
-
-    if (stepNr === 0) {
       const mazeArg = {
         board: maze,
         startNodes: startNode,
@@ -154,15 +146,10 @@ const MapContainer = () => {
       newMazePath = getHeroMazePath(mazeArg);
     }
 
-    const nextHeroTurn = getHeroNextTurn(hero, newMazePath, stepNr);
+    const nextHeroTurn = getHeroNextTurn(hero, newMazePath);
 
-    setMazePath(newMazePath);
+    setMazePath(nextHeroTurn.mazePath);
     setHeroTurn(nextHeroTurn);
-    setMazeStep(nextHeroTurn.step);
-  };
-
-  const getStep = (elapsedTickCount) => {
-    return elapsedTickCount === 0 ? elapsedTickCount : mazeStep;
   };
 
   const getCanvasFields = (props) => {
@@ -326,8 +313,6 @@ const MapContainer = () => {
       fields
     );
 
-    const step = getStep(elapsedTickCount);
-
     if (gameMode === GAME_MODE.STORY) {
       storyGameMode(
         startNodes,
@@ -337,7 +322,6 @@ const MapContainer = () => {
         maze,
         width,
         height,
-        step,
         elapsedTickCount
       );
     }

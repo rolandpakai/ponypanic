@@ -129,23 +129,6 @@ export const getShortestMazePath = (paths) => {
   return path;
 };
 
-export const getNextDirection = (path, step) => {
-  let direction = "";
-
-  if (path.length > 0 && path[step] && path[step].dir) {
-    direction = path[step].dir;
-  }
-
-  return direction;
-};
-
-export const getHeroNextAction = (path, step) => {
-  const direction = getNextDirection(path, step);
-  const heroAction = getHeroAction(direction);
-
-  return heroAction;
-};
-
 export const getHeroMazePath = (mazeArg) => {
   const paths = getMazePaths(mazeArg);
   const path = getShortestMazePath(paths);
@@ -153,34 +136,26 @@ export const getHeroMazePath = (mazeArg) => {
   return path;
 };
 
-export const getHeroNextTurn = (hero, mazePath, step) => {
-  let nextHeroTurn = {};
+export const getHeroNextTurn = (hero, mazePath) => {
+  const nextHeroTurn = {
+    heroId: hero.id,
+  };
+
+  let action = HERO_ACTION.NOTHING;
 
   if (hero.bulletInRange && hero.bulletInRange.length > 0) {
-    const point = hero.bulletInRange[0];
-
-    nextHeroTurn = {
-      heroId: hero.id,
-      action: point.action,
-      step,
-    };
+    action = hero.bulletInRange[0].action;
   } else if (hero.enemyInKickRange && hero.enemyInKickRange.length > 0) {
-    const point = hero.enemyInKickRange[0];
-
-    nextHeroTurn = {
-      heroId: hero.id,
-      action: point.action,
-      step,
-    };
+    action = hero.enemyInKickRange[0].action;
   } else {
-    const heroAction = getHeroNextAction(mazePath, step);
-
-    nextHeroTurn = {
-      heroId: hero.id,
-      action: heroAction,
-      step: step + 1,
-    };
+    const path = mazePath.shift();
+    if (path && path.dir) {
+      action = getHeroAction(path.dir);
+    }
   }
+
+  nextHeroTurn.action = action;
+  nextHeroTurn.mazePath = mazePath;
 
   return nextHeroTurn;
 };
