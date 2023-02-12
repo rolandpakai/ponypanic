@@ -3,6 +3,10 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 
 import { GameStateContext } from "../contexts/GameStateContext";
+import {
+  existsItemInLocalStorage,
+  getGameStateFromLocalStorage,
+} from "../utils/util";
 import { GAME_STATE, LOCAL_STORAGE_STATE_NAME } from "../utils/constants";
 import Button from "./Button";
 
@@ -26,26 +30,14 @@ const TitleContainerModeMenu = () => {
     updateGameState(newGameState);
   };
 
-  const existsGameStateInStore = () => {
-    let exists = false;
-    const localStorageState = localStorage.getItem(LOCAL_STORAGE_STATE_NAME);
-
-    if (localStorageState && localStorageState !== "undefined") {
-      exists = true;
-    }
-
-    return exists;
-  };
-
   useEffect(() => {
-    const exists = existsGameStateInStore();
+    const exists = existsItemInLocalStorage(LOCAL_STORAGE_STATE_NAME);
 
     if (exists) {
-      const localStorageState = localStorage.getItem(LOCAL_STORAGE_STATE_NAME);
-      const storageState = JSON.parse(localStorageState);
+      const stateFromLocalStorage = getGameStateFromLocalStorage();
       const newGameState = {
         ...gameState,
-        value: storageState,
+        value: stateFromLocalStorage,
       };
 
       updateGameState(newGameState);

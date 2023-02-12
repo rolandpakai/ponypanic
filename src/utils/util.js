@@ -3,6 +3,7 @@ import {
   IMG_BIG_SIZE,
   IMG_SMALL_SIZE,
   KICK_POINTS,
+  LOCAL_STORAGE_STATE_NAME,
 } from "./constants";
 import PathFinder from "../path-finder/PathFinder";
 
@@ -219,4 +220,26 @@ export const getHeroRanges = (hero, enemies, bullets) => {
   }, {});
 
   return { kickRange, enemyInKickRange, bulletInRange };
+};
+
+export const existsItemInLocalStorage = (itemName) => {
+  let exists = false;
+  const localStorageValue = localStorage.getItem(itemName);
+
+  if (localStorageValue && localStorageValue !== "undefined") {
+    exists = true;
+  }
+
+  return exists;
+};
+
+export const getGameStateFromLocalStorage = () => {
+  let localStorageValue;
+
+  if (existsItemInLocalStorage(LOCAL_STORAGE_STATE_NAME)) {
+    const localStorageItem = localStorage.getItem(LOCAL_STORAGE_STATE_NAME);
+    localStorageValue = JSON.parse(localStorageItem);
+  }
+
+  return localStorageValue;
 };

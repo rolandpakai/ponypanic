@@ -13,7 +13,13 @@ import {
   apiResetLevel,
   apiStoryBegin,
 } from "../api/api";
-import { arrayToMap, getImageSize, mapToArray } from "../utils/util";
+import {
+  arrayToMap,
+  getImageSize,
+  mapToArray,
+  existsItemInLocalStorage,
+  getGameStateFromLocalStorage,
+} from "../utils/util";
 import {
   FIELD_TYPE,
   GAME_MODE,
@@ -244,13 +250,14 @@ const MapContainer = () => {
     };
 
     const loadData = () => {
-      const localStorageState = localStorage.getItem(LOCAL_STORAGE_STATE_NAME);
+      if (existsItemInLocalStorage(LOCAL_STORAGE_STATE_NAME)) {
+        const stateFromLocalStorage = getGameStateFromLocalStorage();
 
-      if (localStorageState && localStorageState !== "undefined") {
-        const storageState = JSON.parse(localStorageState);
-
-        updateCanvas(storageState.storyToken, storageState.canvas);
-        setStoryToken(storageState.storyToken);
+        updateCanvas(
+          stateFromLocalStorage.storyToken,
+          stateFromLocalStorage.canvas
+        );
+        setStoryToken(stateFromLocalStorage.storyToken);
         setDialogProps({ ...dialogProps, open: false });
 
         setTimeout(() => {
