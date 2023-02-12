@@ -233,36 +233,36 @@ const MapContainer = () => {
     nextTurn(heroTurn);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const {
-        storyPlaythroughToken,
-        playthroughState: { currentLevel },
-      } = await apiStoryBegin(PLAYER_TOKEN);
+  const fetchData = async () => {
+    const {
+      storyPlaythroughToken,
+      playthroughState: { currentLevel },
+    } = await apiStoryBegin(PLAYER_TOKEN);
 
-      setCanvasData(storyPlaythroughToken, currentLevel);
-      setStoryToken(storyPlaythroughToken);
+    setCanvasData(storyPlaythroughToken, currentLevel);
+    setStoryToken(storyPlaythroughToken);
+    setDialogProps({ ...dialogProps, open: false });
+
+    setTimeout(() => {
+      setLoading(false);
+    }, "300");
+  };
+
+  const loadData = () => {
+    if (existsItemInLocalStorage(LOCAL_STORAGE_STATE_NAME)) {
+      const storedState = getItemFromLocalStorage(LOCAL_STORAGE_STATE_NAME);
+
+      updateCanvas(storedState.storyToken, storedState.canvas);
+      setStoryToken(storedState.storyToken);
       setDialogProps({ ...dialogProps, open: false });
 
       setTimeout(() => {
         setLoading(false);
       }, "300");
-    };
+    }
+  };
 
-    const loadData = () => {
-      if (existsItemInLocalStorage(LOCAL_STORAGE_STATE_NAME)) {
-        const storedState = getItemFromLocalStorage(LOCAL_STORAGE_STATE_NAME);
-
-        updateCanvas(storedState.storyToken, storedState.canvas);
-        setStoryToken(storedState.storyToken);
-        setDialogProps({ ...dialogProps, open: false });
-
-        setTimeout(() => {
-          setLoading(false);
-        }, "300");
-      }
-    };
-
+  useEffect(() => {
     setLoading(true);
 
     if (gameState.state === GAME_STATE.NEW) {
