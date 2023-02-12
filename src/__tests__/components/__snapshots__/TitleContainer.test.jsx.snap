@@ -15,7 +15,7 @@ exports[`TitleContainer Component TitleContainer renders 1`] = `
     className="MuiContainer-root MuiContainer-maxWidthXs css-nzinn5-MuiContainer-root"
   >
     <div
-      className="css-vankme-MuiStack-root"
+      className="css-1mi39fu-MuiStack-root"
     >
       <button
         className="MuiButtonBase-root MuiButton-root MuiLoadingButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-fullWidth MuiButton-root MuiLoadingButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-fullWidth css-dat04h-MuiButtonBase-root-MuiButton-root-MuiLoadingButton-root"
@@ -37,7 +37,33 @@ exports[`TitleContainer Component TitleContainer renders 1`] = `
         tabIndex={0}
         type="button"
       >
-        NEW GAME
+        STORY MODE
+      </button>
+    </div>
+    <div
+      className="css-1mi39fu-MuiStack-root"
+    >
+      <button
+        className="MuiButtonBase-root MuiButton-root MuiLoadingButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-fullWidth Mui-disabled MuiButton-root MuiLoadingButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-fullWidth css-dat04h-MuiButtonBase-root-MuiButton-root-MuiLoadingButton-root"
+        disabled={true}
+        id=":r1:"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onContextMenu={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={-1}
+        type="button"
+      >
+        FREESTYLE MODE
       </button>
     </div>
   </div>

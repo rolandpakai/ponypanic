@@ -9,8 +9,41 @@ Array [
       className="MuiContainer-root MuiContainer-maxWidthMd css-xdmu94-MuiContainer-root"
     >
       <div
-        className="MuiBox-root css-1js63x3"
-      />
+        className="css-1ukijpk-MuiStack-root"
+      >
+        <img
+          alt="title"
+          className="header-img"
+          src="./themes/pony/title.png"
+          style={
+            Object {
+              "display": "block",
+              "height": "110px",
+              "objectFit": "contain",
+            }
+          }
+        />
+      </div>
+    </div>
+  </div>,
+  <div
+    className="MuiBox-root css-0"
+  >
+    <div
+      className="MuiContainer-root MuiContainer-maxWidthMd css-xdmu94-MuiContainer-root"
+    >
+      <div
+        className="css-1av9md8-MuiStack-root"
+      >
+        <div
+          className="MuiBox-root css-1as3uml"
+        >
+          <div
+            className="MuiBox-root css-gaqaxa"
+            id="id-undefined"
+          />
+        </div>
+      </div>
     </div>
     <div
       className="MuiContainer-root MuiContainer-maxWidthXs css-nzinn5-MuiContainer-root"
@@ -38,7 +71,7 @@ Array [
           tabIndex={0}
           type="button"
         >
-          NEW GAME
+          HERO TURN
         </button>
       </div>
     </div>
