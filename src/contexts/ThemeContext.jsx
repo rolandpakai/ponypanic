@@ -27,18 +27,21 @@ export const ThemeProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    let newTheme = theme;
+
     if (existsItemInLocalStorage(LOCAL_STORAGE_THEME_NAME)) {
       const storedTheme = getItemFromLocalStorage(LOCAL_STORAGE_THEME_NAME);
-      setTheme(storedTheme);
+      newTheme = storedTheme;
     } else {
       setItemInLocalStorage(LOCAL_STORAGE_THEME_NAME, DEFAULT_THEME);
-      setTheme(DEFAULT_THEME);
+      newTheme = DEFAULT_THEME;
     }
+
+    setTheme(newTheme);
   }, []);
 
   useLayoutEffect(() => {
     const element = document.documentElement;
-
     element.classList.remove(...element.classList);
     document.documentElement.classList.add(`theme-${theme}`);
   }, [theme]);
