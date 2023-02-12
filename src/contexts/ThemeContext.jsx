@@ -6,6 +6,11 @@ import React, {
   useState,
 } from "react";
 import PropTypes from "prop-types";
+import {
+  existsItemInLocalStorage,
+  getItemFromLocalStorage,
+  setItemInLocalStorage,
+} from "../utils/util";
 import { DEFAULT_THEME, LOCAL_STORAGE_THEME_NAME } from "../utils/constants";
 
 export const ThemeContext = createContext({
@@ -17,17 +22,16 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(DEFAULT_THEME);
 
   const selectTheme = (value) => {
-    localStorage.setItem(LOCAL_STORAGE_THEME_NAME, value);
+    setItemInLocalStorage(LOCAL_STORAGE_THEME_NAME, value);
     setTheme(value);
   };
 
   useEffect(() => {
-    const localStorageTheme = localStorage.getItem(LOCAL_STORAGE_THEME_NAME);
-
-    if (localStorageTheme && localStorageTheme !== "undefined") {
-      setTheme(localStorageTheme);
+    if (existsItemInLocalStorage(LOCAL_STORAGE_THEME_NAME)) {
+      const storedTheme = getItemFromLocalStorage(LOCAL_STORAGE_THEME_NAME);
+      setTheme(storedTheme);
     } else {
-      localStorage.setItem(LOCAL_STORAGE_THEME_NAME, DEFAULT_THEME);
+      setItemInLocalStorage(LOCAL_STORAGE_THEME_NAME, DEFAULT_THEME);
       setTheme(DEFAULT_THEME);
     }
   }, []);
