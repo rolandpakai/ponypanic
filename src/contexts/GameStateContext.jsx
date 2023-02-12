@@ -1,5 +1,6 @@
 import React, { createContext, useMemo, useState } from "react";
 import PropTypes from "prop-types";
+import { setItemInLocalStorage } from "../utils/util";
 import { GAME_STATE, LOCAL_STORAGE_STATE_NAME } from "../utils/constants";
 
 const defaultValue = { state: GAME_STATE.END, value: {} };
@@ -15,7 +16,7 @@ export const GameStateProvider = ({ children }) => {
   const updateGameState = (prop) => {
     const { value } = prop;
 
-    localStorage.setItem(LOCAL_STORAGE_STATE_NAME, JSON.stringify(value));
+    setItemInLocalStorage(LOCAL_STORAGE_STATE_NAME, value);
 
     setGameState(prop);
   };
