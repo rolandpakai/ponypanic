@@ -4,7 +4,7 @@ import Container from "@mui/material/Container";
 import Footer from "./Footer";
 
 import { ThemeContext } from "../contexts/ThemeContext";
-import TitleContainerMainMenu from "./TitleContainerMainMenu";
+import TitleMainMenu from "./TitleMainMenu";
 
 const TitleScreen = () => {
   const { theme } = useContext(ThemeContext);
@@ -24,7 +24,7 @@ const TitleScreen = () => {
             }}
           />
         </Container>
-        <TitleContainerMainMenu />
+        <TitleMainMenu />
       </Box>
       <Footer />
     </>
