@@ -24,6 +24,7 @@ import {
   FIELD_TYPE,
   GAME_MODE,
   GAME_STATE,
+  LOADING_TIMEOUT,
   PLAYER_TOKEN,
   LOCAL_STORAGE_STATE_NAME,
 } from "../utils/constants";
@@ -212,7 +213,7 @@ const MapContainer = () => {
 
     setTimeout(() => {
       setLoadingTurn(false);
-    }, "300");
+    }, LOADING_TIMEOUT);
 
     if (map.isGameOver) {
       gameOver(map.status);
@@ -245,7 +246,7 @@ const MapContainer = () => {
 
     setTimeout(() => {
       setLoading(false);
-    }, "300");
+    }, LOADING_TIMEOUT);
   };
 
   const loadData = () => {
@@ -258,7 +259,7 @@ const MapContainer = () => {
 
       setTimeout(() => {
         setLoading(false);
-      }, "300");
+      }, LOADING_TIMEOUT);
     }
   };
 
