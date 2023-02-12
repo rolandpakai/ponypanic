@@ -25,9 +25,7 @@ const MapContainer = () => {
   const [canvas, setCanvas] = useState({});
   const [storyToken, setStoryToken] = useState("");
   const [heroTurn, setHeroTurn] = useState({});
-
   const [dialogProps, setDialogProps] = useState({ open: false });
-
   const [loading, setLoading] = useState(false);
   const [loadingTurn, setLoadingTurn] = useState(false);
 
