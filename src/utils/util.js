@@ -3,7 +3,6 @@ import {
   IMG_BIG_SIZE,
   IMG_SMALL_SIZE,
   KICK_POINTS,
-  LOCAL_STORAGE_STATE_NAME,
 } from "./constants";
 import PathFinder from "../path-finder/PathFinder";
 
@@ -233,11 +232,11 @@ export const existsItemInLocalStorage = (itemName) => {
   return exists;
 };
 
-export const getGameStateFromLocalStorage = () => {
+export const getItemFromLocalStorage = (itemName) => {
   let localStorageValue;
 
-  if (existsItemInLocalStorage(LOCAL_STORAGE_STATE_NAME)) {
-    const localStorageItem = localStorage.getItem(LOCAL_STORAGE_STATE_NAME);
+  if (existsItemInLocalStorage(itemName)) {
+    const localStorageItem = localStorage.getItem(itemName);
     localStorageValue = JSON.parse(localStorageItem);
   }
 

@@ -18,7 +18,7 @@ import {
   getImageSize,
   mapToArray,
   existsItemInLocalStorage,
-  getGameStateFromLocalStorage,
+  getItemFromLocalStorage,
 } from "../utils/util";
 import {
   FIELD_TYPE,
@@ -251,12 +251,15 @@ const MapContainer = () => {
 
     const loadData = () => {
       if (existsItemInLocalStorage(LOCAL_STORAGE_STATE_NAME)) {
-        const stateFromLocalStorage = getGameStateFromLocalStorage();
+        const stateFromLocalStorage = getItemFromLocalStorage(
+          LOCAL_STORAGE_STATE_NAME
+        );
 
         updateCanvas(
           stateFromLocalStorage.storyToken,
           stateFromLocalStorage.canvas
         );
+
         setStoryToken(stateFromLocalStorage.storyToken);
         setDialogProps({ ...dialogProps, open: false });
 

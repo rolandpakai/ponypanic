@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import { GameStateContext } from "../contexts/GameStateContext";
 import {
   existsItemInLocalStorage,
-  getGameStateFromLocalStorage,
+  getItemFromLocalStorage,
 } from "../utils/util";
 import { GAME_STATE, LOCAL_STORAGE_STATE_NAME } from "../utils/constants";
 import Button from "./Button";
@@ -34,7 +34,9 @@ const TitleContainerModeMenu = () => {
     const exists = existsItemInLocalStorage(LOCAL_STORAGE_STATE_NAME);
 
     if (exists) {
-      const stateFromLocalStorage = getGameStateFromLocalStorage();
+      const stateFromLocalStorage = getItemFromLocalStorage(
+        LOCAL_STORAGE_STATE_NAME
+      );
       const newGameState = {
         ...gameState,
         value: stateFromLocalStorage,
