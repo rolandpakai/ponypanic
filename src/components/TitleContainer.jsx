@@ -1,19 +1,12 @@
 import React, { useContext } from "react";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Stack from "@mui/material/Stack";
 
 import { ThemeContext } from "../contexts/ThemeContext";
-import { NewGameContext } from "../contexts/NewGameContext";
-import Button from "./Button";
+import TitleContainerMainMenu from "./TitleContainerMainMenu";
 
 const TitleContainer = () => {
   const { theme } = useContext(ThemeContext);
-  const { setNewGame } = useContext(NewGameContext);
-
-  const onClickHandler = () => {
-    setNewGame(true);
-  };
 
   return (
     <Box>
@@ -29,11 +22,7 @@ const TitleContainer = () => {
           }}
         />
       </Container>
-      <Container maxWidth="xs">
-        <Stack direction="row" justifyContent="center" maxWidth="xs">
-          <Button onClick={onClickHandler}>NEW GAME</Button>
-        </Stack>
-      </Container>
+      <TitleContainerMainMenu />
     </Box>
   );
 };

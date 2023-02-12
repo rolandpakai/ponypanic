@@ -4,12 +4,12 @@ import PropTypes from "prop-types";
 import { GAME_MODE } from "../utils/constants";
 
 export const GameModeContext = createContext({
-  gameMode: GAME_MODE.STORY,
+  gameMode: GAME_MODE.UNDEFINED,
   setGameMode: () => {},
 });
 
 export const GameModeProvider = ({ children }) => {
-  const [gameMode, setGameMode] = useState(GAME_MODE.STORY);
+  const [gameMode, setGameMode] = useState(GAME_MODE.UNDEFINED);
 
   const value = useMemo(() => ({ gameMode, setGameMode }), [gameMode]);
 

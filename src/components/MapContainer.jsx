@@ -14,14 +14,21 @@ import {
   apiStoryBegin,
 } from "../api/api";
 import { arrayToMap, getImageSize, mapToArray } from "../utils/util";
-import { FIELD_TYPE, PLAYER_TOKEN } from "../utils/constants";
+import {
+  FIELD_TYPE,
+  GAME_MODE,
+  GAME_STATE,
+  PLAYER_TOKEN,
+} from "../utils/constants";
 import Canvas from "./Canvas";
 import PopupDialog from "./PopupDialog";
 import Button from "./Button";
-import { NewGameContext } from "../contexts/NewGameContext";
+import { GameStateContext } from "../contexts/GameStateContext";
+import { GameModeContext } from "../contexts/GameModeContext";
 
 const MapContainer = () => {
-  const { setNewGame } = useContext(NewGameContext);
+  const { setGameMode } = useContext(GameModeContext);
+  const { setGameState } = useContext(GameStateContext);
   const [canvas, setCanvas] = useState({});
   const [storyToken, setStoryToken] = useState("");
   const [heroTurn, setHeroTurn] = useState({});
@@ -92,7 +99,8 @@ const MapContainer = () => {
   };
 
   const endHandler = () => {
-    setNewGame(false);
+    setGameState(GAME_STATE.OVER);
+    setGameMode(GAME_MODE.UNDEFINED);
   };
 
   const continueHandler = () => {
