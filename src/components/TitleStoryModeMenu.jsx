@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 
@@ -8,6 +8,7 @@ import Button from "./Button";
 
 const TitleContainerModeMenu = () => {
   const { gameState, updateGameState } = useContext(GameStateContext);
+  const [gameStateStored, setGameStateStored] = useState(false);
 
   const onClickNewGameHandler = () => {
     const newGameState = {
@@ -25,7 +26,7 @@ const TitleContainerModeMenu = () => {
     updateGameState(newGameState);
   };
 
-  const existsGameState = () => {
+  const existsGameStateInStore = () => {
     let exists = false;
     const localStorageState = localStorage.getItem(LOCAL_STORAGE_STATE_NAME);
 
@@ -37,7 +38,9 @@ const TitleContainerModeMenu = () => {
   };
 
   useEffect(() => {
-    if (existsGameState()) {
+    const exists = existsGameStateInStore();
+
+    if (exists) {
       const localStorageState = localStorage.getItem(LOCAL_STORAGE_STATE_NAME);
       const storageState = JSON.parse(localStorageState);
       const newGameState = {
@@ -47,6 +50,8 @@ const TitleContainerModeMenu = () => {
 
       updateGameState(newGameState);
     }
+
+    setGameStateStored(exists);
   }, []);
 
   return (
@@ -55,7 +60,7 @@ const TitleContainerModeMenu = () => {
         <Button onClick={onClickNewGameHandler}>NEW GAME</Button>
       </Stack>
       <Stack direction="row" justifyContent="center" p="10px" maxWidth="xs">
-        <Button disabled={!existsGameState()} onClick={onClickContinueHandler}>
+        <Button disabled={!gameStateStored} onClick={onClickContinueHandler}>
           CONTINUE
         </Button>
       </Stack>
