@@ -7,7 +7,12 @@ import {
   getHeroNextTurn,
   ijTOxy,
 } from "../utils/util";
-import { BORDER, FIELD_TYPE, GAME_MODE, MAP_COUNT } from "../utils/constants";
+import {
+  BORDER,
+  FIELD_TYPE,
+  GAME_MODE,
+  THEME_MAP_COUNT,
+} from "../utils/constants";
 import { Algorithms, Heuristic } from "../path-finder/constants";
 import FieldContainer from "./FieldContainer";
 import Bullet from "./fields/Bullet";
@@ -96,7 +101,8 @@ const Canvas = (props) => {
     const endNodes = [];
     const maze = Array.from(Array(height), () => []);
     const hasEnemy = !(Object.keys(enemies).length === 0);
-    const fieldLevel = currentLevel > MAP_COUNT ? MAP_COUNT : currentLevel;
+    const fieldLevel =
+      currentLevel > THEME_MAP_COUNT ? THEME_MAP_COUNT : currentLevel;
 
     let borderFields = getBorderFields(
       height,

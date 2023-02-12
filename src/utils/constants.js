@@ -1,5 +1,5 @@
 export const PLAYER_TOKEN = process.env.REACT_APP_PLAYER_TOKEN;
-export const MAP_COUNT = 11;
+export const THEME_MAP_COUNT = 11;
 export const KICK_DAMAGE = 0.6;
 export const IMG_BIG_SIZE = "64px";
 export const IMG_SMALL_SIZE = "32px";

@@ -9,7 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
 import { ThemeContext } from "../contexts/ThemeContext";
-import { FIELD_TYPE, MAP_COUNT } from "../utils/constants";
+import { FIELD_TYPE, THEME_MAP_COUNT } from "../utils/constants";
 
 const FieldContainer = (props) => {
   const [anchorEl, setAnchorEl] = useState();
@@ -18,7 +18,7 @@ const FieldContainer = (props) => {
 
   const open = Boolean(anchorEl);
 
-  const fieldLevel = level > MAP_COUNT ? MAP_COUNT : level;
+  const fieldLevel = level > THEME_MAP_COUNT ? THEME_MAP_COUNT : level;
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
