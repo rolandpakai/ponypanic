@@ -34,12 +34,10 @@ const TitleContainerModeMenu = () => {
     const exists = existsItemInLocalStorage(LOCAL_STORAGE_STATE_NAME);
 
     if (exists) {
-      const stateFromLocalStorage = getItemFromLocalStorage(
-        LOCAL_STORAGE_STATE_NAME
-      );
+      const storedState = getItemFromLocalStorage(LOCAL_STORAGE_STATE_NAME);
       const newGameState = {
         ...gameState,
-        value: stateFromLocalStorage,
+        value: storedState,
       };
 
       updateGameState(newGameState);

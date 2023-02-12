@@ -251,16 +251,10 @@ const MapContainer = () => {
 
     const loadData = () => {
       if (existsItemInLocalStorage(LOCAL_STORAGE_STATE_NAME)) {
-        const stateFromLocalStorage = getItemFromLocalStorage(
-          LOCAL_STORAGE_STATE_NAME
-        );
+        const storedState = getItemFromLocalStorage(LOCAL_STORAGE_STATE_NAME);
 
-        updateCanvas(
-          stateFromLocalStorage.storyToken,
-          stateFromLocalStorage.canvas
-        );
-
-        setStoryToken(stateFromLocalStorage.storyToken);
+        updateCanvas(storedState.storyToken, storedState.canvas);
+        setStoryToken(storedState.storyToken);
         setDialogProps({ ...dialogProps, open: false });
 
         setTimeout(() => {
