@@ -150,7 +150,7 @@ const Canvas = (props) => {
               treasures[idd]
             ),
           };
-          endNodes.push({ x: xy.x, y: xy.y, id: fieldContainer.id, idd });
+          endNodes.push({ x: xy.x, y: xy.y, idd });
         }
 
         if (heroes[idd]) {
@@ -169,7 +169,7 @@ const Canvas = (props) => {
             field: new Hero(idd, heroes[idd].type, fieldLevel, heroes[idd]),
           };
 
-          startNodes.push({ x: xy.x, y: xy.y, id: fieldContainer.id, idd });
+          startNodes.push({ x: xy.x, y: xy.y, idd });
         }
 
         if (enemies[idd] && enemies[idd].health > 0) {
@@ -249,10 +249,25 @@ const Canvas = (props) => {
     return { newFields, gameParam };
   };
 
-  const isNewMazePath = (hero, collected, elapsedTickCount) => {
+  const isHeroCollectedTreasure = (hero, collected) => {
+    return !!(
+      collected[hero.idd] && collected[hero.idd].collectedByHeroId === hero.id
+    );
+  };
+
+  const isContinueLevel = (newMazePath, elapsedTickCount) => {
+    return !!(newMazePath.length === 0 && elapsedTickCount > 0);
+  };
+
+  const isNewLevel = (elapsedTickCount) => {
+    return elapsedTickCount === 0;
+  };
+
+  const calcNewMazePath = (newMazePath, hero, collected, elapsedTickCount) => {
     return (
-      elapsedTickCount === 0 ||
-      (collected[hero.idd] && collected[hero.idd].collectedByHeroId === hero.id)
+      isNewLevel(elapsedTickCount) ||
+      isContinueLevel(newMazePath, elapsedTickCount) ||
+      isHeroCollectedTreasure(hero, collected)
     );
   };
 
@@ -273,7 +288,7 @@ const Canvas = (props) => {
 
     let newMazePath = [...mazePath];
 
-    if (isNewMazePath(hero, collected, elapsedTickCount)) {
+    if (calcNewMazePath(newMazePath, hero, collected, elapsedTickCount)) {
       const mazeArg = {
         board: maze,
         startNodes: startNode,
