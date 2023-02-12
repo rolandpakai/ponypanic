@@ -3,7 +3,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const Button = (props) => {
-  const { loading, onClick, children } = { ...props };
+  const { disabled, loading, onClick, children } = { ...props };
 
   const loadingIndicator = (
     <CircularProgress color="inherit" size={25} sx={{ color: "#fff" }} />
@@ -11,6 +11,7 @@ const Button = (props) => {
 
   return (
     <LoadingButton
+      disabled={disabled}
       loading={loading}
       onClick={onClick}
       color="error"
