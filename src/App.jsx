@@ -14,7 +14,7 @@ import "./styles/App.scss";
 const App = () => {
   const { gameState } = useContext(GameStateContext);
 
-  if (gameState === GAME_STATE.OVER) {
+  if (gameState.state === GAME_STATE.END) {
     return <TitleScreen />;
   }
 

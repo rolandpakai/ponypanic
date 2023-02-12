@@ -16,7 +16,7 @@ export const GAME_MODE = {
 export const GAME_STATE = {
   NEW: "NEW",
   CONTINUE: "CONTINUE",
-  OVER: "OVER",
+  END: "END",
 };
 
 export const THEMES_SELECT_OPTIONS = [
