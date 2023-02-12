@@ -5,13 +5,17 @@ import { GAME_MODE } from "../utils/constants";
 
 export const GameModeContext = createContext({
   gameMode: GAME_MODE.UNDEFINED,
-  setGameMode: () => {},
+  updateGameMode: () => {},
 });
 
 export const GameModeProvider = ({ children }) => {
   const [gameMode, setGameMode] = useState(GAME_MODE.UNDEFINED);
 
-  const value = useMemo(() => ({ gameMode, setGameMode }), [gameMode]);
+  const updateGameMode = (mode) => {
+    setGameMode(mode);
+  };
+
+  const value = useMemo(() => ({ gameMode, updateGameMode }), [gameMode]);
 
   return (
     <GameModeContext.Provider value={value}>

@@ -27,8 +27,8 @@ import { GameStateContext } from "../contexts/GameStateContext";
 import { GameModeContext } from "../contexts/GameModeContext";
 
 const MapContainer = () => {
-  const { setGameMode } = useContext(GameModeContext);
-  const { setGameState } = useContext(GameStateContext);
+  const { updateGameMode } = useContext(GameModeContext);
+  const { updateGameState } = useContext(GameStateContext);
   const [canvas, setCanvas] = useState({});
   const [storyToken, setStoryToken] = useState("");
   const [heroTurn, setHeroTurn] = useState({});
@@ -99,8 +99,8 @@ const MapContainer = () => {
   };
 
   const endHandler = () => {
-    setGameState(GAME_STATE.OVER);
-    setGameMode(GAME_MODE.UNDEFINED);
+    updateGameState(GAME_STATE.OVER);
+    updateGameMode(GAME_MODE.UNDEFINED);
   };
 
   const continueHandler = () => {

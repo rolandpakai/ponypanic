@@ -7,10 +7,14 @@ import { GAME_STATE } from "../utils/constants";
 import Button from "./Button";
 
 const TitleContainerModeMenu = () => {
-  const { setGameState } = useContext(GameStateContext);
+  const { updateGameState } = useContext(GameStateContext);
 
   const onClickNewGameHandler = () => {
-    setGameState(GAME_STATE.NEW);
+    updateGameState(GAME_STATE.NEW);
+  };
+
+  const onClickContinueHandler = () => {
+    updateGameState(GAME_STATE.NEW);
   };
 
   return (
@@ -19,9 +23,7 @@ const TitleContainerModeMenu = () => {
         <Button onClick={onClickNewGameHandler}>NEW GAME</Button>
       </Stack>
       <Stack direction="row" justifyContent="center" p="10px" maxWidth="xs">
-        <Button disabled onClick={onClickNewGameHandler}>
-          CONTINUE
-        </Button>
+        <Button onClick={onClickContinueHandler}>CONTINUE</Button>
       </Stack>
     </Container>
   );

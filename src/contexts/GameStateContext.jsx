@@ -4,13 +4,17 @@ import { GAME_STATE } from "../utils/constants";
 
 export const GameStateContext = createContext({
   gameState: false,
-  setGameState: () => {},
+  updateGameState: () => {},
 });
 
 export const GameStateProvider = ({ children }) => {
   const [gameState, setGameState] = useState(GAME_STATE.OVER);
 
-  const value = useMemo(() => ({ gameState, setGameState }), [gameState]);
+  const updateGameState = (state) => {
+    setGameState(state);
+  };
+
+  const value = useMemo(() => ({ gameState, updateGameState }), [gameState]);
 
   return (
     <GameStateContext.Provider value={value}>
