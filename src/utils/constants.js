@@ -11,6 +11,13 @@ export const LOCAL_STORAGE_THEME_NAME = "pony-panic-theme";
 export const GAME_MODE = {
   STORY: "STORY",
   FREESTYLE: "FREESTYLE",
+  UNDEFINED: "UNDEFINED",
+};
+
+export const GAME_STATE = {
+  NEW: "NEW",
+  CONTINUE: "CONTINUE",
+  OVER: "OVER",
 };
 
 export const THEMES_SELECT_OPTIONS = [
