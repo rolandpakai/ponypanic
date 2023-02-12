@@ -19,6 +19,7 @@ import {
   GAME_MODE,
   GAME_STATE,
   PLAYER_TOKEN,
+  LOCAL_STORAGE_STATE_NAME,
 } from "../utils/constants";
 import Canvas from "./Canvas";
 import PopupDialog from "./PopupDialog";
@@ -28,13 +29,23 @@ import { GameModeContext } from "../contexts/GameModeContext";
 
 const MapContainer = () => {
   const { updateGameMode } = useContext(GameModeContext);
-  const { updateGameState } = useContext(GameStateContext);
+  const { gameState, updateGameState } = useContext(GameStateContext);
   const [canvas, setCanvas] = useState({});
   const [storyToken, setStoryToken] = useState("");
   const [heroTurn, setHeroTurn] = useState({});
   const [dialogProps, setDialogProps] = useState({ open: false });
   const [loading, setLoading] = useState(false);
   const [loadingTurn, setLoadingTurn] = useState(false);
+
+  const updateCanvas = (token, newCanvas) => {
+    const newGameState = {
+      ...gameState,
+      value: { storyToken: token, canvas: newCanvas },
+    };
+
+    updateGameState(newGameState);
+    setCanvas(newCanvas);
+  };
 
   const updateHeroTurn = (nextHeroTurn) => {
     setHeroTurn(nextHeroTurn);
@@ -77,38 +88,55 @@ const MapContainer = () => {
     const mapState = await apiMapState(token);
     const newCanvas = getCanvasData(mapResource, mapState, currentLevel);
 
-    setCanvas(newCanvas);
+    updateCanvas(token, newCanvas);
   };
 
-  const resetLevel = async () => {
+  const resetLevel = async (token) => {
     const {
       playthroughState: { currentLevel },
-    } = await apiResetLevel(storyToken);
+    } = await apiResetLevel(token);
 
-    setCanvasData(storyToken, currentLevel);
+    setCanvasData(token, currentLevel);
     setDialogProps({ ...dialogProps, open: false });
   };
 
-  const nextLevel = async () => {
+  const nextLevel = async (token) => {
     const {
       playthroughState: { currentLevel },
-    } = await apiNextLevel(storyToken);
+    } = await apiNextLevel(token);
 
-    setCanvasData(storyToken, currentLevel);
+    setCanvasData(token, currentLevel);
     setDialogProps({ ...dialogProps, open: false });
   };
 
-  const endHandler = () => {
-    updateGameState(GAME_STATE.OVER);
+  const endLevel = async (token) => {
+    const {
+      playthroughState: { currentLevel },
+    } = await apiNextLevel(token);
+
+    const mapResource = await apiMapResource(token);
+    const mapState = await apiMapState(token);
+    const newCanvas = getCanvasData(mapResource, mapState, currentLevel);
+
+    const newGameState = {
+      state: GAME_STATE.END,
+      value: { storyToken: token, canvas: newCanvas },
+    };
+
+    updateGameState(newGameState);
     updateGameMode(GAME_MODE.UNDEFINED);
   };
 
+  const endHandler = () => {
+    endLevel(storyToken);
+  };
+
   const continueHandler = () => {
-    resetLevel();
+    resetLevel(storyToken);
   };
 
   const nextHandler = () => {
-    nextLevel();
+    nextLevel(storyToken);
   };
 
   const dialogPropsStatus = {
@@ -174,7 +202,7 @@ const MapContainer = () => {
       ...updates,
     };
 
-    setCanvas(newCanvas);
+    updateCanvas(storyToken, newCanvas);
 
     setTimeout(() => {
       setLoadingTurn(false);
@@ -207,16 +235,39 @@ const MapContainer = () => {
       } = await apiStoryBegin(PLAYER_TOKEN);
 
       setCanvasData(storyPlaythroughToken, currentLevel);
-      setDialogProps({ ...dialogProps, open: false });
       setStoryToken(storyPlaythroughToken);
+      setDialogProps({ ...dialogProps, open: false });
 
       setTimeout(() => {
         setLoading(false);
       }, "300");
     };
 
+    const loadData = () => {
+      const localStorageState = localStorage.getItem(LOCAL_STORAGE_STATE_NAME);
+
+      if (localStorageState && localStorageState !== "undefined") {
+        const storageState = JSON.parse(localStorageState);
+
+        updateCanvas(storageState.storyToken, storageState.canvas);
+        setStoryToken(storageState.storyToken);
+        setDialogProps({ ...dialogProps, open: false });
+
+        setTimeout(() => {
+          setLoading(false);
+        }, "300");
+      }
+    };
+
     setLoading(true);
-    fetchData();
+
+    if (gameState.state === GAME_STATE.NEW) {
+      fetchData();
+    }
+
+    if (gameState.state === GAME_STATE.CONTINUE) {
+      loadData();
+    }
   }, []);
 
   return (
