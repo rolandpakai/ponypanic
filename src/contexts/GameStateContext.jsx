@@ -17,7 +17,6 @@ export const GameStateProvider = ({ children }) => {
     const { value } = prop;
 
     setItemInLocalStorage(LOCAL_STORAGE_STATE_NAME, value);
-
     setGameState(prop);
   };
 

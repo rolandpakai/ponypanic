@@ -27,6 +27,7 @@ const TitleContainerModeMenu = () => {
       ...gameState,
       state: GAME_STATE.CONTINUE,
     };
+
     updateGameState(newGameState);
   };
 
