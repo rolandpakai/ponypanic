@@ -27,7 +27,6 @@ const Canvas = (props) => {
   const { gameMode } = useContext(GameModeContext);
   const [fields, setFields] = useState([]);
   const [mazePath, setMazePath] = useState([]);
-
   const { canvas, updateHeroTurn } = { ...props };
 
   const getFieldContainer = (fieldContainer) => {
