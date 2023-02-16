@@ -1,9 +1,8 @@
 class Field {
-  constructor(idd, type, level, theme, data) {
+  constructor(idd, type, level, data) {
     this.idd = idd;
     this.level = level;
     this.type = type;
-    this.theme = theme;
     this.data = data;
 
     this.popover = false;
