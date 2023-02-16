@@ -10,7 +10,7 @@ import {
 import { GAME_STATE, LOCAL_STORAGE_STATE_NAME } from "../utils/constants";
 import Button from "./Button";
 
-const TitleContainerModeMenu = () => {
+const TitleStoryModeMenu = () => {
   const { gameState, updateGameState } = useContext(GameStateContext);
   const [gameStateStored, setGameStateStored] = useState(false);
 
@@ -61,4 +61,4 @@ const TitleContainerModeMenu = () => {
   );
 };
 
-export default TitleContainerModeMenu;
+export default TitleStoryModeMenu;
