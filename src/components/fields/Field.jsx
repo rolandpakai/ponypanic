@@ -6,6 +6,7 @@ class Field {
     this.data = data;
 
     this.popover = false;
+    this.popoverContent = "";
   }
 
   getImgSrc() {
